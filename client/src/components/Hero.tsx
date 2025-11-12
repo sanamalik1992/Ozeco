@@ -18,14 +18,16 @@ export default function Hero() {
         </Badge>
         
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6" data-testid="text-hero-title">
-          Premium Electric Bikes
+          Quality Electric Bikes
           <br />
-          for UK Riders
+          Competitive Prices
+          <br />
+          Knowledgeable Support
         </h1>
         
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
-          Discover top brands including Engwe, Eleglide, DYU, and DUOTTS.
-          Fast UK delivery and expert support.
+          Discover top brands including ENGWE, Eleglide, DYU, Duotts, and Touroll.
+          Free UK delivery on all orders.
         </p>
         
         <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
@@ -44,11 +46,15 @@ export default function Hero() {
           </div>
           <div className="flex items-center gap-2" data-testid="trust-expert-support">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>Expert Support</span>
+            <span>UK-Based Support</span>
           </div>
           <div className="flex items-center gap-2" data-testid="trust-warranty">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>2 Year Warranty</span>
+            <span>12-Month Warranty</span>
+          </div>
+          <div className="flex items-center gap-2" data-testid="trust-delivery-time">
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+            <span>3-6 Day Delivery</span>
           </div>
         </div>
       </div>

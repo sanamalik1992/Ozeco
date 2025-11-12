@@ -9,10 +9,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <h3 className="text-lg font-display font-bold mb-4" data-testid="text-footer-about">
-              About Ozeco
+              Ozeco Ltd
             </h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground mb-2">
               UK-based e-bike specialists since 2022, bringing you premium electric bikes from trusted brands.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Company No: 15445991
             </p>
           </div>
 
@@ -80,13 +83,19 @@ export default function Footer() {
 
           <div>
             <h3 className="text-lg font-semibold mb-4" data-testid="text-footer-contact-info">
-              Contact
+              Contact Us
             </h3>
             <p className="text-sm text-muted-foreground mb-2">
-              Email: info@ozeco.co.uk
+              424 Idle Rd, Bradford<br />BD2 2AR, United Kingdom
+            </p>
+            <p className="text-sm text-muted-foreground mb-2">
+              Email: support@ozeco.co.uk
+            </p>
+            <p className="text-sm text-muted-foreground mb-2">
+              Phone: +44 7446 610660
             </p>
             <p className="text-sm text-muted-foreground mb-4">
-              United Kingdom
+              Mon-Fri: 9:00 AM - 5:30 PM (GMT)
             </p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Lock className="h-4 w-4" />
@@ -97,7 +106,7 @@ export default function Footer() {
 
         <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground" data-testid="text-copyright">
-            © 2024 Ozeco.co.uk. All rights reserved.
+            © 2024 Ozeco Ltd. All rights reserved. Company No: 15445991
           </p>
           
           <div className="flex items-center gap-4">

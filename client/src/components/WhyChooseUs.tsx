@@ -1,26 +1,26 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Headphones, Tag, Truck } from "lucide-react";
+import { MapPin, Headphones, Award, Truck } from "lucide-react";
 
 const features = [
   {
-    icon: MapPin,
-    title: "UK Based Business",
-    description: "Family-run company established in 2022, committed to serving UK customers.",
+    icon: Truck,
+    title: "Free UK Delivery",
+    description: "Free shipping on all orders within the United Kingdom. Delivery in 3-6 business days.",
+  },
+  {
+    icon: Award,
+    title: "12-Month Warranty",
+    description: "All e-bikes come with a comprehensive 12-month warranty for your peace of mind.",
   },
   {
     icon: Headphones,
-    title: "Expert Support",
-    description: "Knowledgeable team ready to help you find the perfect e-bike for your needs.",
+    title: "UK-Based Support",
+    description: "Expert customer service available Mon-Fri, 9:00 AM - 5:30 PM (GMT). Call +44 7446 610660.",
   },
   {
-    icon: Tag,
-    title: "Competitive Pricing",
-    description: "Great value on premium brands with regular offers and finance options.",
-  },
-  {
-    icon: Truck,
-    title: "Fast UK Delivery",
-    description: "Quick dispatch with free delivery on all e-bikes across Great Britain.",
+    icon: MapPin,
+    title: "UK Registered Company",
+    description: "Ozeco Ltd (Company No: 15445991) established in 2022 and based in Bradford, UK.",
   },
 ];
 
