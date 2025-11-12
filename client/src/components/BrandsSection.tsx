@@ -3,23 +3,23 @@ import BrandCard from "./BrandCard";
 const brands = [
   {
     name: "ENGWE",
-    description: "Powerful off-road electric bikes built for adventure and long-range rides.",
+    description: "Powerful off-road Electric bikes built for adventure and long-range rides.",
   },
   {
     name: "Eleglide",
-    description: "Sleek urban e-bikes combining style with cutting-edge technology.",
+    description: "Sleek urban Electric bikes combining style with cutting-edge technology.",
   },
   {
     name: "DYU",
-    description: "Compact folding e-bikes perfect for commuters and city living.",
+    description: "Compact folding Electric bikes perfect for commuters and city living.",
   },
   {
     name: "Duotts",
-    description: "Premium electric bikes with exceptional performance and design.",
+    description: "Premium Electric bikes with exceptional performance and design.",
   },
   {
     name: "Touroll",
-    description: "Innovative electric bikes designed for versatile urban mobility.",
+    description: "Innovative Electric bikes designed for versatile urban mobility.",
   },
 ];
 
@@ -32,7 +32,7 @@ export default function BrandsSection() {
             Shop by Brand
           </h2>
           <p className="text-muted-foreground text-lg" data-testid="text-brands-subtitle">
-            Premium electric bikes from trusted manufacturers
+            Premium Electric bikes from trusted manufacturers
           </p>
         </div>
 

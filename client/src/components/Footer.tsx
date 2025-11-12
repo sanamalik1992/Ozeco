@@ -12,7 +12,7 @@ export default function Footer() {
               Ozeco Ltd
             </h3>
             <p className="text-sm text-muted-foreground mb-2">
-              UK-based e-bike specialists since 2022, bringing you premium electric bikes from trusted brands.
+              UK-based Electric bike specialists since 2022, bringing you premium Electric bikes from trusted brands.
             </p>
             <p className="text-sm text-muted-foreground">
               Company No: 15445991

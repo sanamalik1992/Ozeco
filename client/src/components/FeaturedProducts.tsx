@@ -51,7 +51,7 @@ export default function FeaturedProducts() {
               Featured E-Bikes
             </h2>
             <p className="text-muted-foreground" data-testid="text-featured-subtitle">
-              Discover our most popular electric bikes
+              Discover our most popular Electric bikes
             </p>
           </div>
           <Button variant="outline" className="hidden md:flex" data-testid="button-view-all">

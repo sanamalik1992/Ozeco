@@ -33,7 +33,7 @@ export default function WhyChooseUs() {
             Why Choose Ozeco?
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto" data-testid="text-why-choose-subtitle">
-            Your trusted partner for premium electric bikes in the UK
+            Your trusted partner for premium Electric bikes in the UK
           </p>
         </div>
 
