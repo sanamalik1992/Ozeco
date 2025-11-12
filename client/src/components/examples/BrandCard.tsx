@@ -2,11 +2,11 @@ import BrandCard from '../BrandCard';
 
 export default function BrandCardExample() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 p-6">
       <BrandCard
-        name="Engwe"
+        name="ENGWE"
         description="Powerful off-road electric bikes built for adventure and long-range rides."
-        onClick={() => console.log('Engwe clicked')}
+        onClick={() => console.log('ENGWE clicked')}
       />
       <BrandCard
         name="Eleglide"
@@ -19,9 +19,14 @@ export default function BrandCardExample() {
         onClick={() => console.log('DYU clicked')}
       />
       <BrandCard
-        name="DUOTTS"
+        name="Duotts"
         description="Premium electric bikes with exceptional performance and design."
-        onClick={() => console.log('DUOTTS clicked')}
+        onClick={() => console.log('Duotts clicked')}
+      />
+      <BrandCard
+        name="Touroll"
+        description="Innovative electric bikes designed for versatile urban mobility."
+        onClick={() => console.log('Touroll clicked')}
       />
     </div>
   );

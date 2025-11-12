@@ -1,17 +1,14 @@
 import ProductCard from '../ProductCard';
-import productImage1 from '@assets/generated_images/Black_e-bike_white_background_79ee0cad.png';
-import productImage2 from '@assets/generated_images/White_city_e-bike_5041c7ba.png';
-import productImage3 from '@assets/generated_images/Red_folding_e-bike_7174f629.png';
 
 export default function ProductCardExample() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
       <ProductCard
         id="1"
-        name="Engwe Engine Pro"
+        name="ENGWE Engine X"
         brand="Engwe"
-        price={1299}
-        image={productImage1}
+        price={899.99}
+        image="https://www.ozeco.co.uk/cdn/shop/files/ejh2g8zn.png?v=1747666206&width=533"
         range="75 miles"
         maxSpeed="28 mph"
         onViewDetails={() => console.log('View details clicked')}
@@ -19,10 +16,10 @@ export default function ProductCardExample() {
       />
       <ProductCard
         id="2"
-        name="Eleglide T1 Step-Thru"
+        name="Eleglide M2"
         brand="Eleglide"
-        price={899}
-        image={productImage2}
+        price={594.99}
+        image="https://www.ozeco.co.uk/cdn/shop/files/kvo5ypxk.png?v=1747598026&width=533"
         range="65 miles"
         maxSpeed="15.5 mph"
         onViewDetails={() => console.log('View details clicked')}
@@ -30,10 +27,10 @@ export default function ProductCardExample() {
       />
       <ProductCard
         id="3"
-        name="DYU King 750"
+        name="DYU A1F Pro"
         brand="DYU"
-        price={749}
-        image={productImage3}
+        price={399.99}
+        image="https://www.ozeco.co.uk/cdn/shop/files/hyw8o05i.png?v=1747601600&width=533"
         range="45 miles"
         maxSpeed="15.5 mph"
         onViewDetails={() => console.log('View details clicked')}

@@ -2,7 +2,7 @@ import BrandCard from "./BrandCard";
 
 const brands = [
   {
-    name: "Engwe",
+    name: "ENGWE",
     description: "Powerful off-road electric bikes built for adventure and long-range rides.",
   },
   {
@@ -14,8 +14,12 @@ const brands = [
     description: "Compact folding e-bikes perfect for commuters and city living.",
   },
   {
-    name: "DUOTTS",
+    name: "Duotts",
     description: "Premium electric bikes with exceptional performance and design.",
+  },
+  {
+    name: "Touroll",
+    description: "Innovative electric bikes designed for versatile urban mobility.",
   },
 ];
 
@@ -32,7 +36,7 @@ export default function BrandsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {brands.map((brand) => (
             <BrandCard
               key={brand.name}

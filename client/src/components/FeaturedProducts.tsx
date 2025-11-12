@@ -1,45 +1,41 @@
 import ProductCard from "./ProductCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import productImage1 from "@assets/generated_images/Black_e-bike_white_background_79ee0cad.png";
-import productImage2 from "@assets/generated_images/White_city_e-bike_5041c7ba.png";
-import productImage3 from "@assets/generated_images/Red_folding_e-bike_7174f629.png";
-import productImage4 from "@assets/generated_images/Grey_cargo_e-bike_c9740836.png";
 
 const products = [
   {
     id: "1",
-    name: "Engwe Engine Pro",
+    name: "ENGWE Engine X",
     brand: "Engwe",
-    price: 1299,
-    image: productImage1,
+    price: 899.99,
+    image: "https://www.ozeco.co.uk/cdn/shop/files/ejh2g8zn.png?v=1747666206&width=533",
     range: "75 miles",
     maxSpeed: "28 mph",
   },
   {
     id: "2",
-    name: "Eleglide T1 Step-Thru",
+    name: "Eleglide M2",
     brand: "Eleglide",
-    price: 899,
-    image: productImage2,
+    price: 594.99,
+    image: "https://www.ozeco.co.uk/cdn/shop/files/kvo5ypxk.png?v=1747598026&width=533",
     range: "65 miles",
     maxSpeed: "15.5 mph",
   },
   {
     id: "3",
-    name: "DYU King 750",
+    name: "DYU A1F Pro",
     brand: "DYU",
-    price: 749,
-    image: productImage3,
+    price: 399.99,
+    image: "https://www.ozeco.co.uk/cdn/shop/files/hyw8o05i.png?v=1747601600&width=533",
     range: "45 miles",
     maxSpeed: "15.5 mph",
   },
   {
     id: "4",
-    name: "DUOTTS C29 Cargo",
-    brand: "DUOTTS",
-    price: 1499,
-    image: productImage4,
+    name: "Duotts C29",
+    brand: "Duotts",
+    price: 684.99,
+    image: "https://www.ozeco.co.uk/cdn/shop/files/01vs85u4.png?v=1747683500&width=533",
     range: "80 miles",
     maxSpeed: "15.5 mph",
   },
