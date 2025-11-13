@@ -167,10 +167,91 @@ export default function ProductDetail() {
           {/* Description */}
           <Card className="mb-12">
             <CardContent className="p-6 md:p-8">
-              <h2 className="text-2xl font-semibold mb-4">About This Electric Bike</h2>
-              <p className="text-muted-foreground leading-relaxed" data-testid="text-product-description">
-                {product.description}
-              </p>
+              <h2 className="text-2xl font-semibold mb-6">About This Electric Bike</h2>
+              
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Overview</h3>
+                  <p className="text-muted-foreground leading-relaxed" data-testid="text-product-description">
+                    {product.description}
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Key Performance</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    The {product.name} is equipped with a {product.motorPower} motor that delivers reliable power 
+                    for all your journeys. With a {product.batteryCapacity} battery, you can travel up to {product.maxRange} 
+                    on a single charge, reaching speeds of up to {product.topSpeed}. Whether you're commuting to work, 
+                    running errands, or exploring the countryside, this Electric bike offers the perfect balance of 
+                    performance and efficiency.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Design & Build Quality</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Built by {product.brand}, a trusted name in Electric bikes, the {product.name} combines quality 
+                    engineering with thoughtful design. The {product.frameType} frame provides durability while 
+                    maintaining a comfortable riding position. At {product.weight}, it strikes an ideal balance between 
+                    sturdiness and portability, with a maximum load capacity of {product.maxLoad}.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Perfect For</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {product.category === "Electric Folding Bikes" && 
+                      "Ideal for urban commuters who need a compact, portable solution. This folding Electric bike easily fits in your car boot, under your desk, or in storage at home. Perfect for mixed-mode commuting combining public transport and cycling."
+                    }
+                    {product.category === "Electric Mountain Bikes" && 
+                      "Designed for adventurous riders who want to explore off-road trails and challenging terrain. This mountain Electric bike gives you the power to tackle steep hills and rough paths with confidence, extending your riding range and making every trail accessible."
+                    }
+                    {product.category === "Electric City Bikes" && 
+                      "Perfect for daily commuters and casual riders navigating city streets. This Electric bike makes your daily journey effortless, helping you arrive fresh and on time while enjoying the freedom of two wheels."
+                    }
+                    {(product.category !== "Electric Folding Bikes" && 
+                      product.category !== "Electric Mountain Bikes" && 
+                      product.category !== "Electric City Bikes") && 
+                      "This versatile Electric bike is suitable for a wide range of riders and purposes. Whether commuting, leisure riding, or running errands, it provides reliable electric assistance to make every journey more enjoyable and less tiring."
+                    }
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Why Choose This Model?</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                      <div>
+                        <p className="font-medium mb-1">Trusted Brand</p>
+                        <p className="text-sm text-muted-foreground">{product.brand} is known for quality and reliability in the Electric bike market</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                      <div>
+                        <p className="font-medium mb-1">Fast UK Delivery</p>
+                        <p className="text-sm text-muted-foreground">Dispatch within 1 working day, 2-3 working days delivery</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                      <div>
+                        <p className="font-medium mb-1">12-Month Warranty</p>
+                        <p className="text-sm text-muted-foreground">Comprehensive warranty coverage for peace of mind</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                      <div>
+                        <p className="font-medium mb-1">Expert Support</p>
+                        <p className="text-sm text-muted-foreground">UK-based customer service team ready to help</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
