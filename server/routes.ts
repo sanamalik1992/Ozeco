@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertProductSchema, insertCartItemSchema } from "@shared/schema";
+import Stripe from "stripe";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
@@ -223,6 +224,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Database seeded successfully", count: productData.length });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Stripe payment route for checkout
+  app.post("/api/create-payment-intent", async (req, res) => {
+    try {
+      const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+      
+      if (!stripeSecretKey) {
+        return res.status(500).json({ 
+          error: "Stripe is not configured. Please set STRIPE_SECRET_KEY." 
+        });
+      }
+
+      const stripe = new Stripe(stripeSecretKey, {
+        apiVersion: "2024-11-20.acacia",
+      });
+
+      const { amount } = req.body;
+
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Invalid amount" });
+      }
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to pence
+        currency: "gbp",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (error: any) {
+      console.error("Stripe error:", error);
+      res.status(500).json({ 
+        error: "Error creating payment intent: " + error.message 
+      });
     }
   });
 

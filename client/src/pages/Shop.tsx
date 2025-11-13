@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { type Product } from "@shared/schema";
+import { useCart } from "@/lib/cart-context";
+import { useToast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +19,23 @@ export default function Shop() {
   const [selectedBrand, setSelectedBrand] = useState<string>(brandParam);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
+  const { addItem } = useCart();
+  const { toast } = useToast();
 
   // Update selected brand when URL param changes
   useEffect(() => {
     setSelectedBrand(brandParam);
   }, [brandParam]);
+
+  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem(product);
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
 
   const { data: products = [], isLoading, isError } = useQuery<Product[]>({
     queryKey: ["/api/products"],
@@ -211,6 +225,7 @@ export default function Shop() {
                       size="icon" 
                       variant="default" 
                       className="bg-primary"
+                      onClick={(e) => handleAddToCart(product, e)}
                       data-testid={`button-cart-${product.slug}`}
                     >
                       <ShoppingCart className="h-4 w-4" />

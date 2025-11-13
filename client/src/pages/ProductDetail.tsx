@@ -1,5 +1,7 @@
 import { useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useCart } from "@/lib/cart-context";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BrandLogo from "@/components/BrandLogo";
@@ -13,11 +15,23 @@ import type { Product } from "@shared/schema";
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:slug");
   const productSlug = params?.slug;
+  const { addItem } = useCart();
+  const { toast } = useToast();
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: [`/api/products/slug/${productSlug}`],
     enabled: !!productSlug,
   });
+
+  const handleAddToCart = () => {
+    if (product) {
+      addItem(product);
+      toast({
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart.`,
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -140,7 +154,7 @@ export default function ProductDetail() {
 
               {/* Add to Cart */}
               <div className="space-y-4">
-                <Button size="lg" className="w-full" data-testid="button-add-to-cart">
+                <Button size="lg" className="w-full" onClick={handleAddToCart} data-testid="button-add-to-cart">
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Add to Cart
                 </Button>
