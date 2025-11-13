@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2 } from "lucide-react";
+import { Link } from "wouter";
 import heroImage from "@assets/stock_images/person_riding_electr_063f5152.jpg";
 
 export default function Hero() {
@@ -47,12 +48,16 @@ export default function Hero() {
         </p>
         
         <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
-          <Button size="lg" variant="default" className="bg-primary hover:bg-primary border-primary-border text-lg px-8 py-6" data-testid="button-shop-now">
-            Shop Black Friday Deals
-          </Button>
-          <Button size="lg" variant="outline" className="bg-background/20 backdrop-blur-sm border-white/40 text-white hover:bg-background/30 text-lg px-8 py-6" data-testid="button-view-brands">
-            Compare Bikes
-          </Button>
+          <Link href="/shop">
+            <Button size="lg" variant="default" className="bg-primary hover:bg-primary border-primary-border text-lg px-8 py-6" data-testid="button-shop-now">
+              Shop Black Friday Deals
+            </Button>
+          </Link>
+          <Link href="/shop">
+            <Button size="lg" variant="outline" className="bg-background/20 backdrop-blur-sm border-white/40 text-white hover:bg-background/30 text-lg px-8 py-6" data-testid="button-view-brands">
+              Compare Bikes
+            </Button>
+          </Link>
         </div>
         
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm">

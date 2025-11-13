@@ -2,6 +2,7 @@ import ProductCard from "./ProductCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
+import { Link } from "wouter";
 
 const products = [
   {
@@ -56,10 +57,12 @@ export default function FeaturedProducts() {
               Trusted by thousands of UK riders • Starting from £359.99
             </p>
           </div>
-          <Button variant="outline" className="hidden md:flex" data-testid="button-view-all">
-            View All
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href="/shop">
+            <Button variant="outline" className="hidden md:flex" data-testid="button-view-all">
+              View All
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -74,10 +77,12 @@ export default function FeaturedProducts() {
         </div>
 
         <div className="mt-8 text-center md:hidden">
-          <Button variant="outline" data-testid="button-view-all-mobile">
-            View All E-Bikes
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href="/shop">
+            <Button variant="outline" data-testid="button-view-all-mobile">
+              View All E-Bikes
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
