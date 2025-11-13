@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { type Product } from "@shared/schema";
+import BrandLogo from "@/components/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -173,8 +174,10 @@ export default function Shop() {
                   
                   <CardContent className="p-4">
                     <Link href={`/product/${product.slug}`}>
-                      <div className="mb-2">
-                        <p className="text-xs text-muted-foreground mb-1">{product.brand}</p>
+                      <div className="mb-3">
+                        <div className="mb-2">
+                          <BrandLogo brand={product.brand} className="h-6" />
+                        </div>
                         <h3 className="font-semibold text-lg leading-tight group-hover:text-primary transition-colors" data-testid={`text-name-${product.slug}`}>
                           {product.name}
                         </h3>

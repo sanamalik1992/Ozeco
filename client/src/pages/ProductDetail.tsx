@@ -2,6 +2,7 @@ import { useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BrandLogo from "@/components/BrandLogo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,10 +84,8 @@ export default function ProductDetail() {
             {/* Product Info */}
             <div className="space-y-6">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline" data-testid="badge-brand">
-                    {product.brand}
-                  </Badge>
+                <div className="flex items-center gap-3 mb-4">
+                  <BrandLogo brand={product.brand} />
                   <Badge variant="outline" data-testid="badge-category">
                     {product.category}
                   </Badge>
