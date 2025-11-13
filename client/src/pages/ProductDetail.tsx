@@ -10,12 +10,12 @@ import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield } from
 import type { Product } from "@shared/schema";
 
 export default function ProductDetail() {
-  const [, params] = useRoute("/product/:id");
-  const productId = params?.id;
+  const [, params] = useRoute("/product/:slug");
+  const productSlug = params?.slug;
 
   const { data: product, isLoading } = useQuery<Product>({
-    queryKey: ["/api/products", productId],
-    enabled: !!productId,
+    queryKey: [`/api/products/slug/${productSlug}`],
+    enabled: !!productSlug,
   });
 
   if (isLoading) {
