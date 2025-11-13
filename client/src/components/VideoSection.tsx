@@ -20,7 +20,7 @@ export default function VideoSection() {
             <div className="relative aspect-video bg-muted">
               <iframe
                 className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/VIDEO_ID_REPLACE_ME"
+                src="https://www.youtube.com/embed/ix1_uFwQjjw"
                 title="Eleglide M2 Electric Bike - UK's Best Seller"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
