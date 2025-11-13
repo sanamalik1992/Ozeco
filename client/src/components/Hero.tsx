@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Play } from "lucide-react";
 import { useState } from "react";
-import heroImage from "@assets/stock_images/person_riding_electr_9ed610ff.jpg";
+import heroImage from "@assets/stock_images/person_riding_electr_063f5152.jpg";
 
 export default function Hero() {
   const [showVideo, setShowVideo] = useState(false);
