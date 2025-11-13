@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import StarRating from "@/components/StarRating";
 import { ShoppingCart, Eye } from "lucide-react";
 
 interface ProductCardProps {
@@ -11,6 +12,8 @@ interface ProductCardProps {
   image: string;
   range: string;
   maxSpeed: string;
+  rating?: number;
+  reviewCount?: number;
   onViewDetails?: () => void;
   onAddToCart?: () => void;
 }
@@ -23,6 +26,8 @@ export default function ProductCard({
   image,
   range,
   maxSpeed,
+  rating,
+  reviewCount,
   onViewDetails,
   onAddToCart,
 }: ProductCardProps) {
@@ -56,6 +61,16 @@ export default function ProductCard({
         <h3 className="text-xl font-semibold mb-2" data-testid={`text-product-name-${id}`}>
           {name}
         </h3>
+        {rating !== undefined && rating > 0 && (
+          <div className="flex items-center gap-2 mb-3" data-testid={`rating-${id}`}>
+            <StarRating rating={rating} size="sm" />
+            {reviewCount !== undefined && reviewCount > 0 && (
+              <span className="text-sm text-muted-foreground">
+                ({reviewCount})
+              </span>
+            )}
+          </div>
+        )}
         <p className="text-3xl font-bold text-primary mb-4" data-testid={`text-price-${id}`}>
           £{price.toLocaleString()}
           {discount && (

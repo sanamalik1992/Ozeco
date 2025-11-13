@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { type Product } from "@shared/schema";
+import { type Product, type Review } from "@shared/schema";
 import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
+import StarRating from "@/components/StarRating";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -41,6 +42,45 @@ export default function Shop() {
   const { data: products = [], isLoading, isError } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
+
+  // Fetch all reviews for all products
+  const reviewQueries = useQuery({
+    queryKey: ["/api/reviews", products.map(p => p.id)],
+    queryFn: async () => {
+      if (products.length === 0) return {};
+      
+      const reviewsMap: Record<string, Review[]> = {};
+      
+      await Promise.all(
+        products.map(async (product) => {
+          try {
+            const response = await fetch(`/api/products/${product.id}/reviews`);
+            if (response.ok) {
+              reviewsMap[product.id] = await response.json();
+            } else {
+              reviewsMap[product.id] = [];
+            }
+          } catch (error) {
+            reviewsMap[product.id] = [];
+          }
+        })
+      );
+      
+      return reviewsMap;
+    },
+    enabled: products.length > 0,
+  });
+
+  const reviewsMap = reviewQueries.data || {};
+
+  // Calculate average rating for a product
+  const getProductRating = (productId: string): { rating: number; count: number } => {
+    const reviews = reviewsMap[productId] || [];
+    if (reviews.length === 0) return { rating: 0, count: 0 };
+    
+    const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+    return { rating: avgRating, count: reviews.length };
+  };
 
   // Get unique brands and categories
   const brands = ["all", ...Array.from(new Set(products.map(p => p.brand)))];
@@ -197,6 +237,16 @@ export default function Shop() {
                           {product.name}
                         </h3>
                       </div>
+                      
+                      {(() => {
+                        const { rating, count } = getProductRating(product.id);
+                        return rating > 0 && (
+                          <div className="flex items-center gap-2 mb-3" data-testid={`rating-${product.slug}`}>
+                            <StarRating rating={rating} size="sm" />
+                            <span className="text-xs text-muted-foreground">({count})</span>
+                          </div>
+                        );
+                      })()}
                       
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-2xl font-bold" data-testid={`text-price-${product.slug}`}>

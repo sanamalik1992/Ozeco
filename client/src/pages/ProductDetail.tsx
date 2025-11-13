@@ -5,12 +5,14 @@ import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BrandLogo from "@/components/BrandLogo";
+import Reviews from "@/components/Reviews";
+import StarRating from "@/components/StarRating";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield } from "lucide-react";
-import type { Product } from "@shared/schema";
+import type { Product, Review } from "@shared/schema";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:slug");
@@ -22,6 +24,15 @@ export default function ProductDetail() {
     queryKey: [`/api/products/slug/${productSlug}`],
     enabled: !!productSlug,
   });
+
+  const { data: reviews = [], isLoading: reviewsLoading } = useQuery<Review[]>({
+    queryKey: [`/api/products/${product?.id}/reviews`],
+    enabled: !!product?.id,
+  });
+
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+    : 0;
 
   const handleAddToCart = () => {
     if (product) {
@@ -107,6 +118,14 @@ export default function ProductDetail() {
                 <h1 className="text-3xl md:text-4xl font-display font-bold mb-4" data-testid="text-product-name">
                   {product.name}
                 </h1>
+                {reviews.length > 0 && (
+                  <div className="flex items-center gap-3 mb-4" data-testid="product-rating-summary">
+                    <StarRating rating={averageRating} size="lg" />
+                    <span className="text-sm text-muted-foreground">
+                      {averageRating.toFixed(1)} ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-baseline gap-3 mb-6">
                   <span className="text-4xl font-bold text-primary" data-testid="text-product-price">
                     £{parseFloat(product.price).toFixed(2)}
@@ -267,6 +286,11 @@ export default function ProductDetail() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Reviews */}
+          <div className="mb-12">
+            <Reviews reviews={reviews} />
+          </div>
 
           {/* Delivery Information */}
           <Card>
