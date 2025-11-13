@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
-import heroImage from "@assets/stock_images/person_riding_electr_063f5152.jpg";
+import heroImage from "@assets/stock_images/person_riding_electr_6fefd866.jpg";
 
 export default function Hero() {
   // Using a high-quality stock video of e-bike lifestyle
@@ -44,7 +44,7 @@ export default function Hero() {
           Premium Electric Bikes From £359.99
         </p>
         <p className="text-base md:text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-          Join 400,000+ riders worldwide • Free UK delivery • Expert support 7 days a week
+          Dispatch within 1 working day • 2-3 day UK delivery • Free shipping • Expert support 7 days a week
         </p>
         
         <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
@@ -61,21 +61,21 @@ export default function Hero() {
         </div>
         
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-          <div className="flex items-center gap-2" data-testid="trust-free-delivery">
+          <div className="flex items-center gap-2" data-testid="trust-fast-dispatch">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>Free UK Delivery</span>
+            <span>1 Day Dispatch</span>
           </div>
-          <div className="flex items-center gap-2" data-testid="trust-expert-support">
+          <div className="flex items-center gap-2" data-testid="trust-delivery-time">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>UK-Based Support</span>
+            <span>2-3 Day Delivery</span>
           </div>
           <div className="flex items-center gap-2" data-testid="trust-warranty">
             <CheckCircle2 className="h-5 w-5 text-primary" />
             <span>12-Month Warranty</span>
           </div>
-          <div className="flex items-center gap-2" data-testid="trust-delivery-time">
+          <div className="flex items-center gap-2" data-testid="trust-expert-support">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>3-6 Day Delivery</span>
+            <span>UK Support 7 Days</span>
           </div>
         </div>
       </div>

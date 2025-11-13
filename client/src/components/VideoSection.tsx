@@ -32,16 +32,16 @@ export default function VideoSection() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
             <Card className="p-6 text-center bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-              <div className="text-3xl font-bold text-primary mb-2">3-6 Days</div>
-              <p className="text-sm text-muted-foreground">Free UK Delivery</p>
+              <div className="text-3xl font-bold text-primary mb-2">1 Day</div>
+              <p className="text-sm text-muted-foreground">Dispatch Time</p>
+            </Card>
+            <Card className="p-6 text-center bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+              <div className="text-3xl font-bold text-primary mb-2">2-3 Days</div>
+              <p className="text-sm text-muted-foreground">UK Delivery Time</p>
             </Card>
             <Card className="p-6 text-center bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <div className="text-3xl font-bold text-primary mb-2">12 Months</div>
               <p className="text-sm text-muted-foreground">Full Warranty</p>
-            </Card>
-            <Card className="p-6 text-center bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-              <div className="text-3xl font-bold text-primary mb-2">400,000+</div>
-              <p className="text-sm text-muted-foreground">Riders Worldwide</p>
             </Card>
           </div>
         </div>
