@@ -239,7 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const stripe = new Stripe(stripeSecretKey, {
-        apiVersion: "2024-11-20.acacia",
+        apiVersion: "2025-10-29.clover",
       });
 
       const { amount } = req.body;
