@@ -26,18 +26,31 @@ export default function ProductCard({
   onViewDetails,
   onAddToCart,
 }: ProductCardProps) {
+  const isPopular = id === "2"; // Eleglide M2 is popular
+  const discount = id === "3" ? 20 : null; // DYU has discount
+  
   return (
     <Card className="hover-elevate active-elevate-2 transition-all overflow-hidden" data-testid={`card-product-${id}`}>
-      <div className="aspect-square bg-muted relative overflow-hidden">
+      <div className="aspect-square bg-gradient-to-br from-muted to-accent/20 relative overflow-hidden">
         <img
           src={image}
           alt={name}
           className="w-full h-full object-cover"
           data-testid={`img-product-${id}`}
         />
-        <Badge className="absolute top-3 left-3" data-testid={`badge-brand-${id}`}>
+        <Badge className="absolute top-3 left-3" variant="secondary" data-testid={`badge-brand-${id}`}>
           {brand}
         </Badge>
+        {isPopular && (
+          <Badge className="absolute top-3 right-3 bg-orange-500 text-white border-orange-600">
+            ⭐ Bestseller
+          </Badge>
+        )}
+        {discount && (
+          <Badge className="absolute top-3 right-3 bg-red-500 text-white border-red-600">
+            Save £{discount}
+          </Badge>
+        )}
       </div>
       <CardContent className="p-6">
         <h3 className="text-xl font-semibold mb-2" data-testid={`text-product-name-${id}`}>
@@ -45,6 +58,11 @@ export default function ProductCard({
         </h3>
         <p className="text-3xl font-bold text-primary mb-4" data-testid={`text-price-${id}`}>
           £{price.toLocaleString()}
+          {discount && (
+            <span className="text-base text-muted-foreground line-through ml-2">
+              £{(price + discount).toFixed(2)}
+            </span>
+          )}
         </p>
         <div className="flex gap-4 text-sm text-muted-foreground mb-4">
           <div data-testid={`text-range-${id}`}>

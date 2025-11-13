@@ -1,4 +1,5 @@
 import BrandCard from "./BrandCard";
+import { Badge } from "@/components/ui/badge";
 
 const brands = [
   {
@@ -25,14 +26,15 @@ const brands = [
 
 export default function BrandsSection() {
   return (
-    <section className="py-16 md:py-24 bg-muted/30">
+    <section className="py-16 md:py-24 bg-gradient-to-b from-background via-accent/5 to-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
+          <Badge className="mb-4 bg-primary text-primary-foreground">Trusted Brands</Badge>
           <h2 className="text-3xl md:text-4xl font-display font-bold mb-4" data-testid="text-brands-title">
-            Shop by Brand
+            Shop Premium Electric Bike Brands
           </h2>
           <p className="text-muted-foreground text-lg" data-testid="text-brands-subtitle">
-            Premium Electric bikes from trusted manufacturers
+            ENGWE, Eleglide, DYU, Duotts & Touroll - Top manufacturers trusted by 400,000+ riders worldwide
           </p>
         </div>
 

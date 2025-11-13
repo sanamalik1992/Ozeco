@@ -1,5 +1,6 @@
 import ProductCard from "./ProductCard";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 
 const products = [
@@ -43,15 +44,16 @@ const products = [
 
 export default function FeaturedProducts() {
   return (
-    <section className="py-16 md:py-24">
+    <section className="py-16 md:py-24 bg-gradient-to-b from-background via-primary/5 to-background">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-12">
           <div>
+            <Badge className="mb-4 bg-primary text-primary-foreground">Top Sellers</Badge>
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-2" data-testid="text-featured-title">
-              Featured E-Bikes
+              Most Popular Electric Bikes
             </h2>
-            <p className="text-muted-foreground" data-testid="text-featured-subtitle">
-              Discover our most popular Electric bikes
+            <p className="text-muted-foreground text-lg" data-testid="text-featured-subtitle">
+              Trusted by thousands of UK riders • Starting from £359.99
             </p>
           </div>
           <Button variant="outline" className="hidden md:flex" data-testid="button-view-all">

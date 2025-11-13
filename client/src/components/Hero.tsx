@@ -13,21 +13,20 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60" />
       
       <div className="relative z-10 container mx-auto px-4 text-center text-white">
-        <Badge className="mb-6 bg-primary/90 backdrop-blur-sm border-primary-border" data-testid="badge-uk-based">
-          UK Based Since 2022
+        <Badge className="mb-6 bg-orange-500 text-white border-orange-600" data-testid="badge-uk-based">
+          🎉 Free UK Delivery on All Orders
         </Badge>
         
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6" data-testid="text-hero-title">
-          Quality Electric Bikes
+          Ride Further. Save More.
           <br />
-          Competitive Prices
-          <br />
-          Knowledgeable Support
+          <span className="text-primary">Go Electric.</span>
         </h1>
         
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
-          Discover top brands including ENGWE, Eleglide, DYU, Duotts, and Touroll.
-          Free UK delivery on all orders.
+          Premium Electric bikes from £359.99. Join 400,000+ riders who've made the switch.
+          <br />
+          <span className="font-semibold text-white">UK-based support • 12-month warranty • 3-6 day delivery</span>
         </p>
         
         <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
