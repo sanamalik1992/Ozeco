@@ -25,7 +25,7 @@ export default function ProductDetail() {
     enabled: !!productSlug,
   });
 
-  const { data: reviews = [], isLoading: reviewsLoading } = useQuery<Review[]>({
+  const { data: reviews = [] } = useQuery<Review[]>({
     queryKey: [`/api/products/${product?.id}/reviews`],
     enabled: !!product?.id,
   });

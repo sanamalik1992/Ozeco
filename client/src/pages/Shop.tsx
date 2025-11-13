@@ -43,35 +43,44 @@ export default function Shop() {
     queryKey: ["/api/products"],
   });
 
-  // Fetch all reviews for all products
-  const reviewQueries = useQuery({
-    queryKey: ["/api/reviews", products.map(p => p.id)],
+  // Create a stable product IDs list for dependencies
+  const productIdsList = useMemo(() => products.map(p => p.id), [products]);
+
+  // Fetch reviews for all products - using individual queries would be better but
+  // for simplicity we aggregate them here with a stable key
+  const { data: reviewsMap = {} } = useQuery<Record<string, Review[]>>({
+    queryKey: ["all-reviews", ...productIdsList],
     queryFn: async () => {
       if (products.length === 0) return {};
       
-      const reviewsMap: Record<string, Review[]> = {};
+      const reviewsData: Record<string, Review[]> = {};
       
-      await Promise.all(
+      const results = await Promise.all(
         products.map(async (product) => {
           try {
-            const response = await fetch(`/api/products/${product.id}/reviews`);
+            const response = await fetch(`/api/products/${product.id}/reviews`, {
+              credentials: "include",
+            });
             if (response.ok) {
-              reviewsMap[product.id] = await response.json();
-            } else {
-              reviewsMap[product.id] = [];
+              const data = await response.json();
+              return { id: product.id, reviews: data };
             }
+            return { id: product.id, reviews: [] };
           } catch (error) {
-            reviewsMap[product.id] = [];
+            return { id: product.id, reviews: [] };
           }
         })
       );
       
-      return reviewsMap;
+      results.forEach(({ id, reviews }) => {
+        reviewsData[id] = reviews;
+      });
+      
+      return reviewsData;
     },
     enabled: products.length > 0,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
-
-  const reviewsMap = reviewQueries.data || {};
 
   // Calculate average rating for a product
   const getProductRating = (productId: string): { rating: number; count: number } => {
