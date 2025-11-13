@@ -3,47 +3,47 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
-
-const products = [
-  {
-    id: "1",
-    name: "ENGWE Engine X",
-    brand: "Engwe",
-    price: 899.99,
-    image: "https://www.ozeco.co.uk/cdn/shop/files/ejh2g8zn.png?v=1747666206&width=533",
-    range: "75 miles",
-    maxSpeed: "28 mph",
-  },
-  {
-    id: "2",
-    name: "Eleglide M2",
-    brand: "Eleglide",
-    price: 594.99,
-    image: "https://www.ozeco.co.uk/cdn/shop/files/kvo5ypxk.png?v=1747598026&width=533",
-    range: "65 miles",
-    maxSpeed: "15.5 mph",
-  },
-  {
-    id: "3",
-    name: "DYU A1F Pro",
-    brand: "DYU",
-    price: 399.99,
-    image: "https://www.ozeco.co.uk/cdn/shop/files/hyw8o05i.png?v=1747601600&width=533",
-    range: "45 miles",
-    maxSpeed: "15.5 mph",
-  },
-  {
-    id: "4",
-    name: "Duotts C29",
-    brand: "Duotts",
-    price: 684.99,
-    image: "https://www.ozeco.co.uk/cdn/shop/files/01vs85u4.png?v=1747683500&width=533",
-    range: "80 miles",
-    maxSpeed: "15.5 mph",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { type Product } from "@shared/schema";
 
 export default function FeaturedProducts() {
+  const { data: allProducts = [], isLoading, isError } = useQuery<Product[]>({
+    queryKey: ["/api/products"],
+  });
+
+  // Filter for bestsellers
+  const products = allProducts.filter(p => p.isBestseller).slice(0, 4);
+
+  if (isLoading) {
+    return (
+      <section className="py-16 md:py-24 bg-gradient-to-b from-background via-primary/5 to-background">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-96 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isError || products.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-gradient-to-b from-background via-primary/5 to-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center py-12">
+            <p className="text-lg text-muted-foreground mb-4">
+              {isError ? "Unable to load products. Please try again later." : "No featured products available at the moment."}
+            </p>
+            <Link href="/shop">
+              <Button>Browse All Products</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="py-16 md:py-24 bg-gradient-to-b from-background via-primary/5 to-background">
       <div className="container mx-auto px-4">
@@ -69,7 +69,13 @@ export default function FeaturedProducts() {
           {products.map((product) => (
             <ProductCard
               key={product.id}
-              {...product}
+              id={product.id}
+              name={product.name}
+              brand={product.brand}
+              price={parseFloat(product.price)}
+              image={product.image}
+              range={product.maxRange || ""}
+              maxSpeed={product.topSpeed || ""}
               onViewDetails={() => console.log('View details:', product.name)}
               onAddToCart={() => console.log('Add to cart:', product.name)}
             />

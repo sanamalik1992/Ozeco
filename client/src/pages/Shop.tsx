@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { type Product } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -6,14 +6,23 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShoppingCart, Filter } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Shop() {
-  const [selectedBrand, setSelectedBrand] = useState<string>("all");
+  const [location] = useLocation();
+  const searchParams = new URLSearchParams(location.split('?')[1] || '');
+  const brandParam = searchParams.get('brand') || 'all';
+  
+  const [selectedBrand, setSelectedBrand] = useState<string>(brandParam);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
 
-  const { data: products = [], isLoading } = useQuery<Product[]>({
+  // Update selected brand when URL param changes
+  useEffect(() => {
+    setSelectedBrand(brandParam);
+  }, [brandParam]);
+
+  const { data: products = [], isLoading, isError } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
 
@@ -117,6 +126,11 @@ export default function Shop() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          ) : isError ? (
+            <div className="text-center py-16">
+              <p className="text-lg text-muted-foreground mb-4">Unable to load products. Please refresh the page.</p>
+              <Button onClick={() => window.location.reload()}>Retry</Button>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-16">

@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
-import BrandsSection from "@/components/BrandsSection";
+import BrandCarousel from "@/components/BrandCarousel";
 import VideoSection from "@/components/VideoSection";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import WhyChooseUs from "@/components/WhyChooseUs";
@@ -16,9 +16,9 @@ export default function Home() {
       <main>
         <Hero />
         <TrustBar />
-        <BrandsSection />
-        <VideoSection />
         <FeaturedProducts />
+        <BrandCarousel />
+        <VideoSection />
         <WhyChooseUs />
         <Testimonials />
         <Newsletter />
