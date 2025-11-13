@@ -63,19 +63,11 @@ export default function Hero() {
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
           <div className="flex items-center gap-2" data-testid="trust-fast-dispatch">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>1 Day Dispatch</span>
+            <span>Fast Dispatch</span>
           </div>
-          <div className="flex items-center gap-2" data-testid="trust-delivery-time">
+          <div className="flex items-center gap-2" data-testid="trust-uk-shipping">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>2-3 Working Days</span>
-          </div>
-          <div className="flex items-center gap-2" data-testid="trust-warranty">
-            <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>12-Month Warranty</span>
-          </div>
-          <div className="flex items-center gap-2" data-testid="trust-expert-support">
-            <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>UK Support 7 Days</span>
+            <span>UK Shipping</span>
           </div>
         </div>
       </div>
