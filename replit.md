@@ -1,7 +1,7 @@
 # Ozeco.co.uk - Electric Bike E-Commerce Website
 
 ## Project Overview
-High-converting e-commerce website for Ozeco.co.uk (Ozeco Ltd, founded 2022 as ekwonline), a UK-based Electric bike business selling premium brands including ENGWE, Eleglide, DYU, Duotts, Touroll, and Fiido.
+High-converting e-commerce website for Ozeco.co.uk (Ozeco Ltd, founded 2022), a UK-based Electric bike business selling premium brands including ENGWE, Eleglide, DYU, Duotts, Touroll, and Fiido.
 
 **Goal**: Professional, trustworthy website optimized for conversions with vibrant design that attracts the e-bike crowd. Previous Google Ads attempts failed and current website sales are low despite eBay success.
 

@@ -50,7 +50,7 @@ export default function Newsletter() {
                 Our Story
               </h3>
               <p className="text-muted-foreground mb-4">
-                Founded in 2022 as ekwonline, we rebranded to Ozeco in 2023 with a mission to make premium Electric bikes accessible to UK riders.
+                Founded in 2022, Ozeco has a mission to make premium Electric bikes accessible to UK riders.
               </p>
               <p className="text-muted-foreground">
                 As a family-run business based in the UK, we're passionate about sustainable transportation and helping our customers discover the joy of Electric biking. We partner with leading brands like ENGWE, Eleglide, DYU, Duotts, and Touroll to bring you the best selection at competitive prices with expert support every step of the way.
