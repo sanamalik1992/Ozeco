@@ -58,6 +58,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Review routes
+  app.get("/api/products/:productId/reviews", async (req, res) => {
+    try {
+      const reviews = await storage.getReviewsByProduct(req.params.productId);
+      res.json(reviews);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Cart routes
   app.get("/api/cart", async (req, res) => {
     try {

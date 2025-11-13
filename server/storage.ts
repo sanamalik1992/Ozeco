@@ -5,12 +5,15 @@ import {
   type InsertProduct,
   type CartItem,
   type InsertCartItem,
+  type Review,
+  type InsertReview,
   users,
   products,
   cartItems,
+  reviews,
 } from "@shared/schema";
 import { db } from "@db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -31,6 +34,10 @@ export interface IStorage {
   updateCartItemQuantity(id: string, quantity: number): Promise<CartItem | undefined>;
   removeFromCart(id: string): Promise<void>;
   clearCart(sessionId: string): Promise<void>;
+  
+  // Review methods
+  getReviewsByProduct(productId: string): Promise<Review[]>;
+  createReview(review: InsertReview): Promise<Review>;
 }
 
 export class DbStorage implements IStorage {
@@ -130,6 +137,20 @@ export class DbStorage implements IStorage {
 
   async clearCart(sessionId: string): Promise<void> {
     await db.delete(cartItems).where(eq(cartItems.sessionId, sessionId));
+  }
+
+  // Review methods
+  async getReviewsByProduct(productId: string): Promise<Review[]> {
+    return await db
+      .select()
+      .from(reviews)
+      .where(eq(reviews.productId, productId))
+      .orderBy(desc(reviews.createdAt));
+  }
+
+  async createReview(insertReview: InsertReview): Promise<Review> {
+    const result = await db.insert(reviews).values(insertReview).returning();
+    return result[0];
   }
 }
 
