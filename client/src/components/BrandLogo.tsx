@@ -1,4 +1,4 @@
-import engweLogo from "@assets/IMG_5240_1763073445688.png";
+import engweLogo from "@assets/IMG_5246_1763073648077.png";
 import dyuLogo from "@assets/IMG_5241_1763073445688.png";
 import eleglideLogo from "@assets/IMG_5242_1763073445688.jpeg";
 import duottsLogo from "@assets/IMG_5243_1763073445688.jpeg";
