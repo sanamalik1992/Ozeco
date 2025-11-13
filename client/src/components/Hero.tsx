@@ -1,47 +1,36 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Play } from "lucide-react";
-import { useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 import heroImage from "@assets/stock_images/person_riding_electr_063f5152.jpg";
 
 export default function Hero() {
-  const [showVideo, setShowVideo] = useState(false);
+  // REPLACE 'YOUR_VIDEO_ID' with your actual YouTube video ID
+  // Example: if your video URL is https://www.youtube.com/watch?v=ABC123, use 'ABC123'
+  const videoId = "YOUR_VIDEO_ID";
   
   return (
     <section className="relative h-[80vh] md:h-screen flex items-center justify-center overflow-hidden">
-      {!showVideo ? (
-        <>
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${heroImage})` }}
-            data-testid="img-hero-background"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            <button
-              onClick={() => setShowVideo(true)}
-              className="bg-primary/90 backdrop-blur-sm rounded-full p-8 hover-elevate active-elevate-2 transition-all group"
-              data-testid="button-hero-play-video"
-              aria-label="Play video"
-            >
-              <Play className="h-16 w-16 md:h-20 md:w-20 text-primary-foreground fill-current group-hover:scale-110 transition-transform" />
-            </button>
-            <p className="text-white text-center mt-4 text-sm md:text-base font-semibold">Watch Our Story</p>
-          </div>
-        </>
-      ) : (
-        <iframe
-          className="absolute inset-0 w-full h-full z-30"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-          title="Ozeco Electric Bikes - See Them In Action"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          data-testid="video-hero-player"
-        ></iframe>
-      )}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 pointer-events-none" />
+      {/* Autoplaying looping background video */}
+      <iframe
+        className="absolute inset-0 w-full h-full z-0"
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
+        title="Ozeco Electric Bikes - Hero Video"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        data-testid="video-hero-background"
+      ></iframe>
       
+      {/* Fallback poster image (shows while video loads) */}
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{ backgroundImage: `url(${heroImage})` }}
+        data-testid="img-hero-poster"
+      />
+      
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 z-5" />
+      
+      {/* Hero content */}
       <div className="relative z-10 container mx-auto px-4 text-center text-white">
         <Badge className="mb-6 bg-red-600 text-white border-red-700 animate-pulse" data-testid="badge-uk-based">
           🔥 SALE: Save Up To £150 - Limited Time!
