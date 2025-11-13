@@ -40,11 +40,8 @@ export default function Hero() {
           <span className="text-primary">Electric Bike Store</span>
         </h1>
         
-        <p className="text-xl md:text-2xl text-white mb-4 max-w-3xl mx-auto font-semibold" data-testid="text-hero-subtitle">
+        <p className="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto font-semibold" data-testid="text-hero-subtitle">
           Premium Electric Bikes From £359.99
-        </p>
-        <p className="text-base md:text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-          Dispatch within 1 working day • 2-3 working days UK delivery • Free shipping • Expert support 7 days a week
         </p>
         
         <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
