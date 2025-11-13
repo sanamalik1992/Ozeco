@@ -9,10 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShoppingCart, Filter } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { Link, useSearch } from "wouter";
 
 export default function Shop() {
-  const [location] = useLocation();
+  const search = useSearch();
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
@@ -21,10 +21,12 @@ export default function Shop() {
 
   // Update selected brand when URL param changes
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.split('?')[1] || '');
+    const searchParams = new URLSearchParams(search);
     const brandParam = searchParams.get('brand') || 'all';
+    console.log('Search string:', search);
+    console.log('Brand param:', brandParam);
     setSelectedBrand(brandParam);
-  }, [location]);
+  }, [search]);
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
