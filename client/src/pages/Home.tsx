@@ -18,6 +18,7 @@ export default function Home() {
         <TrustBar />
         <FeaturedProducts />
         <BrandCarousel />
+        <VideoSection />
         <WhyChooseUs />
         <Testimonials />
         <Newsletter />
