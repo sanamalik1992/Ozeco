@@ -44,7 +44,7 @@ export default function Hero() {
           Premium Electric Bikes From £359.99
         </p>
         <p className="text-base md:text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-          Dispatch within 1 working day • 2-3 day UK delivery • Free shipping • Expert support 7 days a week
+          Dispatch within 1 working day • 2-3 working days UK delivery • Free shipping • Expert support 7 days a week
         </p>
         
         <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
@@ -67,7 +67,7 @@ export default function Hero() {
           </div>
           <div className="flex items-center gap-2" data-testid="trust-delivery-time">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            <span>2-3 Day Delivery</span>
+            <span>2-3 Working Days</span>
           </div>
           <div className="flex items-center gap-2" data-testid="trust-warranty">
             <CheckCircle2 className="h-5 w-5 text-primary" />

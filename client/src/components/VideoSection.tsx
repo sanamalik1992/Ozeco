@@ -36,8 +36,8 @@ export default function VideoSection() {
               <p className="text-sm text-muted-foreground">Dispatch Time</p>
             </Card>
             <Card className="p-6 text-center bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-              <div className="text-3xl font-bold text-primary mb-2">2-3 Days</div>
-              <p className="text-sm text-muted-foreground">UK Delivery Time</p>
+              <div className="text-3xl font-bold text-primary mb-2">2-3 Working Days</div>
+              <p className="text-sm text-muted-foreground">UK Delivery</p>
             </Card>
             <Card className="p-6 text-center bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <div className="text-3xl font-bold text-primary mb-2">12 Months</div>
