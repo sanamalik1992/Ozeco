@@ -4,31 +4,28 @@ import { CheckCircle2 } from "lucide-react";
 import heroImage from "@assets/stock_images/person_riding_electr_063f5152.jpg";
 
 export default function Hero() {
-  // REPLACE 'YOUR_VIDEO_ID' with your actual YouTube video ID
-  // Example: if your video URL is https://www.youtube.com/watch?v=ABC123, use 'ABC123'
-  const videoId = "YOUR_VIDEO_ID";
+  // Using a high-quality stock video of e-bike lifestyle
+  // You can replace this URL with your own video file for best performance
+  const videoUrl = "https://videos.pexels.com/video-files/5752729/5752729-uhd_2560_1440_25fps.mp4";
   
   return (
     <section className="relative h-[80vh] md:h-screen flex items-center justify-center overflow-hidden">
       {/* Autoplaying looping background video */}
-      <iframe
-        className="absolute inset-0 w-full h-full z-0"
-        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
-        title="Ozeco Electric Bikes - Hero Video"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      <video
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster={heroImage}
         data-testid="video-hero-background"
-      ></iframe>
-      
-      {/* Fallback poster image (shows while video loads) */}
-      <div
-        className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: `url(${heroImage})` }}
-        data-testid="img-hero-poster"
-      />
+      >
+        <source src={videoUrl} type="video/mp4" />
+        {/* Fallback to image if video doesn't load */}
+      </video>
       
       {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 z-5" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/65 z-5" />
       
       {/* Hero content */}
       <div className="relative z-10 container mx-auto px-4 text-center text-white">
