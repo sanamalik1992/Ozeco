@@ -13,10 +13,7 @@ import { Link, useLocation } from "wouter";
 
 export default function Shop() {
   const [location] = useLocation();
-  const searchParams = new URLSearchParams(location.split('?')[1] || '');
-  const brandParam = searchParams.get('brand') || 'all';
-  
-  const [selectedBrand, setSelectedBrand] = useState<string>(brandParam);
+  const [selectedBrand, setSelectedBrand] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
   const { addItem } = useCart();
@@ -24,8 +21,10 @@ export default function Shop() {
 
   // Update selected brand when URL param changes
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.split('?')[1] || '');
+    const brandParam = searchParams.get('brand') || 'all';
     setSelectedBrand(brandParam);
-  }, [brandParam]);
+  }, [location]);
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
