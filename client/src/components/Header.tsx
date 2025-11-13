@@ -18,11 +18,8 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/bikes" data-testid="link-all-bikes">
+            <Link href="/shop" data-testid="link-all-bikes">
               <Button variant="ghost" data-testid="button-nav-bikes">All E-Bikes</Button>
-            </Link>
-            <Link href="/brands" data-testid="link-brands">
-              <Button variant="ghost" data-testid="button-nav-brands">Brands</Button>
             </Link>
             <Link href="/about" data-testid="link-about">
               <Button variant="ghost" data-testid="button-nav-about">About</Button>
@@ -83,14 +80,9 @@ export default function Header() {
 
         {mobileMenuOpen && (
           <nav className="md:hidden py-4 flex flex-col gap-2" data-testid="nav-mobile">
-            <Link href="/bikes">
+            <Link href="/shop">
               <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-bikes">
                 All E-Bikes
-              </Button>
-            </Link>
-            <Link href="/brands">
-              <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brands">
-                Brands
               </Button>
             </Link>
             <Link href="/about">
