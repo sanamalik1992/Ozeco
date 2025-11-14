@@ -219,6 +219,10 @@ npm run db:push --force  # Force push (use with caution)
     - ProductCard now accepts slug prop and navigates to product detail pages
     - Entire card is clickable (not just the "View Details" button)
     - Maintains separate click handlers for "Add to Cart" to prevent navigation
+  - **UX improvements**:
+    - Fixed TrustBar alignment on mobile - icons and text now left-align on mobile, center on desktop
+    - Made star rating summary on product pages clickable - smoothly scrolls to reviews section
+    - Fixed React hooks ordering issue in Reviews component for stability
 
 - **2025-11-13**: 
   - **Implemented complete customer review system**:
