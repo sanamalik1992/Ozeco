@@ -70,14 +70,13 @@ export default function FeaturedProducts() {
             <ProductCard
               key={product.id}
               id={product.id}
+              slug={product.slug}
               name={product.name}
               brand={product.brand}
               price={parseFloat(product.price)}
               image={product.image}
               range={product.maxRange || ""}
               maxSpeed={product.topSpeed || ""}
-              onViewDetails={() => console.log('View details:', product.name)}
-              onAddToCart={() => console.log('Add to cart:', product.name)}
             />
           ))}
         </div>

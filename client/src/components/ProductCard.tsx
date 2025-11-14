@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "@/components/StarRating";
 import { ShoppingCart, Eye } from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 interface ProductCardProps {
   id: string;
+  slug: string;
   name: string;
   brand: string;
   price: number;
@@ -20,6 +22,7 @@ interface ProductCardProps {
 
 export default function ProductCard({
   id,
+  slug,
   name,
   brand,
   price,
@@ -31,11 +34,24 @@ export default function ProductCard({
   onViewDetails,
   onAddToCart,
 }: ProductCardProps) {
+  const [, setLocation] = useLocation();
   const isPopular = id === "2"; // Eleglide M2 is popular
   const discount = id === "3" ? 20 : null; // DYU has discount
+
+  const handleViewDetails = () => {
+    if (onViewDetails) {
+      onViewDetails();
+    } else {
+      setLocation(`/product/${slug}`);
+    }
+  };
   
   return (
-    <Card className="hover-elevate active-elevate-2 transition-all overflow-hidden" data-testid={`card-product-${id}`}>
+    <Card 
+      className="hover-elevate active-elevate-2 transition-all overflow-hidden cursor-pointer" 
+      data-testid={`card-product-${id}`}
+      onClick={handleViewDetails}
+    >
       <div className="aspect-square bg-gradient-to-br from-muted to-accent/20 relative overflow-hidden">
         <img
           src={image}
@@ -91,7 +107,12 @@ export default function ProductCard({
           <Button
             variant="default"
             className="flex-1"
-            onClick={onAddToCart}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onAddToCart) {
+                onAddToCart();
+              }
+            }}
             data-testid={`button-add-cart-${id}`}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
@@ -100,7 +121,10 @@ export default function ProductCard({
           <Button
             size="icon"
             variant="outline"
-            onClick={onViewDetails}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewDetails();
+            }}
             data-testid={`button-view-${id}`}
           >
             <Eye className="h-4 w-4" />
