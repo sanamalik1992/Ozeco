@@ -502,7 +502,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: "Unauthorized" });
       }
 
-      const { trackingNumber } = req.body;
+      let { trackingNumber } = req.body;
+      
+      // Validate tracking number if provided
+      if (trackingNumber) {
+        trackingNumber = trackingNumber.trim();
+        if (trackingNumber.length > 64) {
+          return res.status(400).json({ error: "Tracking number must be 64 characters or less" });
+        }
+        if (!/^[a-zA-Z0-9\-_]+$/.test(trackingNumber)) {
+          return res.status(400).json({ error: "Tracking number must contain only letters, numbers, hyphens, and underscores" });
+        }
+      }
+      
       const order = await storage.updateOrderTracking(req.params.id, trackingNumber || null);
       
       if (!order) {
