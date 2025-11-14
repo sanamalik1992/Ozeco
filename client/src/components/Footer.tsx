@@ -1,6 +1,6 @@
 import { Link } from "wouter";
-import { SiStripe } from "react-icons/si";
-import { Lock } from "lucide-react";
+import { SiStripe, SiPaypal, SiFacebook, SiInstagram } from "react-icons/si";
+import { Lock, CreditCard } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -103,6 +103,34 @@ export default function Footer() {
             <p className="text-sm text-muted-foreground mb-4">
               Mon-Fri: 9:00 AM - 5:30 PM (GMT)
             </p>
+            
+            {/* Social Media Links */}
+            <div className="mb-4">
+              <h4 className="text-sm font-semibold mb-2">Follow Us</h4>
+              <div className="flex items-center gap-3">
+                <a 
+                  href="https://www.instagram.com/ozeco_uk?igsh=MXNieDhwZHQzeXk0Mw%3D%3D&utm_source=qr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                  data-testid="link-instagram"
+                  aria-label="Instagram"
+                >
+                  <SiInstagram className="h-5 w-5" />
+                </a>
+                <a 
+                  href="https://www.facebook.com/share/17gpWpX2xf/?mibextid=wwXIfr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                  data-testid="link-facebook"
+                  aria-label="Facebook"
+                >
+                  <SiFacebook className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Lock className="h-4 w-4" />
               <span>Secure Checkout</span>
@@ -110,29 +138,44 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground" data-testid="text-copyright">
-            © 2024 Ozeco Ltd. All rights reserved. Company No: 15445991
-          </p>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Powered by</span>
-              <SiStripe className="h-5 w-5" />
+        <div className="border-t pt-8 space-y-4">
+          {/* Payment Methods */}
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm text-muted-foreground">We Accept</p>
+            <div className="flex items-center gap-4 flex-wrap justify-center">
+              <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-md border" data-testid="payment-stripe">
+                <SiStripe className="h-6 w-6" />
+                <span className="text-sm font-medium">Stripe</span>
+              </div>
+              <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-md border" data-testid="payment-paypal">
+                <SiPaypal className="h-6 w-6 text-[#0070BA]" />
+                <span className="text-sm font-medium">PayPal</span>
+              </div>
+              <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-md border" data-testid="payment-cards">
+                <CreditCard className="h-5 w-5" />
+                <span className="text-sm font-medium">Credit/Debit Cards</span>
+              </div>
             </div>
           </div>
-          
-          <div className="flex gap-4 text-sm">
-            <Link href="/privacy-policy" data-testid="link-footer-privacy">
-              <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                Privacy Policy
-              </span>
-            </Link>
-            <Link href="/terms-of-service" data-testid="link-footer-terms">
-              <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                Terms of Service
-              </span>
-            </Link>
+
+          {/* Bottom Row */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-4">
+            <p className="text-sm text-muted-foreground" data-testid="text-copyright">
+              © 2024 Ozeco Ltd. All rights reserved. Company No: 15445991
+            </p>
+            
+            <div className="flex gap-4 text-sm">
+              <Link href="/privacy-policy" data-testid="link-footer-privacy">
+                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                  Privacy Policy
+                </span>
+              </Link>
+              <Link href="/terms-of-service" data-testid="link-footer-terms">
+                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                  Terms of Service
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
