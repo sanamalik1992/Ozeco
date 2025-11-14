@@ -23,7 +23,7 @@ export function NewsletterPopup() {
       const timer = setTimeout(() => {
         setIsOpen(true);
         localStorage.setItem("newsletter-popup-seen", "true");
-      }, 3000); // Show after 3 seconds
+      }, 1000); // Show after 1 second
 
       return () => clearTimeout(timer);
     }
