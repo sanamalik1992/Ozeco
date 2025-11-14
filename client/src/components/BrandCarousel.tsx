@@ -47,10 +47,10 @@ export default function BrandCarousel() {
             <Link key={brand.name} href={`/shop?brand=${brand.name}`}>
               <Card className="group overflow-hidden hover-elevate active-elevate-2 transition-all cursor-pointer" data-testid={`card-brand-${brand.name.toLowerCase()}`}>
                 <div className="flex flex-col items-center justify-center p-6">
-                  <div className="w-full aspect-square mb-4 flex items-center justify-center bg-card rounded-lg border overflow-hidden p-6 transition-all group-hover:border-primary/50">
+                  <div className="w-full aspect-square mb-4 flex items-center justify-center p-4 transition-all">
                     <BrandLogo 
                       brand={brand.name}
-                      className="w-full h-full transition-transform group-hover:scale-105"
+                      className="w-full h-full transition-transform group-hover:scale-105 mix-blend-multiply dark:mix-blend-lighten"
                     />
                   </div>
                   <p className="text-sm font-semibold text-foreground mb-1">{brand.name}</p>
