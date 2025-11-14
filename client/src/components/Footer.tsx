@@ -57,26 +57,32 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
+                <Link href="/faq" data-testid="link-footer-faq">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                    FAQ
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping-policy" data-testid="link-footer-shipping">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                    Shipping Policy
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/returns-policy" data-testid="link-footer-returns">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                    Returns Policy
+                  </span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" data-testid="link-footer-contact">
                   <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                     Contact Us
                   </span>
                 </Link>
-              </li>
-              <li>
-                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  Delivery Information
-                </span>
-              </li>
-              <li>
-                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  Returns Policy
-                </span>
-              </li>
-              <li>
-                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  Warranty
-                </span>
               </li>
             </ul>
           </div>
@@ -117,12 +123,16 @@ export default function Footer() {
           </div>
           
           <div className="flex gap-4 text-sm">
-            <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-              Privacy Policy
-            </span>
-            <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-              Terms of Service
-            </span>
+            <Link href="/privacy-policy" data-testid="link-footer-privacy">
+              <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                Privacy Policy
+              </span>
+            </Link>
+            <Link href="/terms-of-service" data-testid="link-footer-terms">
+              <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                Terms of Service
+              </span>
+            </Link>
           </div>
         </div>
       </div>
