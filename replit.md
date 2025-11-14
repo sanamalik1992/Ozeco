@@ -223,6 +223,11 @@ npm run db:push --force  # Force push (use with caution)
     - Fixed TrustBar alignment on mobile - icons and text now left-align on mobile, center on desktop
     - Made star rating summary on product pages clickable - smoothly scrolls to reviews section
     - Fixed React hooks ordering issue in Reviews component for stability
+  - **Homepage testimonials enhancement**:
+    - Updated 3 customer testimonials to be more genuine and specific
+    - Added specific product models, real-world use cases, and concrete details
+    - Testimonials now feature authentic UK locations and measurable benefits
+    - Covers diverse customer personas: commuter, parent, senior
 
 - **2025-11-13**: 
   - **Implemented complete customer review system**:
