@@ -1,6 +1,6 @@
 import { Link } from "wouter";
-import { SiStripe, SiPaypal, SiFacebook, SiInstagram } from "react-icons/si";
-import { Lock, CreditCard } from "lucide-react";
+import { SiVisa, SiMastercard, SiAmericanexpress, SiPaypal, SiApplepay, SiGooglepay, SiFacebook, SiInstagram } from "react-icons/si";
+import { Lock } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -142,18 +142,24 @@ export default function Footer() {
           {/* Payment Methods */}
           <div className="flex flex-col items-center gap-3">
             <p className="text-sm text-muted-foreground">We Accept</p>
-            <div className="flex items-center gap-4 flex-wrap justify-center">
-              <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-md border" data-testid="payment-stripe">
-                <SiStripe className="h-6 w-6" />
-                <span className="text-sm font-medium">Stripe</span>
+            <div className="flex items-center gap-3 flex-wrap justify-center">
+              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-visa">
+                <SiVisa className="h-8 w-12 text-[#1A1F71]" />
               </div>
-              <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-md border" data-testid="payment-paypal">
-                <SiPaypal className="h-6 w-6 text-[#0070BA]" />
-                <span className="text-sm font-medium">PayPal</span>
+              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-mastercard">
+                <SiMastercard className="h-8 w-12 text-[#EB001B]" />
               </div>
-              <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-md border" data-testid="payment-cards">
-                <CreditCard className="h-5 w-5" />
-                <span className="text-sm font-medium">Credit/Debit Cards</span>
+              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-amex">
+                <SiAmericanexpress className="h-8 w-12 text-[#006FCF]" />
+              </div>
+              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-paypal">
+                <SiPaypal className="h-8 w-12 text-[#0070BA]" />
+              </div>
+              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-applepay">
+                <SiApplepay className="h-8 w-12" />
+              </div>
+              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-googlepay">
+                <SiGooglepay className="h-8 w-12" />
               </div>
             </div>
           </div>
