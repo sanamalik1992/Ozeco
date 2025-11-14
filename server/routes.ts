@@ -6,6 +6,7 @@ import { db } from "@db";
 import { sql } from "drizzle-orm";
 import Stripe from "stripe";
 import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault, isPayPalConfigured } from "./paypal";
+import { sendOrderConfirmationEmail, sendShippingConfirmationEmail } from "./email";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
@@ -365,7 +366,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const totalAmount = (totalInPence / 100).toFixed(2);
 
       // Complete order in a transaction with atomic stock decrements
-      await db.transaction(async (tx) => {
+      const createdOrder = await db.transaction(async (tx) => {
         // STEP 1: Validate and decrement stock for each cart item
         for (const item of cartItems) {
           const result = await tx.execute(sql`
@@ -423,6 +424,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Clear shipping data from session
       delete (req.session as any).shippingData;
+
+      // Send order confirmation email
+      try {
+        const orderItems = await storage.getOrderItems(createdOrder.id);
+        await sendOrderConfirmationEmail({
+          ...createdOrder,
+          items: orderItems,
+        });
+      } catch (emailError) {
+        console.error('Failed to send order confirmation email:', emailError);
+      }
 
       res.json({ success: true });
     } catch (error: any) {
@@ -519,6 +531,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!order) {
         return res.status(404).json({ error: "Order not found" });
+      }
+
+      // Send shipping confirmation email if tracking number is provided
+      if (trackingNumber) {
+        try {
+          const orderItems = await storage.getOrderItems(order.id);
+          await sendShippingConfirmationEmail({
+            ...order,
+            items: orderItems,
+          }, trackingNumber);
+        } catch (emailError) {
+          console.error('Failed to send shipping confirmation email:', emailError);
+        }
       }
 
       res.json(order);
