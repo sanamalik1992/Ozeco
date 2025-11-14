@@ -3,8 +3,10 @@ import type { Order, OrderItem, Product } from '@shared/schema';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = 'Ozeco <orders@ozeco.co.uk>';
-const SUPPORT_EMAIL = 'support@ozeco.co.uk';
+// Use environment variable for FROM email or default to onboarding@resend.dev for testing
+// In production, you MUST verify your domain or email in Resend dashboard
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'support@ozeco.co.uk';
 
 interface OrderEmailData extends Order {
   items: Array<OrderItem & { product: Product }>;
@@ -12,9 +14,11 @@ interface OrderEmailData extends Order {
 
 export async function sendOrderConfirmationEmail(order: OrderEmailData) {
   if (!process.env.RESEND_API_KEY) {
-    console.warn('RESEND_API_KEY not configured, skipping order confirmation email');
+    console.log('RESEND_API_KEY not configured, skipping order confirmation email');
     return;
   }
+
+  console.log(`Sending order confirmation email for order ${order.id} to ${order.customerEmail}`);
 
   const itemsHtml = order.items
     .map(
@@ -127,9 +131,11 @@ export async function sendShippingConfirmationEmail(
   trackingNumber: string
 ) {
   if (!process.env.RESEND_API_KEY) {
-    console.warn('RESEND_API_KEY not configured, skipping shipping confirmation email');
+    console.log('RESEND_API_KEY not configured, skipping shipping confirmation email');
     return;
   }
+
+  console.log(`Sending shipping confirmation email for order ${order.id} to ${order.customerEmail}`);
 
   const itemsHtml = order.items
     .map(
