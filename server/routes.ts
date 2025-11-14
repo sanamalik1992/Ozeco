@@ -1,7 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProductSchema, insertCartItemSchema } from "@shared/schema";
+import { insertProductSchema, insertCartItemSchema, orders, orderItems } from "@shared/schema";
+import { db } from "@db";
+import { sql } from "drizzle-orm";
 import Stripe from "stripe";
 import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault, isPayPalConfigured } from "./paypal";
 
@@ -362,44 +364,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }, 0);
       const totalAmount = (totalInPence / 100).toFixed(2);
 
-      // Create order
-      const order = await storage.createOrder({
-        sessionId,
-        stripePaymentIntentId: req.body.stripePaymentIntentId || null,
-        paypalOrderId: req.body.paypalOrderId || null,
-        totalAmount,
-        status: "completed",
-        fulfillmentStatus: "pending",
-        paymentMethod: req.body.paymentMethod || "stripe",
-        customerEmail: shippingData.customerEmail,
-        customerName: shippingData.customerName,
-        shippingAddressLine1: shippingData.shippingAddressLine1,
-        shippingAddressLine2: shippingData.shippingAddressLine2 || null,
-        shippingCity: shippingData.shippingCity,
-        shippingPostalCode: shippingData.shippingPostalCode,
-        shippingCountry: shippingData.shippingCountry || "GB",
-        customerPhone: shippingData.customerPhone || null,
+      // Complete order in a transaction with atomic stock decrements
+      await db.transaction(async (tx) => {
+        // STEP 1: Validate and decrement stock for each cart item
+        for (const item of cartItems) {
+          const result = await tx.execute(sql`
+            UPDATE products 
+            SET stock_quantity = stock_quantity - ${item.quantity},
+                in_stock = CASE 
+                  WHEN stock_quantity - ${item.quantity} > 0 THEN in_stock 
+                  ELSE false 
+                END
+            WHERE id = ${item.product.id} 
+              AND in_stock = true 
+              AND stock_quantity >= ${item.quantity}
+            RETURNING stock_quantity
+          `);
+
+          if (result.rows.length === 0) {
+            throw new Error(`Insufficient stock for ${item.product.name}. Please update your cart.`);
+          }
+        }
+
+        // STEP 2: Create order
+        const [order] = await tx.insert(orders).values({
+          sessionId,
+          stripePaymentIntentId: req.body.stripePaymentIntentId || null,
+          paypalOrderId: req.body.paypalOrderId || null,
+          totalAmount,
+          status: "completed",
+          fulfillmentStatus: "pending",
+          paymentMethod: req.body.paymentMethod || "stripe",
+          customerEmail: shippingData.customerEmail,
+          customerName: shippingData.customerName,
+          shippingAddressLine1: shippingData.shippingAddressLine1,
+          shippingAddressLine2: shippingData.shippingAddressLine2 || null,
+          shippingCity: shippingData.shippingCity,
+          shippingPostalCode: shippingData.shippingPostalCode,
+          shippingCountry: shippingData.shippingCountry || "GB",
+          customerPhone: shippingData.customerPhone || null,
+        }).returning();
+
+        // STEP 3: Create order items
+        for (const item of cartItems) {
+          await tx.insert(orderItems).values({
+            orderId: order.id,
+            productId: item.product.id,
+            quantity: item.quantity,
+            priceAtTime: item.product.price,
+          });
+        }
+
+        return order;
       });
 
-      // Create order items
-      for (const item of cartItems) {
-        await storage.createOrderItem({
-          orderId: order.id,
-          productId: item.product.id,
-          quantity: item.quantity,
-          priceAtTime: item.product.price,
-        });
-      }
-
-      // Clear the cart
+      // Clear the cart (only after successful transaction)
       await storage.clearCart(sessionId);
 
       // Clear shipping data from session
       delete (req.session as any).shippingData;
 
-      res.json({ success: true, orderId: order.id });
+      res.json({ success: true });
     } catch (error: any) {
       console.error("Order completion error:", error);
+      
+      // Check if it's a stock error
+      if (error.message.includes("Insufficient stock")) {
+        return res.status(409).json({ error: error.message });
+      }
+      
       res.status(500).json({ error: error.message });
     }
   });

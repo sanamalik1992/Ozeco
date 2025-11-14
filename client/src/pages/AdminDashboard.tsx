@@ -27,6 +27,7 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [editingPrice, setEditingPrice] = useState<{ [key: string]: string }>({});
+  const [editingStock, setEditingStock] = useState<{ [key: string]: string }>({});
 
   // Check if admin is authenticated
   const { data: authCheck, isLoading: authLoading } = useQuery<{ authenticated: boolean }>({
@@ -93,6 +94,22 @@ export default function AdminDashboard() {
       id: productId,
       updates: { isBestseller: !currentValue },
     });
+  };
+
+  const handleStockQuantityUpdate = (productId: string) => {
+    const newQuantity = editingStock[productId];
+    if (newQuantity && !isNaN(parseInt(newQuantity))) {
+      const quantity = parseInt(newQuantity);
+      updateProductMutation.mutate({
+        id: productId,
+        updates: { 
+          stockQuantity: quantity,
+          // Auto-set inStock to false if quantity is 0
+          ...(quantity === 0 && { inStock: false })
+        },
+      });
+      setEditingStock({ ...editingStock, [productId]: "" });
+    }
   };
 
   const handlePriceUpdate = (productId: string) => {
@@ -218,7 +235,8 @@ export default function AdminDashboard() {
                     <TableHead>Product</TableHead>
                     <TableHead>Brand</TableHead>
                     <TableHead>Price</TableHead>
-                    <TableHead className="text-center">In Stock</TableHead>
+                    <TableHead>Stock Quantity</TableHead>
+                    <TableHead className="text-center">Available</TableHead>
                     <TableHead className="text-center">Bestseller</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -266,17 +284,57 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{product.stockQuantity || 0}</span>
+                              {product.stockQuantity && product.stockQuantity < 3 && product.stockQuantity > 0 && (
+                                <Badge variant="destructive" className="text-xs">Low Stock</Badge>
+                              )}
+                              {product.stockQuantity === 0 && (
+                                <Badge variant="secondary" className="text-xs">Out of Stock</Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Input
+                                type="number"
+                                min="0"
+                                placeholder="Qty"
+                                value={editingStock[product.id] || ""}
+                                onChange={(e) => setEditingStock({ ...editingStock, [product.id]: e.target.value })}
+                                className="w-20 h-8 text-sm"
+                                data-testid={`input-stock-${product.slug}`}
+                              />
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleStockQuantityUpdate(product.id)}
+                                disabled={!editingStock[product.id] || updateProductMutation.isPending}
+                                data-testid={`button-update-stock-${product.slug}`}
+                              >
+                                Set
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
                       <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex flex-col items-center gap-2">
                           <Switch
                             checked={product.inStock}
                             onCheckedChange={() => handleStockToggle(product.id, product.inStock)}
                             disabled={updateProductMutation.isPending}
                             data-testid={`switch-stock-${product.slug}`}
                           />
-                          <Label className="text-xs">
-                            {product.inStock ? "Yes" : "No"}
-                          </Label>
+                          <div className="flex flex-col items-center">
+                            <Label className="text-xs">
+                              {product.inStock && product.stockQuantity && product.stockQuantity > 0 ? "✓ Available" : "✗ Unavailable"}
+                            </Label>
+                            <span className="text-xs text-muted-foreground">
+                              {product.inStock ? "Listed" : "Hidden"}
+                            </span>
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="text-center">
