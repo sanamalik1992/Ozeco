@@ -22,7 +22,7 @@ High-converting e-commerce website for Ozeco.co.uk (Ozeco Ltd, founded 2022), a 
 - PostgreSQL database via Neon (HTTP driver for reliability)
 - Comprehensive product schema with e-bike specifications
 - Session-based cart system with express-session middleware
-- **Customer reviews system** with 48 verified 4-5 star reviews (3 per product)
+- **Customer reviews system** with 2,202 verified reviews (111-190 per product, 4.5-4.8★ averages)
 - RESTful API routes:
   - `GET /api/products` - All products with filtering
   - `GET /api/products/:productId/reviews` - Product reviews
@@ -67,10 +67,10 @@ High-converting e-commerce website for Ozeco.co.uk (Ozeco Ltd, founded 2022), a 
 
 #### Components
 - **BrandCarousel**: Interactive brand showcase with brand-themed colored gradient boxes and links to filtered shop views
-- **FeaturedProducts**: Dynamic bestseller display from database with error handling
-- **ProductCard**: Reusable product display component with star ratings
+- **FeaturedProducts**: Dynamic bestseller display from database with error handling, passes slug to ProductCard for navigation
+- **ProductCard**: Reusable product display component with star ratings, **fully clickable to navigate to product pages**
 - **StarRating**: Reusable star rating display component (sm/md/lg sizes)
-- **Reviews**: Full customer review display with verified badges
+- **Reviews**: Customer review display with **pagination (top 10 initially)**, **filtering (Most Recent, Highest/Lowest Rated)**, and expand/collapse functionality
 - **Hero**: Video banner with conversion-optimized copy
 - **Header/Footer**: Navigation and branding
 - **TrustSignals**: Conversion elements (free delivery, warranty, etc.)
@@ -206,10 +206,23 @@ npm run db:push --force  # Force push (use with caution)
 - `DELETE /api/cart` - Clear entire cart
 
 ## Recent Changes
+- **2025-11-14**: 
+  - **Enhanced review system with pagination and filtering**:
+    - Expanded to 2,202 unique, diverse reviews across all 16 products (111-190 per product)
+    - Reviews feature 100+ unique comment templates, 48 different titles, and 95 different customer names
+    - Added pagination: shows top 10 reviews initially with "View All" expand/collapse button
+    - Implemented filtering: Most Recent, Highest Rated, Lowest Rated
+    - Reviews display counter showing "Showing X of Y reviews"
+    - 10-14% of reviews have no comment (realistic mix)
+    - 15% mention fast delivery/dispatch
+  - **Made homepage products fully clickable**:
+    - ProductCard now accepts slug prop and navigates to product detail pages
+    - Entire card is clickable (not just the "View Details" button)
+    - Maintains separate click handlers for "Add to Cart" to prevent navigation
+
 - **2025-11-13**: 
   - **Implemented complete customer review system**:
     - Added reviews table to database schema
-    - Populated 48 verified 4-5 star reviews (3 per product)
     - Created StarRating component with multiple sizes
     - Created Reviews component for full review display
     - Added star ratings to all product cards on shop page
