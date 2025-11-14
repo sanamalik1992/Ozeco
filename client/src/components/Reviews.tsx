@@ -17,23 +17,9 @@ export default function Reviews({ reviews }: ReviewsProps) {
   const [showAll, setShowAll] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("recent");
 
-  if (!reviews || reviews.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Customer Reviews</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">No reviews yet. Be the first to review this product!</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
-
   // Sort reviews based on selected option
   const sortedReviews = useMemo(() => {
+    if (!reviews || reviews.length === 0) return [];
     const sorted = [...reviews];
     switch (sortBy) {
       case "recent":
@@ -50,6 +36,22 @@ export default function Reviews({ reviews }: ReviewsProps) {
   // Show only first 10 reviews unless "showAll" is true
   const displayedReviews = showAll ? sortedReviews : sortedReviews.slice(0, 10);
   const hasMore = reviews.length > 10;
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+    : 0;
+
+  if (!reviews || reviews.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Customer Reviews</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">No reviews yet. Be the first to review this product!</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

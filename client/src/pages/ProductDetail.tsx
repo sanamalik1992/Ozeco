@@ -119,12 +119,18 @@ export default function ProductDetail() {
                   {product.name}
                 </h1>
                 {reviews.length > 0 && (
-                  <div className="flex items-center gap-3 mb-4" data-testid="product-rating-summary">
+                  <button
+                    onClick={() => {
+                      document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className="flex items-center gap-3 mb-4 hover-elevate active-elevate-2 p-2 -ml-2 rounded-md transition-colors"
+                    data-testid="button-scroll-to-reviews"
+                  >
                     <StarRating rating={averageRating} size="lg" />
                     <span className="text-sm text-muted-foreground">
                       {averageRating.toFixed(1)} ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
                     </span>
-                  </div>
+                  </button>
                 )}
                 <div className="flex items-baseline gap-3 mb-6">
                   <span className="text-4xl font-bold text-primary" data-testid="text-product-price">
@@ -288,7 +294,7 @@ export default function ProductDetail() {
           </Card>
 
           {/* Reviews */}
-          <div className="mb-12">
+          <div id="reviews" className="mb-12 scroll-mt-20">
             <Reviews reviews={reviews} />
           </div>
 
