@@ -11,7 +11,7 @@ const testimonials = [
     location: "Manchester",
     image: customer1,
     rating: 5,
-    text: "Bought the ENGWE Engine Pro 2.0 three months ago for my 12-mile commute. Battery still shows 70% after the full journey even in eco mode. The hill climb on Wilmslow Road used to kill me on my old bike - now it's effortless. Dispatched same day, arrived in perfect condition.",
+    text: "Bought the ENGWE Engine Pro 2.0 three months ago for my 12-mile commute. Battery still shows 70% after the full journey even in eco mode. The steep hills on my route used to kill me on my old bike - now they're effortless. Dispatched same day, arrived in perfect condition.",
   },
   {
     name: "Sarah K.",
