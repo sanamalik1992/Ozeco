@@ -11,21 +11,21 @@ const testimonials = [
     location: "Manchester",
     image: customer1,
     rating: 5,
-    text: "Brilliant service from Ozeco! My Engwe bike arrived quickly and was exactly as described. The team helped me choose the perfect model for my commute.",
+    text: "Bought the ENGWE Engine Pro 2.0 three months ago for my 12-mile commute. Battery still shows 70% after the full journey even in eco mode. The hill climb on Wilmslow Road used to kill me on my old bike - now it's effortless. Dispatched same day, arrived in perfect condition.",
   },
   {
     name: "Sarah K.",
     location: "Bristol",
     image: customer2,
     rating: 5,
-    text: "Love my new Eleglide e-bike! Great quality and the price was very competitive. Customer service was excellent throughout the whole process.",
+    text: "The Eleglide M1 Plus has transformed my daily school run. I can fit two child seats and still get 45km range. No more sitting in traffic on the A4. Saved over £200 in petrol this month alone. The customer service team were brilliant when I had questions about the battery warranty.",
   },
   {
     name: "Robert T.",
     location: "Edinburgh",
     image: customer3,
     rating: 5,
-    text: "Fantastic experience. The DYU folding bike is perfect for my daily routine. Delivery was fast and the support team answered all my questions.",
+    text: "At 68, I was nervous about electric bikes, but the DYU D3F folding bike has given me my independence back. Folds in 15 seconds so I can take it on the bus to Portobello, then cycle along the prom. The throttle is perfect for when my knees play up. Absolutely life-changing.",
   },
 ];
 
