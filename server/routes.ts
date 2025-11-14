@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertProductSchema, insertCartItemSchema } from "@shared/schema";
 import Stripe from "stripe";
+import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault } from "./paypal";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
@@ -107,7 +108,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // SECURITY: Enforce quantity limits on incoming quantity
-      if (validated.quantity < 1 || validated.quantity > 99) {
+      const quantity = validated.quantity ?? 1;
+      if (quantity < 1 || quantity > 99) {
         return res.status(400).json({ error: "Quantity must be between 1 and 99" });
       }
       
@@ -115,10 +117,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const existingCartItems = await storage.getCartItems(sessionId);
       const existingItem = existingCartItems.find(item => item.productId === validated.productId);
       if (existingItem) {
-        const newTotal = existingItem.quantity + validated.quantity;
+        const newTotal = existingItem.quantity + quantity;
         if (newTotal > 99) {
           return res.status(400).json({ 
-            error: `Cannot add ${validated.quantity} items. Maximum quantity per product is 99. You already have ${existingItem.quantity} in your cart.` 
+            error: `Cannot add ${quantity} items. Maximum quantity per product is 99. You already have ${existingItem.quantity} in your cart.` 
           });
         }
       }
@@ -248,6 +250,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Stripe error:", error);
       res.status(500).json({ error: error.message });
     }
+  });
+
+  // PayPal payment routes (from PayPal integration blueprint)
+  app.get("/paypal/setup", async (req, res) => {
+    await loadPaypalDefault(req, res);
+  });
+
+  app.post("/paypal/order", async (req, res) => {
+    await createPaypalOrder(req, res);
+  });
+
+  app.post("/paypal/order/:orderID/capture", async (req, res) => {
+    await capturePaypalOrder(req, res);
   });
 
   // Seed route (development only)

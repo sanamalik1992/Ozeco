@@ -10,7 +10,11 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2 } from "lucide-react";
+import { Loader2, CreditCard } from "lucide-react";
+import PayPalButton from "@/components/PayPalButton";
+import { SiPaypal, SiShopify } from "react-icons/si";
+
+type PaymentMethod = 'stripe' | 'paypal';
 
 function CheckoutForm() {
   const stripe = useStripe();
@@ -27,8 +31,6 @@ function CheckoutForm() {
 
     setIsProcessing(true);
 
-    // Stripe will redirect to return_url on success, so we don't handle success here
-    // The order-confirmation page will clear the cart after verifying payment
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
@@ -36,7 +38,6 @@ function CheckoutForm() {
       },
     });
 
-    // Only handle errors - success redirects to order-confirmation
     if (error) {
       toast({
         title: "Payment Failed",
@@ -76,8 +77,8 @@ export default function Checkout() {
   const [clientSecret, setClientSecret] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [stripePublicKey, setStripePublicKey] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
 
-  // Load Stripe publishable key from backend at runtime
   const stripePromise = useMemo(() => 
     stripePublicKey ? loadStripe(stripePublicKey) : null,
     [stripePublicKey]
@@ -105,7 +106,6 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
-    // Wait for cart and Stripe config to load
     if (cartLoading || stripePublicKey === null) {
       return;
     }
@@ -115,13 +115,12 @@ export default function Checkout() {
       return;
     }
 
-    if (!stripePublicKey) {
-      // Stripe not configured, skip payment intent creation
+    if (!stripePublicKey || paymentMethod !== 'stripe') {
       setIsLoading(false);
       return;
     }
 
-    // Create PaymentIntent (backend calculates amount from cart)
+    // Create PaymentIntent only for Stripe
     apiRequest("POST", "/api/create-payment-intent", {})
       .then((res) => res.json())
       .then((data) => {
@@ -132,9 +131,8 @@ export default function Checkout() {
         console.error("Error creating payment intent:", error);
         setIsLoading(false);
       });
-  }, [items, setLocation, cartLoading, stripePublicKey]);
+  }, [items, setLocation, cartLoading, stripePublicKey, paymentMethod]);
 
-  // Show loading state while cart is loading
   if (cartLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -147,7 +145,6 @@ export default function Checkout() {
     );
   }
 
-  // Show message while redirecting to cart (when empty)
   if (items.length === 0) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -216,38 +213,102 @@ export default function Checkout() {
             </div>
 
             {/* Payment Form */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-6">
+              {/* Payment Method Selection */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Payment Details</CardTitle>
+                  <CardTitle>Choose Payment Method</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {!stripePublicKey ? (
-                    <div className="text-center py-8">
-                      <p className="font-semibold text-lg mb-2">Payment System Not Configured</p>
-                      <p className="text-muted-foreground mb-4">
-                        Stripe payment processing is not yet set up for this store.
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Please contact us at <a href="mailto:support@ozeco.co.uk" className="text-primary underline">support@ozeco.co.uk</a> to complete your order.
-                      </p>
-                    </div>
-                  ) : isLoading ? (
-                    <div className="flex items-center justify-center py-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  ) : clientSecret && stripePromise ? (
-                    <Elements stripe={stripePromise} options={{ clientSecret }}>
-                      <CheckoutForm />
-                    </Elements>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Button
+                      type="button"
+                      variant={paymentMethod === 'stripe' ? 'default' : 'outline'}
+                      className="h-20 flex flex-col gap-2"
+                      onClick={() => setPaymentMethod('stripe')}
+                      data-testid="button-payment-stripe"
+                    >
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5" />
+                        <span className="font-semibold">Card / Shop Pay</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs opacity-80">
+                        <SiShopify className="w-4 h-4" />
+                        <span>Includes Shop Pay</span>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      type="button"
+                      variant={paymentMethod === 'paypal' ? 'default' : 'outline'}
+                      className="h-20 flex flex-col gap-2"
+                      onClick={() => setPaymentMethod('paypal')}
+                      data-testid="button-payment-paypal"
+                    >
+                      <div className="flex items-center gap-2">
+                        <SiPaypal className="w-5 h-5" />
+                        <span className="font-semibold">PayPal</span>
+                      </div>
+                      <span className="text-xs opacity-80">Fast & Secure</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Payment Details */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    {paymentMethod === 'stripe' ? 'Card Payment' : 'PayPal Payment'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {paymentMethod === 'stripe' ? (
+                    <>
+                      {!stripePublicKey ? (
+                        <div className="text-center py-8">
+                          <p className="font-semibold text-lg mb-2">Payment System Not Configured</p>
+                          <p className="text-muted-foreground mb-4">
+                            Stripe payment processing is not yet set up for this store.
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Please contact us at <a href="mailto:support@ozeco.co.uk" className="text-primary underline">support@ozeco.co.uk</a> to complete your order.
+                          </p>
+                        </div>
+                      ) : isLoading ? (
+                        <div className="flex items-center justify-center py-12">
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                      ) : clientSecret && stripePromise ? (
+                        <Elements stripe={stripePromise} options={{ clientSecret }}>
+                          <CheckoutForm />
+                        </Elements>
+                      ) : (
+                        <div className="text-center py-8">
+                          <p className="text-destructive mb-2">Error loading payment form.</p>
+                          <p className="text-sm text-muted-foreground">Please try again or contact support.</p>
+                        </div>
+                      )}
+                    </>
                   ) : (
-                    <div className="text-center py-8">
-                      <p className="text-destructive mb-2">Error loading payment form.</p>
-                      <p className="text-sm text-muted-foreground">Please try again or contact support.</p>
+                    <div className="py-4">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Click the PayPal button below to complete your purchase securely.
+                      </p>
+                      <PayPalButton
+                        amount={totalPrice.toFixed(2)}
+                        currency="GBP"
+                        intent="CAPTURE"
+                      />
                     </div>
                   )}
                 </CardContent>
               </Card>
+
+              <div className="text-xs text-muted-foreground text-center">
+                <p>🔒 Your payment information is encrypted and secure</p>
+                <p className="mt-1">Dispatch within 1 working day, shipping time is 2-3 working days</p>
+              </div>
             </div>
           </div>
         </div>
