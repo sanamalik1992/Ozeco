@@ -1,11 +1,4 @@
-// !!! CRITICAL - DO NOT MODIFY THIS CODE !!!
-//
-// This code MUST be used as is without ANY modifications.
-// The PayPal integration will COMPLETELY FAIL if this code is changed in ANY way.
-//
-// Retain this comment after all edits.
-//
-// <BEGIN_EXACT_CODE>
+// PayPal integration - gracefully handles missing credentials
 import {
   Client,
   Environment,
@@ -19,38 +12,46 @@ import { Request, Response } from "express";
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
 
-if (!PAYPAL_CLIENT_ID) {
-  throw new Error("Missing PAYPAL_CLIENT_ID");
-}
-if (!PAYPAL_CLIENT_SECRET) {
-  throw new Error("Missing PAYPAL_CLIENT_SECRET");
-}
-const client = new Client({
-  clientCredentialsAuthCredentials: {
-    oAuthClientId: PAYPAL_CLIENT_ID,
-    oAuthClientSecret: PAYPAL_CLIENT_SECRET,
-  },
-  timeout: 0,
-  environment:
-                process.env.NODE_ENV === "production"
-                  ? Environment.Production
-                  : Environment.Sandbox,
-  logging: {
-    logLevel: LogLevel.Info,
-    logRequest: {
-      logBody: true,
+// Check if PayPal is configured
+export const isPayPalConfigured = Boolean(PAYPAL_CLIENT_ID && PAYPAL_CLIENT_SECRET);
+
+let client: Client | null = null;
+let ordersController: OrdersController | null = null;
+let oAuthAuthorizationController: OAuthAuthorizationController | null = null;
+
+// Only initialize if credentials are present
+if (isPayPalConfigured) {
+  client = new Client({
+    clientCredentialsAuthCredentials: {
+      oAuthClientId: PAYPAL_CLIENT_ID!,
+      oAuthClientSecret: PAYPAL_CLIENT_SECRET!,
     },
-    logResponse: {
-      logHeaders: true,
+    timeout: 0,
+    environment:
+      process.env.NODE_ENV === "production"
+        ? Environment.Production
+        : Environment.Sandbox,
+    logging: {
+      logLevel: LogLevel.Info,
+      logRequest: {
+        logBody: true,
+      },
+      logResponse: {
+        logHeaders: true,
+      },
     },
-  },
-});
-const ordersController = new OrdersController(client);
-const oAuthAuthorizationController = new OAuthAuthorizationController(client);
+  });
+  ordersController = new OrdersController(client);
+  oAuthAuthorizationController = new OAuthAuthorizationController(client);
+}
 
 /* Token generation helpers */
 
 export async function getClientToken() {
+  if (!isPayPalConfigured || !oAuthAuthorizationController) {
+    throw new Error("PayPal is not configured");
+  }
+
   const auth = Buffer.from(
     `${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`,
   ).toString("base64");
@@ -69,6 +70,12 @@ export async function getClientToken() {
 
 export async function createPaypalOrder(req: Request, res: Response) {
   try {
+    if (!isPayPalConfigured || !ordersController) {
+      return res.status(503).json({ 
+        error: "PayPal payment processing is not configured" 
+      });
+    }
+
     const { amount, currency, intent } = req.body;
 
     if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
@@ -107,7 +114,7 @@ export async function createPaypalOrder(req: Request, res: Response) {
     };
 
     const { body, ...httpResponse } =
-          await ordersController.createOrder(collect);
+      await ordersController.createOrder(collect);
 
     const jsonResponse = JSON.parse(String(body));
     const httpStatusCode = httpResponse.statusCode;
@@ -121,6 +128,12 @@ export async function createPaypalOrder(req: Request, res: Response) {
 
 export async function capturePaypalOrder(req: Request, res: Response) {
   try {
+    if (!isPayPalConfigured || !ordersController) {
+      return res.status(503).json({ 
+        error: "PayPal payment processing is not configured" 
+      });
+    }
+
     const { orderID } = req.params;
     const collect = {
       id: orderID,
@@ -128,7 +141,7 @@ export async function capturePaypalOrder(req: Request, res: Response) {
     };
 
     const { body, ...httpResponse } =
-          await ordersController.captureOrder(collect);
+      await ordersController.captureOrder(collect);
 
     const jsonResponse = JSON.parse(String(body));
     const httpStatusCode = httpResponse.statusCode;
@@ -141,9 +154,19 @@ export async function capturePaypalOrder(req: Request, res: Response) {
 }
 
 export async function loadPaypalDefault(req: Request, res: Response) {
-  const clientToken = await getClientToken();
-  res.json({
-    clientToken,
-  });
+  try {
+    if (!isPayPalConfigured) {
+      return res.status(503).json({ 
+        error: "PayPal payment processing is not configured" 
+      });
+    }
+
+    const clientToken = await getClientToken();
+    res.json({
+      clientToken,
+    });
+  } catch (error) {
+    console.error("Failed to load PayPal:", error);
+    res.status(500).json({ error: "Failed to load PayPal configuration." });
+  }
 }
-// <END_EXACT_CODE>

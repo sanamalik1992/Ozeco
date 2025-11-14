@@ -256,7 +256,7 @@ npm run db:push --force  # Force push (use with caution)
 - Mobile menu not fully implemented
 - Review system is read-only (no POST route for creating reviews)
 
-## Shopping Cart & Checkout System (COMPLETED - Pending Stripe Keys)
+## Shopping Cart & Multi-Payment Checkout System (COMPLETED)
 
 ### ✅ Implementation Complete
 
@@ -273,37 +273,52 @@ npm run db:push --force  # Force push (use with caution)
 - Session scoping on all cart operations (prevents cross-user manipulation)
 - Input validation on all endpoints
 - Integer pence calculations (no floating-point errors)
+- Quantity limits enforced (1-99 per product)
 
-**Stripe Integration:**
-- Runtime Stripe key configuration (no rebuild needed)
-- `/api/config/stripe-key` endpoint for publishable key
-- `/api/create-payment-intent` with server-calculated amounts
-- Graceful degradation when Stripe keys not configured
-- Checkout page with Stripe Elements
-- Order confirmation page with cart clearing
+**Multi-Payment Integration:**
+- **Stripe Integration** (includes Shop Pay):
+  - Runtime Stripe key configuration (no rebuild needed)
+  - `/api/config/stripe-key` endpoint for publishable key
+  - `/api/create-payment-intent` with server-calculated amounts
+  - Supports credit/debit cards AND Shop Pay
+  - Graceful degradation when Stripe keys not configured
+- **PayPal Integration** (via Replit blueprint):
+  - PayPal Web SDK integration
+  - Sandbox and Production environment support
+  - `/paypal/setup`, `/paypal/order`, `/paypal/order/:id/capture` endpoints
+  - Graceful degradation when PayPal keys not configured
+- **Payment Method Detection:**
+  - `/api/config/payment-methods` endpoint checks available methods
+  - UI automatically shows/hides payment options based on configuration
+  - Auto-selects first available payment method
 
 **Database Schema:**
 - `orders` table for tracking completed purchases
 - `order_items` table for line items
 - Both tables ready for use after payment implementation
 
-**Environment Variables Required:**
-- `STRIPE_PUBLISHABLE_KEY` - Runtime Stripe publishable key
-- `STRIPE_SECRET_KEY` - Stripe secret key for backend
+**Environment Variables (Optional):**
+- `STRIPE_PUBLISHABLE_KEY` - Runtime Stripe publishable key (enables Stripe/Shop Pay)
+- `STRIPE_SECRET_KEY` - Stripe secret key for backend (enables Stripe/Shop Pay)
+- `PAYPAL_CLIENT_ID` - PayPal client ID (enables PayPal)
+- `PAYPAL_CLIENT_SECRET` - PayPal client secret (enables PayPal)
 
 **User Flow:**
 1. Browse products → Add to cart
 2. View cart in drawer OR `/cart` page
 3. Proceed to checkout
-4. Complete payment with Stripe
-5. Order confirmation with automatic cart clearing
+4. Choose payment method (Stripe/Shop Pay or PayPal)
+5. Complete payment
+6. Order confirmation with automatic cart clearing
 
 ### 🔜 Next Steps
-1. **Add Stripe API keys** to enable payment processing
+1. **Add Payment API Keys** (optional - app works without them):
+   - Add `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` for Stripe/Shop Pay
+   - Add `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` for PayPal
 2. Implement product search functionality
 3. Create admin dashboard for product management
 4. Add ability for customers to submit reviews
 5. Optimize for SEO (meta tags, structured data)
 6. Add analytics tracking (Google Analytics integration ready)
 7. Implement newsletter signup functionality
-8. **DEPLOY TO PRODUCTION** - All features ready!
+8. **DEPLOY TO PRODUCTION** - All core e-commerce features ready!

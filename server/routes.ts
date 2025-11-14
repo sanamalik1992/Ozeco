@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertProductSchema, insertCartItemSchema } from "@shared/schema";
 import Stripe from "stripe";
-import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault } from "./paypal";
+import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault, isPayPalConfigured } from "./paypal";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
@@ -187,12 +187,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get Stripe publishable key (for runtime configuration)
+  // Get payment configuration (for runtime configuration)
   app.get("/api/config/stripe-key", async (req, res) => {
     // Use runtime environment variable (not build-time VITE_ prefix)
     const stripePublicKey = process.env.STRIPE_PUBLISHABLE_KEY;
     res.json({ 
       publishableKey: stripePublicKey || null 
+    });
+  });
+
+  app.get("/api/config/payment-methods", async (req, res) => {
+    res.json({
+      stripe: Boolean(process.env.STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_SECRET_KEY),
+      paypal: isPayPalConfigured
     });
   });
 
