@@ -1,9 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProductSchema, insertCartItemSchema, orders, orderItems } from "@shared/schema";
+import { insertProductSchema, insertCartItemSchema, orders, orderItems, products } from "@shared/schema";
 import { db } from "@db";
-import { sql } from "drizzle-orm";
+import { sql, eq, and, gte } from "drizzle-orm";
 import Stripe from "stripe";
 import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault, isPayPalConfigured } from "./paypal";
 import { sendOrderConfirmationEmail, sendShippingConfirmationEmail } from "./email";
@@ -369,21 +369,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const createdOrder = await db.transaction(async (tx) => {
         // STEP 1: Validate and decrement stock for each cart item
         for (const item of cartItems) {
+          // Lock the row and check stock (prevents concurrent overselling)
           const result = await tx.execute(sql`
-            UPDATE products 
-            SET stock_quantity = stock_quantity - ${item.quantity},
-                in_stock = CASE 
-                  WHEN stock_quantity - ${item.quantity} > 0 THEN in_stock 
-                  ELSE false 
-                END
-            WHERE id = ${item.product.id} 
-              AND in_stock = true 
-              AND stock_quantity >= ${item.quantity}
-            RETURNING stock_quantity
+            SELECT stock_quantity, in_stock 
+            FROM products 
+            WHERE id = ${item.product.id}
+            FOR UPDATE
           `);
 
-          if (result.rows.length === 0) {
+          const product = result.rows[0] as { stock_quantity: number | null; in_stock: boolean } | undefined;
+          if (!product || !product.in_stock || (product.stock_quantity ?? 0) < item.quantity) {
             throw new Error(`Insufficient stock for ${item.product.name}. Please update your cart.`);
+          }
+
+          // Decrement stock (row is locked, safe from concurrent updates)
+          const newQuantity = (product.stock_quantity ?? 0) - item.quantity;
+          const updateResult = await tx
+            .update(products)
+            .set({
+              stockQuantity: newQuantity,
+              inStock: newQuantity > 0 ? product.in_stock : false
+            })
+            .where(eq(products.id, item.product.id))
+            .returning({ id: products.id });
+
+          // Verify the update succeeded
+          if (updateResult.length === 0) {
+            throw new Error(`Failed to update stock for ${item.product.name}. Product may have been deleted.`);
           }
         }
 
@@ -519,12 +531,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate tracking number if provided
       if (trackingNumber) {
         trackingNumber = trackingNumber.trim();
-        if (trackingNumber.length > 64) {
+        if (trackingNumber.length === 0) {
+          trackingNumber = null;
+        } else if (trackingNumber.length > 64) {
           return res.status(400).json({ error: "Tracking number must be 64 characters or less" });
-        }
-        if (!/^[a-zA-Z0-9\-_]+$/.test(trackingNumber)) {
+        } else if (!/^[a-zA-Z0-9\-_]+$/.test(trackingNumber)) {
           return res.status(400).json({ error: "Tracking number must contain only letters, numbers, hyphens, and underscores" });
         }
+      } else {
+        trackingNumber = null;
       }
       
       const order = await storage.updateOrderTracking(req.params.id, trackingNumber || null);
