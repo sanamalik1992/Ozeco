@@ -5,14 +5,26 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { type Product } from "@shared/schema";
+import { useCart } from "@/lib/cart-context";
+import { useToast } from "@/hooks/use-toast";
 
 export default function FeaturedProducts() {
   const { data: allProducts = [], isLoading, isError } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
+  const { addItem } = useCart();
+  const { toast } = useToast();
 
   // Filter for bestsellers
   const products = allProducts.filter(p => p.isBestseller).slice(0, 4);
+
+  const handleAddToCart = (product: Product) => {
+    addItem(product.id, 1);
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
 
   if (isLoading) {
     return (
@@ -77,6 +89,7 @@ export default function FeaturedProducts() {
               image={product.image}
               range={product.maxRange || ""}
               maxSpeed={product.topSpeed || ""}
+              onAddToCart={() => handleAddToCart(product)}
             />
           ))}
         </div>

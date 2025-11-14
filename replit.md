@@ -206,7 +206,20 @@ npm run db:push --force  # Force push (use with caution)
 - `DELETE /api/cart` - Clear entire cart
 
 ## Recent Changes
-- **2025-11-14**: 
+- **2025-11-14** (Latest):
+  - **Fixed "Add to Cart" on homepage**: FeaturedProducts now properly calls cart context when clicking "Add to Cart" button
+  - **Implemented multi-payment checkout system**:
+    - Added PayPal integration via Replit blueprint
+    - Checkout page supports Stripe (with Shop Pay) and PayPal
+    - Graceful degradation when payment keys not configured
+    - Payment method auto-detection and selection
+    - Server routes for PayPal order creation and capture
+  - **Enhanced security**:
+    - Fixed TypeScript errors in cart quantity validation
+    - Enforced quantity limits (1-99) server-side
+    - All cart operations properly scoped to sessions
+
+- **2025-11-14** (Earlier): 
   - **Enhanced review system with pagination and filtering**:
     - Expanded to 2,202 unique, diverse reviews across all 16 products (111-190 per product)
     - Reviews feature 100+ unique comment templates, 48 different titles, and 95 different customer names
