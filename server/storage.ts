@@ -53,6 +53,7 @@ export interface IStorage {
   getOrder(id: string): Promise<Order | undefined>;
   getOrderItems(orderId: string): Promise<(OrderItem & { product: Product })[]>;
   updateOrderFulfillment(id: string, fulfillmentStatus: string): Promise<Order | undefined>;
+  updateOrderTracking(id: string, trackingNumber: string | null): Promise<Order | undefined>;
 }
 
 export class DbStorage implements IStorage {
@@ -218,6 +219,14 @@ export class DbStorage implements IStorage {
   async updateOrderFulfillment(id: string, fulfillmentStatus: string): Promise<Order | undefined> {
     const result = await db.update(orders)
       .set({ fulfillmentStatus })
+      .where(eq(orders.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async updateOrderTracking(id: string, trackingNumber: string | null): Promise<Order | undefined> {
+    const result = await db.update(orders)
+      .set({ trackingNumber })
       .where(eq(orders.id, id))
       .returning();
     return result[0];

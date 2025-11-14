@@ -34,6 +34,7 @@ export default function AdminOrders() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
+  const [editingTracking, setEditingTracking] = useState<{ [key: string]: string }>({});
 
   // Fetch orders
   const { data: orders = [], isLoading: ordersLoading, refetch } = useQuery<Order[]>({
@@ -63,8 +64,39 @@ export default function AdminOrders() {
     },
   });
 
+  // Update tracking number mutation
+  const updateTrackingMutation = useMutation({
+    mutationFn: async ({ orderId, trackingNumber }: { orderId: string; trackingNumber: string }) => {
+      const response = await apiRequest("PATCH", `/api/admin/orders/${orderId}/tracking`, { trackingNumber });
+      if (!response.ok) throw new Error("Failed to update tracking number");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+      toast({
+        title: "Tracking Updated",
+        description: "Tracking number updated successfully",
+      });
+      setEditingTracking({});
+    },
+    onError: () => {
+      toast({
+        title: "Update Failed",
+        description: "Failed to update tracking number",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleFulfillmentChange = (orderId: string, newStatus: string) => {
     updateFulfillmentMutation.mutate({ orderId, fulfillmentStatus: newStatus });
+  };
+
+  const handleTrackingUpdate = (orderId: string) => {
+    const trackingNumber = editingTracking[orderId];
+    if (trackingNumber !== undefined) {
+      updateTrackingMutation.mutate({ orderId, trackingNumber });
+    }
   };
 
   // Filter orders by search query
@@ -254,6 +286,42 @@ export default function AdminOrders() {
                   {selectedOrder.shippingAddressLine2 && <p>{selectedOrder.shippingAddressLine2}</p>}
                   <p>{selectedOrder.shippingCity}, {selectedOrder.shippingPostalCode}</p>
                   <p>{selectedOrder.shippingCountry}</p>
+                </div>
+              </div>
+
+              {/* Tracking Number */}
+              <div>
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Tracking Information
+                </h3>
+                <div className="bg-muted/50 p-4 rounded-lg space-y-3">
+                  {selectedOrder.trackingNumber ? (
+                    <p className="text-sm">
+                      <span className="font-medium">Tracking Number:</span>{" "}
+                      <code className="bg-background px-2 py-1 rounded">{selectedOrder.trackingNumber}</code>
+                    </p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No tracking number added yet</p>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="text"
+                      placeholder="Enter tracking number"
+                      value={editingTracking[selectedOrder.id] ?? selectedOrder.trackingNumber ?? ""}
+                      onChange={(e) => setEditingTracking({ ...editingTracking, [selectedOrder.id]: e.target.value })}
+                      className="flex-1"
+                      data-testid="input-tracking-number"
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => handleTrackingUpdate(selectedOrder.id)}
+                      disabled={updateTrackingMutation.isPending}
+                      data-testid="button-update-tracking"
+                    >
+                      Update
+                    </Button>
+                  </div>
                 </div>
               </div>
 

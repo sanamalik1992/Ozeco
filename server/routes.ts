@@ -494,6 +494,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/admin/orders/:id/tracking", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const { trackingNumber } = req.body;
+      const order = await storage.updateOrderTracking(req.params.id, trackingNumber || null);
+      
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      res.json(order);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // PayPal payment routes (from PayPal integration blueprint)
   app.get("/paypal/setup", async (req, res) => {
     await loadPaypalDefault(req, res);
