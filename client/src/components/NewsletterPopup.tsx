@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, X, Gift } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import ebikePic from "@assets/stock_images/modern_electric_bike_67e355f5.jpg";
 
 export function NewsletterPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,94 +68,109 @@ export function NewsletterPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md" data-testid="dialog-newsletter">
+      <DialogContent className="sm:max-w-2xl p-0 overflow-hidden" data-testid="dialog-newsletter">
         <button
           onClick={handleClose}
-          className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 transition-opacity"
+          className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 transition-opacity z-50 bg-background/80 backdrop-blur-sm p-1 rounded-full"
           data-testid="button-close-newsletter"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </button>
 
-        {!discountCode ? (
-          <>
-            <DialogHeader>
-              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <Gift className="w-8 h-8 text-primary" />
-              </div>
-              <DialogTitle className="text-2xl text-center">Get £10 Off Your First Order!</DialogTitle>
-              <DialogDescription className="text-center text-base">
-                Join our newsletter and receive an exclusive £10 discount code for your first Electric bike purchase.
-              </DialogDescription>
-            </DialogHeader>
+        <div className="grid md:grid-cols-2 gap-0">
+          {/* Image Section */}
+          <div className="relative h-48 md:h-auto overflow-hidden">
+            <img 
+              src={ebikePic} 
+              alt="Electric bike" 
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-background/80 to-transparent" />
+          </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="newsletter-email">Email Address</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    id="newsletter-email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
-                    disabled={isSubmitting}
-                    data-testid="input-newsletter-email"
-                  />
+          {/* Content Section */}
+          <div className="p-6 md:p-8">
+            {!discountCode ? (
+              <>
+                <div className="mb-6">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                    <Gift className="w-6 h-6 text-primary" />
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">Get £10 Off Your First Order!</h2>
+                  <p className="text-muted-foreground">
+                    Join our newsletter and receive an exclusive £10 discount code for your first Electric bike purchase.
+                  </p>
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting}
-                data-testid="button-newsletter-submit"
-              >
-                {isSubmitting ? "Subscribing..." : "Get My £10 Discount"}
-              </Button>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="newsletter-email">Email Address</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Input
+                        id="newsletter-email"
+                        type="email"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                        disabled={isSubmitting}
+                        data-testid="input-newsletter-email"
+                      />
+                    </div>
+                  </div>
 
-              <p className="text-xs text-muted-foreground text-center">
-                By subscribing, you agree to receive marketing emails from Ozeco. You can unsubscribe at any time.
-              </p>
-            </form>
-          </>
-        ) : (
-          <>
-            <DialogHeader>
-              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <Gift className="w-8 h-8 text-primary" />
-              </div>
-              <DialogTitle className="text-2xl text-center">Welcome to Ozeco!</DialogTitle>
-              <DialogDescription className="text-center text-base">
-                Here's your exclusive discount code:
-              </DialogDescription>
-            </DialogHeader>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting}
+                    data-testid="button-newsletter-submit"
+                  >
+                    {isSubmitting ? "Subscribing..." : "Get My £10 Discount"}
+                  </Button>
 
-            <div className="bg-primary/10 p-6 rounded-lg text-center my-4">
-              <p className="text-sm text-muted-foreground mb-2">Your Discount Code</p>
-              <p className="text-3xl font-bold text-primary tracking-wider" data-testid="text-discount-code">
-                {discountCode}
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">Save £10 on your first order</p>
-            </div>
+                  <p className="text-xs text-muted-foreground text-center">
+                    By subscribing, you agree to receive marketing emails from Ozeco. You can unsubscribe at any time.
+                  </p>
+                </form>
+              </>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                    <Gift className="w-6 h-6 text-primary" />
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">Welcome to Ozeco!</h2>
+                  <p className="text-muted-foreground">
+                    Here's your exclusive discount code:
+                  </p>
+                </div>
 
-            <Button
-              onClick={handleClose}
-              className="w-full"
-              data-testid="button-start-shopping"
-            >
-              Start Shopping
-            </Button>
+                <div className="bg-primary/10 p-6 rounded-lg text-center mb-6">
+                  <p className="text-sm text-muted-foreground mb-2">Your Discount Code</p>
+                  <p className="text-3xl font-bold text-primary tracking-wider" data-testid="text-discount-code">
+                    {discountCode}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">Save £10 on your first order</p>
+                </div>
 
-            <p className="text-xs text-muted-foreground text-center">
-              This code has been saved to your account. Check your email for details.
-            </p>
-          </>
-        )}
+                <Button
+                  onClick={handleClose}
+                  className="w-full"
+                  data-testid="button-start-shopping"
+                >
+                  Start Shopping
+                </Button>
+
+                <p className="text-xs text-muted-foreground text-center mt-4">
+                  This code has been saved to your account. Check your email for details.
+                </p>
+              </>
+            )}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
