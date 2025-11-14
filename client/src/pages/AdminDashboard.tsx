@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign } from "lucide-react";
+import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import AdminOrders from "./AdminOrders";
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
@@ -142,8 +144,21 @@ export default function AdminDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Tabs defaultValue="inventory" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="inventory" data-testid="tab-inventory">
+              <Package className="mr-2 h-4 w-4" />
+              Inventory
+            </TabsTrigger>
+            <TabsTrigger value="orders" data-testid="tab-orders">
+              <ShoppingBag className="mr-2 h-4 w-4" />
+              Orders
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="inventory" className="space-y-6">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Products</CardTitle>
@@ -178,8 +193,8 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        {/* Products Table */}
-        <Card>
+            {/* Products Table */}
+            <Card>
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <CardTitle>Product Inventory</CardTitle>
@@ -290,6 +305,12 @@ export default function AdminDashboard() {
             )}
           </CardContent>
         </Card>
+          </TabsContent>
+
+          <TabsContent value="orders">
+            <AdminOrders />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

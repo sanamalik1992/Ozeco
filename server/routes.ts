@@ -328,6 +328,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Checkout and order routes
+  app.post("/api/checkout/shipping", async (req, res) => {
+    try {
+      // Store shipping data in session
+      if (req.session) {
+        (req.session as any).shippingData = req.body;
+      }
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/orders/complete", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      const shippingData = (req.session as any).shippingData;
+
+      if (!shippingData) {
+        return res.status(400).json({ error: "Shipping information not found" });
+      }
+
+      // Get cart items with total calculation (server-side for security)
+      const cartItems = await storage.getCartItems(sessionId);
+      if (cartItems.length === 0) {
+        return res.status(400).json({ error: "Cart is empty" });
+      }
+
+      const totalInPence = cartItems.reduce((sum, item) => {
+        const priceInPence = Math.round(parseFloat(item.product.price) * 100);
+        return sum + (priceInPence * item.quantity);
+      }, 0);
+      const totalAmount = (totalInPence / 100).toFixed(2);
+
+      // Create order
+      const order = await storage.createOrder({
+        sessionId,
+        stripePaymentIntentId: req.body.stripePaymentIntentId || null,
+        paypalOrderId: req.body.paypalOrderId || null,
+        totalAmount,
+        status: "completed",
+        fulfillmentStatus: "pending",
+        paymentMethod: req.body.paymentMethod || "stripe",
+        customerEmail: shippingData.customerEmail,
+        customerName: shippingData.customerName,
+        shippingAddressLine1: shippingData.shippingAddressLine1,
+        shippingAddressLine2: shippingData.shippingAddressLine2 || null,
+        shippingCity: shippingData.shippingCity,
+        shippingPostalCode: shippingData.shippingPostalCode,
+        shippingCountry: shippingData.shippingCountry || "GB",
+        customerPhone: shippingData.customerPhone || null,
+      });
+
+      // Create order items
+      for (const item of cartItems) {
+        await storage.createOrderItem({
+          orderId: order.id,
+          productId: item.product.id,
+          quantity: item.quantity,
+          priceAtTime: item.product.price,
+        });
+      }
+
+      // Clear the cart
+      await storage.clearCart(sessionId);
+
+      // Clear shipping data from session
+      delete (req.session as any).shippingData;
+
+      res.json({ success: true, orderId: order.id });
+    } catch (error: any) {
+      console.error("Order completion error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin orders routes
+  app.get("/api/admin/orders", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const orders = await storage.getAllOrders();
+      res.json(orders);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/admin/orders/:id", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const order = await storage.getOrder(req.params.id);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const items = await storage.getOrderItems(req.params.id);
+      res.json({ ...order, items });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.patch("/api/admin/orders/:id/fulfillment", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const { fulfillmentStatus } = req.body;
+      const order = await storage.updateOrderFulfillment(req.params.id, fulfillmentStatus);
+      
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      res.json(order);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // PayPal payment routes (from PayPal integration blueprint)
   app.get("/paypal/setup", async (req, res) => {
     await loadPaypalDefault(req, res);

@@ -7,10 +7,16 @@ import {
   type InsertCartItem,
   type Review,
   type InsertReview,
+  type Order,
+  type InsertOrder,
+  type OrderItem,
+  type InsertOrderItem,
   users,
   products,
   cartItems,
   reviews,
+  orders,
+  orderItems,
 } from "@shared/schema";
 import { db } from "@db";
 import { eq, and, desc } from "drizzle-orm";
@@ -39,6 +45,14 @@ export interface IStorage {
   // Review methods
   getReviewsByProduct(productId: string): Promise<Review[]>;
   createReview(review: InsertReview): Promise<Review>;
+  
+  // Order methods
+  createOrder(order: InsertOrder): Promise<Order>;
+  createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
+  getAllOrders(): Promise<Order[]>;
+  getOrder(id: string): Promise<Order | undefined>;
+  getOrderItems(orderId: string): Promise<(OrderItem & { product: Product })[]>;
+  updateOrderFulfillment(id: string, fulfillmentStatus: string): Promise<Order | undefined>;
 }
 
 export class DbStorage implements IStorage {
@@ -165,6 +179,47 @@ export class DbStorage implements IStorage {
 
   async createReview(insertReview: InsertReview): Promise<Review> {
     const result = await db.insert(reviews).values(insertReview).returning();
+    return result[0];
+  }
+
+  // Order methods
+  async createOrder(insertOrder: InsertOrder): Promise<Order> {
+    const result = await db.insert(orders).values(insertOrder).returning();
+    return result[0];
+  }
+
+  async createOrderItem(insertOrderItem: InsertOrderItem): Promise<OrderItem> {
+    const result = await db.insert(orderItems).values(insertOrderItem).returning();
+    return result[0];
+  }
+
+  async getAllOrders(): Promise<Order[]> {
+    return await db.select().from(orders).orderBy(desc(orders.createdAt));
+  }
+
+  async getOrder(id: string): Promise<Order | undefined> {
+    const result = await db.select().from(orders).where(eq(orders.id, id));
+    return result[0];
+  }
+
+  async getOrderItems(orderId: string): Promise<(OrderItem & { product: Product })[]> {
+    const result = await db
+      .select()
+      .from(orderItems)
+      .leftJoin(products, eq(orderItems.productId, products.id))
+      .where(eq(orderItems.orderId, orderId));
+    
+    return result.map((row: any) => ({
+      ...row.order_items,
+      product: row.products!,
+    }));
+  }
+
+  async updateOrderFulfillment(id: string, fulfillmentStatus: string): Promise<Order | undefined> {
+    const result = await db.update(orders)
+      .set({ fulfillmentStatus })
+      .where(eq(orders.id, id))
+      .returning();
     return result[0];
   }
 }
