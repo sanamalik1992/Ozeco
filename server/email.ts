@@ -1,7 +1,18 @@
 import { Resend } from 'resend';
 import type { Order, OrderItem, Product } from '@shared/schema';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization of Resend client
+let resend: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  if (!process.env.RESEND_API_KEY) {
+    return null;
+  }
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+}
 
 // Use environment variable for FROM email or default to onboarding@resend.dev for testing
 // In production, you MUST verify your domain or email in Resend dashboard
@@ -13,7 +24,8 @@ interface OrderEmailData extends Order {
 }
 
 export async function sendOrderConfirmationEmail(order: OrderEmailData) {
-  if (!process.env.RESEND_API_KEY) {
+  const resendClient = getResendClient();
+  if (!resendClient) {
     console.log('RESEND_API_KEY not configured, skipping order confirmation email');
     return;
   }
@@ -104,7 +116,7 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
 
   try {
     // Send to customer
-    await resend.emails.send({
+    await resendClient.emails.send({
       from: FROM_EMAIL,
       to: order.customerEmail,
       subject: `Order Confirmation - Ozeco`,
@@ -112,7 +124,7 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
     });
 
     // Send to support
-    await resend.emails.send({
+    await resendClient.emails.send({
       from: FROM_EMAIL,
       to: SUPPORT_EMAIL,
       subject: `New Order: ${order.customerName} - £${parseFloat(order.totalAmount).toFixed(2)}`,
@@ -130,7 +142,8 @@ export async function sendShippingConfirmationEmail(
   order: OrderEmailData,
   trackingNumber: string
 ) {
-  if (!process.env.RESEND_API_KEY) {
+  const resendClient = getResendClient();
+  if (!resendClient) {
     console.log('RESEND_API_KEY not configured, skipping shipping confirmation email');
     return;
   }
@@ -214,7 +227,7 @@ export async function sendShippingConfirmationEmail(
   `;
 
   try {
-    await resend.emails.send({
+    await resendClient.emails.send({
       from: FROM_EMAIL,
       to: order.customerEmail,
       subject: `Your Ozeco Order Has Shipped - Tracking: ${trackingNumber}`,
