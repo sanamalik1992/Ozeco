@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProductSchema, insertCartItemSchema, orders, orderItems, products } from "@shared/schema";
+import { insertProductSchema, insertCartItemSchema, orders, orderItems, products, newsletterSubscribers, insertNewsletterSubscriberSchema } from "@shared/schema";
 import { db } from "@db";
 import { sql, eq, and, gte } from "drizzle-orm";
 import Stripe from "stripe";
@@ -578,6 +578,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/paypal/order/:orderID/capture", async (req, res) => {
     await capturePaypalOrder(req, res);
+  });
+
+  // Newsletter routes
+  app.post("/api/newsletter/subscribe", async (req, res) => {
+    try {
+      const validatedData = insertNewsletterSubscriberSchema.parse(req.body);
+      
+      // Check for existing subscriber
+      const existing = await db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.email, validatedData.email)).limit(1);
+      if (existing.length > 0) {
+        return res.status(400).json({ error: "This email is already subscribed to our newsletter." });
+      }
+      
+      // Generate unique £10 off discount code with timestamp to prevent collisions
+      const timestamp = Date.now().toString(36).toUpperCase();
+      const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+      const discountCode = `OZECO10-${timestamp}-${random}`;
+      
+      const [subscriber] = await db.insert(newsletterSubscribers).values({
+        ...validatedData,
+        discountCode,
+      }).returning();
+
+      res.json({ 
+        success: true, 
+        discountCode,
+        message: "Successfully subscribed to newsletter!"
+      });
+    } catch (error: any) {
+      // Fallback for any database errors
+      res.status(500).json({ error: "Failed to subscribe. Please try again later." });
+    }
+  });
+
+  app.get("/api/admin/newsletter/subscribers", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      // Add pagination support (limit to 100 most recent subscribers by default)
+      const limit = Math.min(parseInt(req.query.limit as string) || 100, 500);
+      const offset = parseInt(req.query.offset as string) || 0;
+
+      const subscribers = await db
+        .select()
+        .from(newsletterSubscribers)
+        .orderBy(sql`created_at DESC`)
+        .limit(limit)
+        .offset(offset);
+        
+      res.json(subscribers);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
   });
 
   // Seed route (development only)

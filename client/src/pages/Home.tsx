@@ -8,6 +8,7 @@ import WhyChooseUs from "@/components/WhyChooseUs";
 import Testimonials from "@/components/Testimonials";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
+import { NewsletterPopup } from "@/components/NewsletterPopup";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <Newsletter />
       </main>
       <Footer />
+      <NewsletterPopup />
     </div>
   );
 }

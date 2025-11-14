@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { type Product } from "@shared/schema";
+import { type Product, type NewsletterSubscriber } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag } from "lucide-react";
+import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -37,6 +37,12 @@ export default function AdminDashboard() {
   // Fetch products
   const { data: products = [], isLoading: productsLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
+  });
+
+  // Fetch newsletter subscribers
+  const { data: newsletterSubscribers = [], isLoading: subscribersLoading } = useQuery<NewsletterSubscriber[]>({
+    queryKey: ["/api/admin/newsletter/subscribers"],
+    enabled: authCheck?.authenticated === true,
   });
 
   // Update product mutation
@@ -170,6 +176,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="orders" data-testid="tab-orders">
               <ShoppingBag className="mr-2 h-4 w-4" />
               Orders
+            </TabsTrigger>
+            <TabsTrigger value="newsletter" data-testid="tab-newsletter">
+              <Mail className="mr-2 h-4 w-4" />
+              Newsletter
             </TabsTrigger>
           </TabsList>
 
@@ -367,6 +377,69 @@ export default function AdminDashboard() {
 
           <TabsContent value="orders">
             <AdminOrders />
+          </TabsContent>
+
+          <TabsContent value="newsletter" className="space-y-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Subscribers</CardTitle>
+                <Mail className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{newsletterSubscribers.length}</div>
+                <p className="text-xs text-muted-foreground">Newsletter signups with discount codes</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Newsletter Subscribers</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {subscribersLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : newsletterSubscribers.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No subscribers yet
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Discount Code</TableHead>
+                        <TableHead>Subscribed Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {newsletterSubscribers.map((subscriber) => (
+                        <TableRow key={subscriber.id} data-testid={`row-subscriber-${subscriber.id}`}>
+                          <TableCell className="font-medium" data-testid={`text-email-${subscriber.id}`}>
+                            {subscriber.email}
+                          </TableCell>
+                          <TableCell data-testid={`text-code-${subscriber.id}`}>
+                            <Badge variant="secondary" className="font-mono">
+                              {subscriber.discountCode}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground" data-testid={`text-date-${subscriber.id}`}>
+                            {new Date(subscriber.createdAt).toLocaleDateString('en-GB', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>
