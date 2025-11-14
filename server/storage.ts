@@ -31,8 +31,8 @@ export interface IStorage {
   // Cart methods
   getCartItems(sessionId: string): Promise<(CartItem & { product: Product })[]>;
   addToCart(item: InsertCartItem): Promise<CartItem>;
-  updateCartItemQuantity(id: string, quantity: number): Promise<CartItem | undefined>;
-  removeFromCart(id: string): Promise<void>;
+  updateCartItemQuantity(id: string, quantity: number, sessionId: string): Promise<CartItem | undefined>;
+  removeFromCart(id: string, sessionId: string): Promise<boolean>;
   clearCart(sessionId: string): Promise<void>;
   
   // Review methods
@@ -109,7 +109,7 @@ export class DbStorage implements IStorage {
 
     if (existing.length > 0) {
       // Update quantity
-      const newQuantity = existing[0].quantity + item.quantity;
+      const newQuantity = existing[0].quantity + (item.quantity || 1);
       const updated = await db
         .update(cartItems)
         .set({ quantity: newQuantity })
@@ -122,17 +122,23 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async updateCartItemQuantity(id: string, quantity: number): Promise<CartItem | undefined> {
+  async updateCartItemQuantity(id: string, quantity: number, sessionId: string): Promise<CartItem | undefined> {
+    // SECURITY: Only update if cart item belongs to this session
     const result = await db
       .update(cartItems)
       .set({ quantity })
-      .where(eq(cartItems.id, id))
+      .where(and(eq(cartItems.id, id), eq(cartItems.sessionId, sessionId)))
       .returning();
     return result[0];
   }
 
-  async removeFromCart(id: string): Promise<void> {
-    await db.delete(cartItems).where(eq(cartItems.id, id));
+  async removeFromCart(id: string, sessionId: string): Promise<boolean> {
+    // SECURITY: Only delete if cart item belongs to this session
+    const result = await db
+      .delete(cartItems)
+      .where(and(eq(cartItems.id, id), eq(cartItems.sessionId, sessionId)))
+      .returning();
+    return result.length > 0;
   }
 
   async clearCart(sessionId: string): Promise<void> {

@@ -1,72 +1,101 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Product } from "@shared/schema";
 
-interface CartItem {
-  product: Product;
+interface CartItemWithProduct {
+  id: string;
+  productId: string;
   quantity: number;
+  sessionId: string;
+  createdAt: string;
+  product: Product;
 }
 
 interface CartContextType {
-  items: CartItem[];
-  addItem: (product: Product, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
+  items: CartItemWithProduct[];
+  addItem: (productId: string, quantity?: number) => Promise<void>;
+  removeItem: (cartItemId: string) => Promise<void>;
+  updateQuantity: (cartItemId: string, quantity: number) => Promise<void>;
+  clearCart: () => Promise<void>;
   totalItems: number;
   totalPrice: number;
+  isLoading: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    return saved ? JSON.parse(saved) : [];
+  const { data: items = [], isLoading } = useQuery<CartItemWithProduct[]>({
+    queryKey: ["/api/cart"],
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(items));
-  }, [items]);
+  const addItemMutation = useMutation({
+    mutationFn: async ({ productId, quantity }: { productId: string; quantity: number }) => {
+      return apiRequest("POST", "/api/cart", { productId, quantity });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    },
+  });
 
-  const addItem = (product: Product, quantity = 1) => {
-    setItems(current => {
-      const existing = current.find(item => item.product.id === product.id);
-      if (existing) {
-        return current.map(item =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      return [...current, { product, quantity }];
-    });
+  const removeItemMutation = useMutation({
+    mutationFn: async (cartItemId: string) => {
+      return apiRequest("DELETE", `/api/cart/${cartItemId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    },
+  });
+
+  const updateQuantityMutation = useMutation({
+    mutationFn: async ({ cartItemId, quantity }: { cartItemId: string; quantity: number }) => {
+      return apiRequest("PATCH", `/api/cart/${cartItemId}`, { quantity });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    },
+  });
+
+  const clearCartMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("DELETE", "/api/cart");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    },
+  });
+
+  const addItem = async (productId: string, quantity = 1) => {
+    await addItemMutation.mutateAsync({ productId, quantity });
   };
 
-  const removeItem = (productId: string) => {
-    setItems(current => current.filter(item => item.product.id !== productId));
+  const removeItem = async (cartItemId: string) => {
+    await removeItemMutation.mutateAsync(cartItemId);
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = async (cartItemId: string, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(productId);
+      await removeItem(cartItemId);
       return;
     }
-    setItems(current =>
-      current.map(item =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
-    );
+    await updateQuantityMutation.mutateAsync({ cartItemId, quantity });
   };
 
-  const clearCart = () => {
-    setItems([]);
+  const clearCart = async () => {
+    await clearCartMutation.mutateAsync();
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + parseFloat(item.product.price) * item.quantity,
-    0
-  );
+  
+  // Calculate total using integer pence to avoid floating-point errors
+  const totalInPence = items.reduce((sum, item) => {
+    const priceInPence = Math.round(parseFloat(item.product.price) * 100);
+    return sum + (priceInPence * item.quantity);
+  }, 0);
+  const totalPrice = totalInPence / 100;
 
   return (
     <CartContext.Provider
@@ -78,6 +107,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         totalItems,
         totalPrice,
+        isLoading,
       }}
     >
       {children}

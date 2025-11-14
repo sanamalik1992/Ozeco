@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useCart } from "@/lib/cart-context";
 import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -12,16 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
 
-const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
-
 function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
-  const { clearCart } = useCart();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +27,8 @@ function CheckoutForm() {
 
     setIsProcessing(true);
 
+    // Stripe will redirect to return_url on success, so we don't handle success here
+    // The order-confirmation page will clear the cart after verifying payment
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
@@ -39,6 +36,7 @@ function CheckoutForm() {
       },
     });
 
+    // Only handle errors - success redirects to order-confirmation
     if (error) {
       toast({
         title: "Payment Failed",
@@ -46,13 +44,6 @@ function CheckoutForm() {
         variant: "destructive",
       });
       setIsProcessing(false);
-    } else {
-      clearCart();
-      toast({
-        title: "Payment Successful",
-        description: "Thank you for your order!",
-      });
-      setLocation("/order-confirmation");
     }
   };
 
@@ -80,26 +71,58 @@ function CheckoutForm() {
 }
 
 export default function Checkout() {
-  const { items, totalPrice } = useCart();
+  const { items, isLoading: cartLoading } = useCart();
   const [, setLocation] = useLocation();
   const [clientSecret, setClientSecret] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [stripePublicKey, setStripePublicKey] = useState<string | null>(null);
+
+  // Load Stripe publishable key from backend at runtime
+  const stripePromise = useMemo(() => 
+    stripePublicKey ? loadStripe(stripePublicKey) : null,
+    [stripePublicKey]
+  );
+
+  // Calculate total using integer cents to avoid floating-point errors
+  const totalInPence = items.reduce((sum, item) => {
+    const priceInPence = Math.round(parseFloat(item.product.price) * 100);
+    return sum + (priceInPence * item.quantity);
+  }, 0);
+  const totalPrice = totalInPence / 100;
+
+  // Fetch Stripe key from backend on mount
+  useEffect(() => {
+    fetch("/api/config/stripe-key", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setStripePublicKey(data.publishableKey);
+      })
+      .catch((error) => {
+        console.error("Error fetching Stripe config:", error);
+      });
+  }, []);
 
   useEffect(() => {
-    if (items.length === 0) {
-      setLocation("/shop");
+    // Wait for cart and Stripe config to load
+    if (cartLoading || stripePublicKey === null) {
       return;
     }
 
-    // Create PaymentIntent
-    apiRequest("POST", "/api/create-payment-intent", { 
-      amount: totalPrice,
-      items: items.map(item => ({
-        productId: item.product.id,
-        quantity: item.quantity,
-        price: parseFloat(item.product.price)
-      }))
-    })
+    if (items.length === 0) {
+      setLocation("/cart");
+      return;
+    }
+
+    if (!stripePublicKey) {
+      // Stripe not configured, skip payment intent creation
+      setIsLoading(false);
+      return;
+    }
+
+    // Create PaymentIntent (backend calculates amount from cart)
+    apiRequest("POST", "/api/create-payment-intent", {})
       .then((res) => res.json())
       .then((data) => {
         setClientSecret(data.clientSecret);
@@ -109,10 +132,34 @@ export default function Checkout() {
         console.error("Error creating payment intent:", error);
         setIsLoading(false);
       });
-  }, [items, totalPrice, setLocation]);
+  }, [items, setLocation, cartLoading, stripePublicKey]);
 
+  // Show loading state while cart is loading
+  if (cartLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show message while redirecting to cart (when empty)
   if (items.length === 0) {
-    return null;
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-muted-foreground">Redirecting to cart...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -175,22 +222,28 @@ export default function Checkout() {
                   <CardTitle>Payment Details</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {!stripePromise ? (
+                  {!stripePublicKey ? (
                     <div className="text-center py-8">
-                      <p className="text-muted-foreground mb-4">Payment processing is not configured yet.</p>
-                      <p className="text-sm text-muted-foreground">Please contact support to complete your order.</p>
+                      <p className="font-semibold text-lg mb-2">Payment System Not Configured</p>
+                      <p className="text-muted-foreground mb-4">
+                        Stripe payment processing is not yet set up for this store.
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Please contact us at <a href="mailto:support@ozeco.co.uk" className="text-primary underline">support@ozeco.co.uk</a> to complete your order.
+                      </p>
                     </div>
                   ) : isLoading ? (
                     <div className="flex items-center justify-center py-12">
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     </div>
-                  ) : clientSecret ? (
+                  ) : clientSecret && stripePromise ? (
                     <Elements stripe={stripePromise} options={{ clientSecret }}>
                       <CheckoutForm />
                     </Elements>
                   ) : (
                     <div className="text-center py-8">
-                      <p className="text-destructive">Error loading payment form. Please try again.</p>
+                      <p className="text-destructive mb-2">Error loading payment form.</p>
+                      <p className="text-sm text-muted-foreground">Please try again or contact support.</p>
                     </div>
                   )}
                 </CardContent>

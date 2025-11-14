@@ -51,6 +51,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/products", async (req, res) => {
     try {
       const validated = insertProductSchema.parse(req.body);
+      
+      // SECURITY: Validate product price is a valid positive decimal
+      const price = parseFloat(validated.price);
+      if (isNaN(price) || price <= 0 || price > 999999.99) {
+        return res.status(400).json({ error: "Invalid product price. Must be a positive number up to 999,999.99" });
+      }
+      if (validated.originalPrice) {
+        const originalPrice = parseFloat(validated.originalPrice);
+        if (isNaN(originalPrice) || originalPrice <= 0 || originalPrice > 999999.99) {
+          return res.status(400).json({ error: "Invalid original price. Must be a positive number up to 999,999.99" });
+        }
+      }
+      
       const product = await storage.createProduct(validated);
       res.status(201).json(product);
     } catch (error: any) {
@@ -92,6 +105,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         sessionId,
       });
+      
+      // SECURITY: Enforce quantity limits on incoming quantity
+      if (validated.quantity < 1 || validated.quantity > 99) {
+        return res.status(400).json({ error: "Quantity must be between 1 and 99" });
+      }
+      
+      // SECURITY: Check if adding this quantity to existing cart item would exceed limit
+      const existingCartItems = await storage.getCartItems(sessionId);
+      const existingItem = existingCartItems.find(item => item.productId === validated.productId);
+      if (existingItem) {
+        const newTotal = existingItem.quantity + validated.quantity;
+        if (newTotal > 99) {
+          return res.status(400).json({ 
+            error: `Cannot add ${validated.quantity} items. Maximum quantity per product is 99. You already have ${existingItem.quantity} in your cart.` 
+          });
+        }
+      }
+      
       const item = await storage.addToCart(validated);
       res.status(201).json(item);
     } catch (error: any) {
@@ -101,13 +132,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/cart/:id", async (req, res) => {
     try {
-      const { quantity } = req.body;
-      if (typeof quantity !== "number" || quantity < 1) {
-        return res.status(400).json({ error: "Invalid quantity" });
+      if (!req.session) {
+        return res.status(500).json({ error: "Session not initialized" });
       }
-      const item = await storage.updateCartItemQuantity(req.params.id, quantity);
+      const sessionId = req.session.id || req.sessionID;
+      const { quantity } = req.body;
+      
+      // SECURITY: Validate quantity bounds
+      if (typeof quantity !== "number" || quantity < 1 || quantity > 99) {
+        return res.status(400).json({ error: "Quantity must be between 1 and 99" });
+      }
+      
+      // SECURITY: Validate cart item belongs to current session
+      const item = await storage.updateCartItemQuantity(req.params.id, quantity, sessionId);
       if (!item) {
-        return res.status(404).json({ error: "Cart item not found" });
+        return res.status(404).json({ error: "Cart item not found or access denied" });
       }
       res.json(item);
     } catch (error: any) {
@@ -117,7 +156,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/cart/:id", async (req, res) => {
     try {
-      await storage.removeFromCart(req.params.id);
+      if (!req.session) {
+        return res.status(500).json({ error: "Session not initialized" });
+      }
+      const sessionId = req.session.id || req.sessionID;
+      
+      // SECURITY: Validate cart item belongs to current session
+      const success = await storage.removeFromCart(req.params.id, sessionId);
+      if (!success) {
+        return res.status(404).json({ error: "Cart item not found or access denied" });
+      }
       res.status(204).send();
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -133,6 +181,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.clearCart(sessionId);
       res.status(204).send();
     } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get Stripe publishable key (for runtime configuration)
+  app.get("/api/config/stripe-key", async (req, res) => {
+    // Use runtime environment variable (not build-time VITE_ prefix)
+    const stripePublicKey = process.env.STRIPE_PUBLISHABLE_KEY;
+    res.json({ 
+      publishableKey: stripePublicKey || null 
+    });
+  });
+
+  // Stripe payment routes
+  app.post("/api/create-payment-intent", async (req, res) => {
+    try {
+      const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+      
+      if (!stripeSecretKey) {
+        return res.status(400).json({ 
+          error: "Stripe is not configured. Please contact support." 
+        });
+      }
+
+      if (!req.session) {
+        return res.status(500).json({ error: "Session not initialized" });
+      }
+
+      // Use valid Stripe API version (YYYY-MM-DD format)
+      const stripe = new Stripe(stripeSecretKey);
+
+      const sessionId = req.session.id || req.sessionID;
+
+      // SECURITY: Recalculate total from server-side cart (never trust client amount!)
+      const cartItems = await storage.getCartItems(sessionId);
+
+      if (cartItems.length === 0) {
+        return res.status(400).json({ error: "Cart is empty" });
+      }
+
+      // Calculate total using integer pence to avoid floating-point errors
+      const totalInPence = cartItems.reduce((sum, item) => {
+        const priceInPence = Math.round(parseFloat(item.product.price) * 100);
+        return sum + (priceInPence * item.quantity);
+      }, 0);
+
+      // Create a PaymentIntent with the server-calculated amount
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalInPence, // Amount already in pence
+        currency: "gbp",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        metadata: {
+          sessionId,
+          itemCount: cartItems.length.toString(),
+        },
+      });
+
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+      });
+    } catch (error: any) {
+      console.error("Stripe error:", error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -234,44 +347,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Database seeded successfully", count: productData.length });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Stripe payment route for checkout
-  app.post("/api/create-payment-intent", async (req, res) => {
-    try {
-      const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-      
-      if (!stripeSecretKey) {
-        return res.status(500).json({ 
-          error: "Stripe is not configured. Please set STRIPE_SECRET_KEY." 
-        });
-      }
-
-      const stripe = new Stripe(stripeSecretKey, {
-        apiVersion: "2025-10-29.clover",
-      });
-
-      const { amount } = req.body;
-
-      if (!amount || amount <= 0) {
-        return res.status(400).json({ error: "Invalid amount" });
-      }
-
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to pence
-        currency: "gbp",
-        automatic_payment_methods: {
-          enabled: true,
-        },
-      });
-
-      res.json({ clientSecret: paymentIntent.client_secret });
-    } catch (error: any) {
-      console.error("Stripe error:", error);
-      res.status(500).json({ 
-        error: "Error creating payment intent: " + error.message 
-      });
     }
   });
 

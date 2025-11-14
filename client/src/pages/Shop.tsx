@@ -29,14 +29,22 @@ export default function Shop() {
     setSelectedBrand(brandParam);
   }, [search]);
 
-  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
+  const handleAddToCart = async (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem(product);
-    toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
-    });
+    try {
+      await addItem(product.id);
+      toast({
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const { data: products = [], isLoading, isError } = useQuery<Product[]>({

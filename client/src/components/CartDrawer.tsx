@@ -40,7 +40,7 @@ export default function CartDrawer() {
             <>
               <div className="flex-1 overflow-y-auto space-y-4">
                 {items.map((item) => (
-                  <div key={item.product.id} className="flex gap-4" data-testid={`cart-item-${item.product.slug}`}>
+                  <div key={item.id} className="flex gap-4" data-testid={`cart-item-${item.product.slug}`}>
                     <img
                       src={item.product.image}
                       alt={item.product.name}
@@ -55,7 +55,7 @@ export default function CartDrawer() {
                             size="icon"
                             variant="ghost"
                             className="h-7 w-7"
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             data-testid={`button-decrease-${item.product.slug}`}
                           >
                             <Minus className="h-3 w-3" />
@@ -67,7 +67,7 @@ export default function CartDrawer() {
                             size="icon"
                             variant="ghost"
                             className="h-7 w-7"
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             data-testid={`button-increase-${item.product.slug}`}
                           >
                             <Plus className="h-3 w-3" />
@@ -77,7 +77,7 @@ export default function CartDrawer() {
                           size="icon"
                           variant="ghost"
                           className="h-7 w-7"
-                          onClick={() => removeItem(item.product.id)}
+                          onClick={() => removeItem(item.id)}
                           data-testid={`button-remove-${item.product.slug}`}
                         >
                           <X className="h-4 w-4" />

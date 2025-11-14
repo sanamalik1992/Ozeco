@@ -83,3 +83,37 @@ export const insertReviewSchema = createInsertSchema(reviews).omit({
 
 export type InsertReview = z.infer<typeof insertReviewSchema>;
 export type Review = typeof reviews.$inferSelect;
+
+export const orders = pgTable("orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: text("session_id").notNull(),
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  status: text("status").notNull().default("pending"),
+  customerEmail: text("customer_email"),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const orderItems = pgTable("order_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull().references(() => orders.id),
+  productId: varchar("product_id").notNull().references(() => products.id),
+  quantity: integer("quantity").notNull(),
+  priceAtTime: decimal("price_at_time", { precision: 10, scale: 2 }).notNull(),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const insertOrderSchema = createInsertSchema(orders).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertOrder = z.infer<typeof insertOrderSchema>;
+export type Order = typeof orders.$inferSelect;
+export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
+export type OrderItem = typeof orderItems.$inferSelect;

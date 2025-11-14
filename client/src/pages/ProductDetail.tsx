@@ -34,13 +34,21 @@ export default function ProductDetail() {
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (product) {
-      addItem(product);
-      toast({
-        title: "Added to cart",
-        description: `${product.name} has been added to your cart.`,
-      });
+      try {
+        await addItem(product.id);
+        toast({
+          title: "Added to cart",
+          description: `${product.name} has been added to your cart.`,
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to add item to cart. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 

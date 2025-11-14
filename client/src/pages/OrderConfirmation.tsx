@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useCart } from "@/lib/cart-context";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +8,14 @@ import { CheckCircle, Package, Truck } from "lucide-react";
 import { Link } from "wouter";
 
 export default function OrderConfirmation() {
+  const { clearCart } = useCart();
+
+  // Clear cart when order confirmation page loads (after successful payment redirect)
+  useEffect(() => {
+    clearCart().catch((error) => {
+      console.error("Failed to clear cart:", error);
+    });
+  }, [clearCart]);
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
