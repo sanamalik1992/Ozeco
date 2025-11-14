@@ -259,6 +259,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin authentication routes
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { password } = req.body;
+      const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+
+      if (password === adminPassword) {
+        // Set admin flag in session
+        if (req.session) {
+          (req.session as any).isAdmin = true;
+        }
+        res.json({ success: true });
+      } else {
+        res.status(401).json({ error: "Invalid password" });
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/admin/logout", async (req, res) => {
+    try {
+      if (req.session) {
+        (req.session as any).isAdmin = false;
+      }
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/admin/check", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      res.json({ authenticated: isAdmin });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin product management routes
+  app.patch("/api/admin/products/:id", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const { id } = req.params;
+      const updates = req.body;
+
+      // Validate that we have some updates
+      if (Object.keys(updates).length === 0) {
+        return res.status(400).json({ error: "No updates provided" });
+      }
+
+      const product = await storage.updateProduct(id, updates);
+      
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      res.json(product);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // PayPal payment routes (from PayPal integration blueprint)
   app.get("/paypal/setup", async (req, res) => {
     await loadPaypalDefault(req, res);
