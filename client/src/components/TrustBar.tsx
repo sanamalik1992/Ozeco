@@ -46,11 +46,11 @@ export default function TrustBar() {
           {trustSignals.map((signal, index) => (
             <div
               key={index}
-              className="flex items-center justify-center gap-2 text-sm"
+              className="flex items-start justify-start md:items-center md:justify-center gap-2 text-sm text-left md:text-center"
               data-testid={`trust-signal-${index}`}
             >
               <signal.icon className="h-4 w-4 text-primary flex-shrink-0" />
-              <span className="text-muted-foreground">{signal.text}</span>
+              <span className="text-muted-foreground leading-snug">{signal.text}</span>
             </div>
           ))}
         </div>
