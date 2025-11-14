@@ -42,6 +42,11 @@ The platform is built with a modern web stack designed for performance and scala
 - **Shopping Cart System**: Session-based with full CRUD operations via API. Includes server-side total calculation, input validation, and security features to prevent fraud.
 - **Checkout & Order Management**: Multi-step checkout process, Stripe (including Shop Pay) and PayPal integrations, atomic stock decrement during order completion, and an admin dashboard for inventory and order management with fulfillment tracking and tracking number support.
 - **Inventory Management**: Dual-field system (`stockQuantity` and `inStock`) with atomic stock decrements, low stock warnings, and overselling prevention.
+- **Newsletter System**: Popup appears 1 second after first visit, offers £10 discount code, generates unique timestamp-based codes (format: OZECO10-{timestamp}-{random}), with duplicate email protection and admin dashboard integration.
+- **Policy Pages**: Complete legal pages including Returns Policy (30-day returns), Shipping Policy (1-day dispatch, 2-3 day delivery), Privacy Policy (GDPR-compliant), Terms of Service, and comprehensive FAQ (15+ questions with accordion UI).
+- **WhatsApp Chat**: Floating button in bottom-right corner with hover-to-expand text, pulse animation, and pre-filled message directing to business WhatsApp (+44 7446 610660).
+- **Social Media Integration**: Instagram and Facebook links in footer with hover effects.
+- **Payment Display**: Footer showcases accepted payment methods (Stripe, PayPal, Credit/Debit Cards) with icons.
 
 ### System Design Choices
 - **API Routes**: Standard RESTful API for products, cart management, and reviews.
@@ -49,7 +54,8 @@ The platform is built with a modern web stack designed for performance and scala
     - `products`: Stores detailed e-bike information including unique identifiers, pricing, descriptions, images, technical specs, and inventory status (`inStock`, `stockQuantity`).
     - `cart_items`: Links session IDs to product IDs and quantities.
     - `reviews`: Stores customer feedback including product ID, customer name, rating, title, comment, and verification status.
-    - `orders` & `order_items`: For tracking completed purchases.
+    - `orders` & `order_items`: For tracking completed purchases with shipping addresses and tracking numbers.
+    - `newsletter_subscribers`: Stores subscriber emails, discount codes, and subscription timestamps.
 
 ## External Dependencies
 - **Database**: PostgreSQL (via Neon)
