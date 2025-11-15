@@ -1,0 +1,183 @@
+[
+  {
+    "slug": "eleglide-m1-plus",
+    "images": [
+      "/products/eleglide-m1-plus/1.png",
+      "/products/eleglide-m1-plus/2.png",
+      "/products/eleglide-m1-plus/3.png",
+      "/products/eleglide-m1-plus/4.png",
+      "/products/eleglide-m1-plus/5.png",
+      "/products/eleglide-m1-plus/6.png",
+      "/products/eleglide-m1-plus/7.png",
+      "/products/eleglide-m1-plus/8.png"
+    ]
+  },
+  {
+    "slug": "eleglide-m2",
+    "images": [
+      "/products/eleglide-m2/1.png",
+      "/products/eleglide-m2/2.jpg",
+      "/products/eleglide-m2/3.jpg",
+      "/products/eleglide-m2/4.jpg",
+      "/products/eleglide-m2/5.png",
+      "/products/eleglide-m2/6.png",
+      "/products/eleglide-m2/7.jpg",
+      "/products/eleglide-m2/8.png"
+    ]
+  },
+  {
+    "slug": "engwe-engine-x",
+    "images": [
+      "/products/engwe-engine-x/1.png",
+      "/products/engwe-engine-x/2.png",
+      "/products/engwe-engine-x/3.png",
+      "/products/engwe-engine-x/4.png",
+      "/products/engwe-engine-x/5.png",
+      "/products/engwe-engine-x/6.png",
+      "/products/engwe-engine-x/7.png",
+      "/products/engwe-engine-x/8.png"
+    ]
+  },
+  {
+    "slug": "engwe-engine-pro-2-0",
+    "images": [
+      "/products/engwe-engine-pro-2-0/1.png",
+      "/products/engwe-engine-pro-2-0/2.png",
+      "/products/engwe-engine-pro-2-0/3.png",
+      "/products/engwe-engine-pro-2-0/4.png",
+      "/products/engwe-engine-pro-2-0/5.png",
+      "/products/engwe-engine-pro-2-0/6.png"
+    ]
+  },
+  {
+    "slug": "engwe-l20",
+    "images": [
+      "/products/engwe-l20/1.webp",
+      "/products/engwe-l20/2.webp"
+    ]
+  },
+  {
+    "slug": "engwe-t14",
+    "images": [
+      "/products/engwe-t14/1.jpg",
+      "/products/engwe-t14/2.png",
+      "/products/engwe-t14/3.png",
+      "/products/engwe-t14/4.png",
+      "/products/engwe-t14/5.png",
+      "/products/engwe-t14/6.png",
+      "/products/engwe-t14/7.png",
+      "/products/engwe-t14/8.png"
+    ]
+  },
+  {
+    "slug": "dyu-a1f-pro",
+    "images": [
+      "/products/dyu-a1f-pro/1.png",
+      "/products/dyu-a1f-pro/2.png",
+      "/products/dyu-a1f-pro/3.png",
+      "/products/dyu-a1f-pro/4.png",
+      "/products/dyu-a1f-pro/5.png",
+      "/products/dyu-a1f-pro/6.png",
+      "/products/dyu-a1f-pro/7.png",
+      "/products/dyu-a1f-pro/8.png"
+    ]
+  },
+  {
+    "slug": "dyu-d3f",
+    "images": [
+      "/products/dyu-d3f/1.jpg",
+      "/products/dyu-d3f/2.jpg",
+      "/products/dyu-d3f/3.jpg",
+      "/products/dyu-d3f/4.jpg",
+      "/products/dyu-d3f/5.jpg",
+      "/products/dyu-d3f/6.jpg"
+    ]
+  },
+  {
+    "slug": "duotts-c29",
+    "images": [
+      "/products/duotts-c29/1.png",
+      "/products/duotts-c29/2.png",
+      "/products/duotts-c29/3.png",
+      "/products/duotts-c29/4.png",
+      "/products/duotts-c29/5.png",
+      "/products/duotts-c29/6.png",
+      "/products/duotts-c29/7.png",
+      "/products/duotts-c29/8.png"
+    ]
+  },
+  {
+    "slug": "duotts-s26",
+    "images": [
+      "/products/duotts-s26/1.png",
+      "/products/duotts-s26/2.png",
+      "/products/duotts-s26/3.png",
+      "/products/duotts-s26/4.png",
+      "/products/duotts-s26/5.png",
+      "/products/duotts-s26/6.png",
+      "/products/duotts-s26/7.png",
+      "/products/duotts-s26/8.png"
+    ]
+  },
+  {
+    "slug": "touroll-b1",
+    "images": [
+      "/products/touroll-b1/1.png",
+      "/products/touroll-b1/2.png",
+      "/products/touroll-b1/3.png",
+      "/products/touroll-b1/4.jpg",
+      "/products/touroll-b1/5.jpg",
+      "/products/touroll-b1/6.jpg",
+      "/products/touroll-b1/7.png",
+      "/products/touroll-b1/8.png"
+    ]
+  },
+  {
+    "slug": "touroll-j1",
+    "images": [
+      "/products/touroll-j1/1.png",
+      "/products/touroll-j1/2.png",
+      "/products/touroll-j1/3.png",
+      "/products/touroll-j1/4.png",
+      "/products/touroll-j1/5.png",
+      "/products/touroll-j1/6.png",
+      "/products/touroll-j1/7.png",
+      "/products/touroll-j1/8.png"
+    ]
+  },
+  {
+    "slug": "touroll-j1-st",
+    "images": [
+      "/products/touroll-j1-st/1.png",
+      "/products/touroll-j1-st/2.png",
+      "/products/touroll-j1-st/3.png",
+      "/products/touroll-j1-st/4.png",
+      "/products/touroll-j1-st/5.png",
+      "/products/touroll-j1-st/6.png",
+      "/products/touroll-j1-st/7.png",
+      "/products/touroll-j1-st/8.png"
+    ]
+  },
+  {
+    "slug": "touroll-u1",
+    "images": [
+      "/products/touroll-u1/1.jpg",
+      "/products/touroll-u1/2.png",
+      "/products/touroll-u1/3.png",
+      "/products/touroll-u1/4.jpg",
+      "/products/touroll-u1/5.jpg",
+      "/products/touroll-u1/6.jpg",
+      "/products/touroll-u1/7.jpg",
+      "/products/touroll-u1/8.jpg"
+    ]
+  },
+  {
+    "slug": "fiido-d3-pro",
+    "images": [
+      "/products/fiido-d3-pro/1.jpg",
+      "/products/fiido-d3-pro/2.jpg",
+      "/products/fiido-d3-pro/3.jpg",
+      "/products/fiido-d3-pro/4.jpg"
+    ]
+  }
+]
