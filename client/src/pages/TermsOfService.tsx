@@ -94,7 +94,7 @@ export default function TermsOfService() {
               <p className="text-muted-foreground">
                 All Electric bikes are covered by the manufacturer's warranty. Warranty periods vary 
                 by brand and component. Warranty does not cover normal wear and tear, misuse, accidents, 
-                or unauthorized modifications.
+                or unauthorised modifications.
               </p>
             </section>
 
@@ -141,7 +141,7 @@ export default function TermsOfService() {
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
                 <li>Use our website for any unlawful purpose</li>
-                <li>Attempt to gain unauthorized access to our systems</li>
+                <li>Attempt to gain unauthorised access to our systems</li>
                 <li>Transmit viruses or malicious code</li>
                 <li>Engage in fraudulent activity</li>
                 <li>Impersonate any person or entity</li>

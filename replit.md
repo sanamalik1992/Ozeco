@@ -5,6 +5,9 @@ Ozeco.co.uk is a UK-based e-commerce platform specializing in premium Electric b
 
 ## User Preferences
 - Always use "Electric bikes" with capital E for branding.
+- Use UK English spelling throughout the site (e.g., "authorised" not "authorized", "organised" not "organized").
+- Business phone number: 03333398590 (displayed on all pages and footer).
+- WhatsApp contact: +44 7446 610660 (for chat functionality only).
 - The primary color should be a vibrant green (HSL 142 85% 42%).
 - Use orange/red badges for urgency and sales.
 - Include an autoplaying HTML5 video on the hero banner.
@@ -44,7 +47,7 @@ The platform is built with a modern web stack designed for performance and scala
 - **Inventory Management**: Dual-field system (`stockQuantity` and `inStock`) with atomic stock decrements, low stock warnings, and overselling prevention.
 - **Newsletter System**: Popup appears 1 second after first visit, offers £10 discount code, generates unique timestamp-based codes (format: OZECO10-{timestamp}-{random}), with duplicate email protection and admin dashboard integration.
 - **Policy Pages**: Complete legal pages including Returns Policy (14-day returns), Shipping Policy (1-day dispatch, 2-3 day delivery), Privacy Policy (GDPR-compliant), Terms of Service, and comprehensive FAQ (15+ questions with accordion UI).
-- **WhatsApp Chat**: Floating button in bottom-right corner with hover-to-expand text, pulse animation, and pre-filled message directing to business WhatsApp (+44 7446 610660).
+- **WhatsApp Chat**: Floating button in bottom-right corner with hover-to-expand text, pulse animation, and pre-filled message directing to business WhatsApp (+44 7446 610660). Note: The displayed business phone number is 03333398590 on all pages, while WhatsApp uses +44 7446 610660.
 - **Social Media Integration**: Instagram and Facebook links in footer with hover effects.
 - **Payment Display**: Footer showcases accepted payment methods (Stripe, PayPal, Credit/Debit Cards) with icons.
 - **Search Functionality**: Live autocomplete search with dropdown showing product images, names, brands, and prices. Searches across product names, brands, descriptions, and categories.

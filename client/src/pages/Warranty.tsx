@@ -68,7 +68,7 @@ export default function Warranty() {
               <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
                 <li>Normal wear and tear items (brake pads, tyres, cables, grips)</li>
                 <li>Damage from accidents, misuse, or improper maintenance</li>
-                <li>Modifications or repairs done by unauthorized technicians</li>
+                <li>Modifications or repairs done by unauthorised technicians</li>
                 <li>Water damage from improper use or storage</li>
                 <li>Cosmetic damage that doesn't affect functionality</li>
                 <li>Battery degradation within normal operating parameters (less than 20% capacity loss)</li>
@@ -153,7 +153,7 @@ export default function Warranty() {
               <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
                 <li>Keep your proof of purchase (order confirmation email)</li>
                 <li>Follow the manufacturer's maintenance schedule in your user manual</li>
-                <li>Use only authorized parts and accessories</li>
+                <li>Use only authorised parts and accessories</li>
                 <li>Have major repairs performed by qualified technicians</li>
                 <li>Store your bike properly when not in use (indoors, dry conditions)</li>
               </ul>

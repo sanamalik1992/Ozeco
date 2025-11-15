@@ -54,8 +54,8 @@ export default function PrivacyPolicy() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">Data Security</h2>
               <p className="text-muted-foreground">
-                We implement appropriate technical and organizational measures to protect your personal 
-                information against unauthorized access, alteration, disclosure, or destruction. Payment 
+                We implement appropriate technical and organisational measures to protect your personal 
+                information against unauthorised access, alteration, disclosure, or destruction. Payment 
                 information is encrypted and processed through secure payment gateways (Stripe and PayPal). 
                 We never store your complete credit card details on our servers.
               </p>
