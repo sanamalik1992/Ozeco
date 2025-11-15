@@ -737,6 +737,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Referral routes
+  app.post("/api/referral/create", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email || !email.includes('@')) {
+        return res.status(400).json({ error: "Valid email required" });
+      }
+      
+      // Check if user already has a referral code
+      const existing = await storage.getReferralsByEmail(email);
+      if (existing.length > 0) {
+        return res.json(existing[0]);
+      }
+      
+      // Generate unique referral code
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+      const code = `OZECO${timestamp}${random}`;
+      
+      const referral = await storage.createReferralCode({
+        code,
+        referrerEmail: email,
+        uses: 0,
+        discountAmount: 20,
+      });
+      
+      res.status(201).json(referral);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/referral/check/:code", async (req, res) => {
+    try {
+      const referral = await storage.getReferralCode(req.params.code);
+      if (!referral) {
+        return res.status(404).json({ error: "Invalid referral code" });
+      }
+      res.json({ valid: true, discountAmount: referral.discountAmount });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/referral/stats/:email", async (req, res) => {
+    try {
+      const referrals = await storage.getReferralsByEmail(req.params.email);
+      if (referrals.length === 0) {
+        return res.status(404).json({ error: "No referral codes found" });
+      }
+      res.json(referrals);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Blog routes
   app.get("/api/blog", async (req, res) => {
     try {

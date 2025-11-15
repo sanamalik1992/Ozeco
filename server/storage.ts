@@ -13,6 +13,8 @@ import {
   type InsertOrderItem,
   type BlogPost,
   type InsertBlogPost,
+  type ReferralCode,
+  type InsertReferralCode,
   users,
   products,
   cartItems,
@@ -20,6 +22,7 @@ import {
   orders,
   orderItems,
   blogPosts,
+  referralCodes,
 } from "@shared/schema";
 import { db } from "@db";
 import { eq, and, desc } from "drizzle-orm";
@@ -64,6 +67,12 @@ export interface IStorage {
   getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
   createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
   incrementBlogViews(id: string): Promise<BlogPost | undefined>;
+  
+  // Referral methods
+  createReferralCode(referral: InsertReferralCode): Promise<ReferralCode>;
+  getReferralCode(code: string): Promise<ReferralCode | undefined>;
+  getReferralsByEmail(email: string): Promise<ReferralCode[]>;
+  incrementReferralUses(code: string): Promise<ReferralCode | undefined>;
 }
 
 export class DbStorage implements IStorage {
@@ -269,6 +278,32 @@ export class DbStorage implements IStorage {
     const result = await db.update(blogPosts)
       .set({ views: post.views + 1 })
       .where(eq(blogPosts.id, id))
+      .returning();
+    return result[0];
+  }
+
+  // Referral methods
+  async createReferralCode(insertReferralCode: InsertReferralCode): Promise<ReferralCode> {
+    const result = await db.insert(referralCodes).values(insertReferralCode).returning();
+    return result[0];
+  }
+
+  async getReferralCode(code: string): Promise<ReferralCode | undefined> {
+    const result = await db.select().from(referralCodes).where(eq(referralCodes.code, code));
+    return result[0];
+  }
+
+  async getReferralsByEmail(email: string): Promise<ReferralCode[]> {
+    return await db.select().from(referralCodes).where(eq(referralCodes.referrerEmail, email));
+  }
+
+  async incrementReferralUses(code: string): Promise<ReferralCode | undefined> {
+    const referral = await this.getReferralCode(code);
+    if (!referral) return undefined;
+    
+    const result = await db.update(referralCodes)
+      .set({ uses: referral.uses + 1 })
+      .where(eq(referralCodes.code, code))
       .returning();
     return result[0];
   }

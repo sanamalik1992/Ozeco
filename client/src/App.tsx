@@ -23,6 +23,7 @@ import FAQ from "@/pages/FAQ";
 import SizeFitGuide from "@/pages/SizeFitGuide";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
+import Referral from "@/pages/Referral";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -46,6 +47,7 @@ function Router() {
       <Route path="/size-guide" component={SizeFitGuide} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
+      <Route path="/referral" component={Referral} />
       <Route component={NotFound} />
     </Switch>
   );

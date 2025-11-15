@@ -39,13 +39,15 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  Best Sellers
-                </span>
+                <Link href="/referral" data-testid="link-footer-referral">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                    Referral Program
+                  </span>
+                </Link>
               </li>
               <li>
                 <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  New Arrivals
+                  Best Sellers
                 </span>
               </li>
             </ul>
