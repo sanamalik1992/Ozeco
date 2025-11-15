@@ -1,5 +1,6 @@
 import { useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
@@ -11,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
 import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle } from "lucide-react";
 import type { Product, Review } from "@shared/schema";
 
@@ -20,11 +21,35 @@ export default function ProductDetail() {
   const productSlug = params?.slug;
   const { addItem } = useCart();
   const { toast } = useToast();
+  const [mainCarouselApi, setMainCarouselApi] = useState<CarouselApi>();
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: [`/api/products/slug/${productSlug}`],
     enabled: !!productSlug,
   });
+  
+  useEffect(() => {
+    if (!mainCarouselApi) return;
+    
+    const handleSelect = () => {
+      setSelectedImageIndex(mainCarouselApi.selectedScrollSnap());
+    };
+    
+    mainCarouselApi.on('select', handleSelect);
+    setSelectedImageIndex(mainCarouselApi.selectedScrollSnap());
+    
+    return () => {
+      mainCarouselApi.off('select', handleSelect);
+    };
+  }, [mainCarouselApi]);
+  
+  useEffect(() => {
+    setSelectedImageIndex(0);
+    if (mainCarouselApi) {
+      mainCarouselApi.scrollTo(0, true);
+    }
+  }, [product?.id, mainCarouselApi]);
 
   const { data: reviews = [] } = useQuery<Review[]>({
     queryKey: [`/api/products/${product?.id}/reviews`],
@@ -101,18 +126,83 @@ export default function ProductDetail() {
       <main className="py-8 md:py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-12">
-            {/* Product Image */}
+            {/* Product Images Carousel */}
             <div className="space-y-4">
+              {/* Main Image Carousel */}
               <Card className="overflow-hidden">
                 <CardContent className="p-0">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full aspect-square object-contain bg-muted p-8"
-                    data-testid="img-product-main"
-                  />
+                  {product.images && product.images.length > 0 ? (
+                    <Carousel 
+                      setApi={setMainCarouselApi}
+                      opts={{ loop: true }}
+                    >
+                      <CarouselContent>
+                        {product.images.map((image, index) => (
+                          <CarouselItem key={index}>
+                            <img
+                              src={image}
+                              alt={`${product.name} - Image ${index + 1}`}
+                              className="w-full aspect-square object-contain p-8"
+                              data-testid={`img-product-${index}`}
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.onerror = null;
+                                target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="600" height="600" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" fill="%239ca3af" font-size="20" font-family="sans-serif">Image unavailable</text></svg>';
+                              }}
+                            />
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      {product.images.length > 1 && (
+                        <>
+                          <CarouselPrevious className="left-2" data-testid="button-carousel-main-prev" />
+                          <CarouselNext className="right-2" data-testid="button-carousel-main-next" />
+                        </>
+                      )}
+                    </Carousel>
+                  ) : (
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full aspect-square object-contain p-8"
+                      data-testid="img-product-main"
+                    />
+                  )}
                 </CardContent>
               </Card>
+              
+              {/* Thumbnail Navigation */}
+              {product.images && product.images.length > 1 && (
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {product.images.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setSelectedImageIndex(index);
+                        mainCarouselApi?.scrollTo(index);
+                      }}
+                      className={`
+                        border-2 rounded-md overflow-hidden transition-all hover-elevate active-elevate-2
+                        ${selectedImageIndex === index ? 'border-primary' : 'border-border'}
+                      `}
+                      data-testid={`button-thumbnail-${index}`}
+                    >
+                      <img
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full aspect-square object-contain p-2"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null;
+                          target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%23f3f4f6"/></svg>';
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+              
               {product.isBestseller && (
                 <Badge className="bg-orange-500 text-white">
                   ⭐ Bestseller
@@ -387,36 +477,9 @@ export default function ProductDetail() {
           ) : null}
 
           {/* Reviews */}
-          <div id="reviews" className="mb-12 scroll-mt-20">
+          <div id="reviews" className="scroll-mt-20">
             <Reviews reviews={reviews} />
           </div>
-
-          {/* Delivery Information */}
-          <Card>
-            <CardContent className="p-6 md:p-8">
-              <h2 className="text-2xl font-semibold mb-4">Delivery & Support</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-2">Fast Dispatch</h3>
-                  <p className="text-sm text-muted-foreground">
-                    All orders are dispatched within 1 working day for quick delivery to your door.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">UK Delivery</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Free delivery across the UK. Your Electric bike will arrive in 2-3 working days.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Expert Support</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Our UK-based team is here to help 7 days a week with any questions.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </main>
       <Footer />
