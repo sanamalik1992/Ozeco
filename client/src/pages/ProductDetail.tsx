@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
-import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle } from "lucide-react";
+import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User } from "lucide-react";
 import type { Product, Review } from "@shared/schema";
 
 export default function ProductDetail() {
@@ -118,6 +118,7 @@ export default function ProductDetail() {
     { icon: Gauge, label: "Max Speed", value: product.topSpeed },
     { icon: MapPin, label: "Range", value: product.maxRange },
     { icon: Weight, label: "Weight", value: product.weight },
+    ...(product.riderHeight ? [{ icon: User, label: "Rider Height", value: product.riderHeight }] : []),
   ];
 
   return (
@@ -129,47 +130,45 @@ export default function ProductDetail() {
             {/* Product Images Carousel */}
             <div className="space-y-4">
               {/* Main Image Carousel */}
-              <Card className="overflow-hidden">
-                <CardContent className="p-0">
-                  {product.images && product.images.length > 0 ? (
-                    <Carousel 
-                      setApi={setMainCarouselApi}
-                      opts={{ loop: true }}
-                    >
-                      <CarouselContent>
-                        {product.images.map((image, index) => (
-                          <CarouselItem key={index}>
-                            <img
-                              src={image}
-                              alt={`${product.name} - Image ${index + 1}`}
-                              className="w-full aspect-square object-contain p-8"
-                              data-testid={`img-product-${index}`}
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.onerror = null;
-                                target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="600" height="600" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" fill="%239ca3af" font-size="20" font-family="sans-serif">Image unavailable</text></svg>';
-                              }}
-                            />
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      {product.images.length > 1 && (
-                        <>
-                          <CarouselPrevious className="left-2" data-testid="button-carousel-main-prev" />
-                          <CarouselNext className="right-2" data-testid="button-carousel-main-next" />
-                        </>
-                      )}
-                    </Carousel>
-                  ) : (
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full aspect-square object-contain p-8"
-                      data-testid="img-product-main"
-                    />
-                  )}
-                </CardContent>
-              </Card>
+              <div>
+                {product.images && product.images.length > 0 ? (
+                  <Carousel 
+                    setApi={setMainCarouselApi}
+                    opts={{ loop: true }}
+                  >
+                    <CarouselContent>
+                      {product.images.map((image, index) => (
+                        <CarouselItem key={index}>
+                          <img
+                            src={image}
+                            alt={`${product.name} - Image ${index + 1}`}
+                            className="w-full aspect-square object-contain p-8"
+                            data-testid={`img-product-${index}`}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="600" height="600" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" fill="%239ca3af" font-size="20" font-family="sans-serif">Image unavailable</text></svg>';
+                            }}
+                          />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    {product.images.length > 1 && (
+                      <>
+                        <CarouselPrevious className="left-2" data-testid="button-carousel-main-prev" />
+                        <CarouselNext className="right-2" data-testid="button-carousel-main-next" />
+                      </>
+                    )}
+                  </Carousel>
+                ) : (
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full aspect-square object-contain p-8"
+                    data-testid="img-product-main"
+                  />
+                )}
+              </div>
               
               {/* Thumbnail Navigation */}
               {product.images && product.images.length > 1 && (

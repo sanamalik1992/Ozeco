@@ -15,8 +15,16 @@ export default function FeaturedProducts() {
   const { addItem } = useCart();
   const { toast } = useToast();
 
-  // Filter for bestsellers
-  const products = allProducts.filter(p => p.isBestseller).slice(0, 4);
+  // Filter for bestsellers and sort with Eleglide M2 first
+  const products = allProducts
+    .filter(p => p.isBestseller)
+    .sort((a, b) => {
+      // Put Eleglide M2 first
+      if (a.slug === 'eleglide-m2') return -1;
+      if (b.slug === 'eleglide-m2') return 1;
+      return 0;
+    })
+    .slice(0, 4);
 
   const handleAddToCart = (product: Product) => {
     addItem(product.id, 1);

@@ -38,6 +38,7 @@ export const products = pgTable("products", {
   weight: text("weight"),
   maxLoad: text("max_load"),
   frameType: text("frame_type"),
+  riderHeight: text("rider_height"),
   features: text("features").array().notNull().default(sql`ARRAY[]::text[]`),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
