@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Loader2, CreditCard, ArrowLeft, Check } from "lucide-react";
 import PayPalButton from "@/components/PayPalButton";
 import { SiPaypal, SiShopify } from "react-icons/si";
+import TrustBadges from "@/components/TrustBadges";
 
 type PaymentMethod = 'stripe' | 'paypal';
 type CheckoutStep = 'shipping' | 'payment';
@@ -229,6 +230,8 @@ export default function Checkout() {
           <h1 className="text-3xl md:text-4xl font-display font-bold mb-2" data-testid="text-checkout-title">
             Checkout
           </h1>
+          
+          <TrustBadges variant="checkout" />
           
           {/* Progress Steps */}
           <div className="flex items-center gap-4 mb-8">

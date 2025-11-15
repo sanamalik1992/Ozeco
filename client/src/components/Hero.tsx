@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
 import heroImage from "@assets/stock_images/electric_bike_parked_8b429445.jpg";
+import TrustBadges from "@/components/TrustBadges";
 
 export default function Hero() {
   // Using a high-quality stock video of e-bike lifestyle
@@ -67,6 +68,8 @@ export default function Hero() {
             <span>UK Shipping</span>
           </div>
         </div>
+        
+        <TrustBadges variant="hero" />
       </div>
     </section>
   );
