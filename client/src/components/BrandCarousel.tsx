@@ -46,15 +46,13 @@ export default function BrandCarousel() {
           {brands.map((brand) => (
             <Link key={brand.name} href={`/shop?brand=${brand.name}`}>
               <Card className="group overflow-hidden hover-elevate active-elevate-2 transition-all cursor-pointer" data-testid={`card-brand-${brand.name.toLowerCase()}`}>
-                <div className="flex flex-col items-center justify-center p-6">
-                  <div className="w-full aspect-square mb-4 flex items-center justify-center p-4 transition-all">
+                <div className="flex items-center justify-center p-6">
+                  <div className="w-full aspect-square flex items-center justify-center p-4 transition-all">
                     <BrandLogo 
                       brand={brand.name}
                       className="w-full h-full transition-transform group-hover:scale-105 mix-blend-multiply dark:mix-blend-lighten"
                     />
                   </div>
-                  <p className="text-sm font-semibold text-foreground mb-1">{brand.name}</p>
-                  <p className="text-xs text-muted-foreground">{brand.count}</p>
                 </div>
               </Card>
             </Link>
