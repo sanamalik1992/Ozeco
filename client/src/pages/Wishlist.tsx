@@ -109,7 +109,7 @@ export default function Wishlist() {
                             Out of Stock
                           </Badge>
                         )}
-                        {product.inStock && product.stockQuantity < 5 && (
+                        {product.inStock && product.stockQuantity < 10 && (
                           <Badge className="absolute top-4 right-4 bg-orange-500 text-white">
                             Only {product.stockQuantity} left!
                           </Badge>

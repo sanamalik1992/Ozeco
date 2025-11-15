@@ -286,7 +286,7 @@ export default function ProductDetail() {
 
               {/* Add to Cart */}
               <div className="space-y-4">
-                {product.stockQuantity > 0 && product.stockQuantity < 5 && (
+                {product.stockQuantity > 0 && product.stockQuantity < 10 && (
                   <div className="flex items-center gap-2 text-sm bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-400 px-4 py-3 rounded-md" data-testid="stock-urgency">
                     <AlertCircle className="h-5 w-5" />
                     <span className="font-semibold">Only {product.stockQuantity} left in stock - Order soon!</span>

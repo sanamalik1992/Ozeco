@@ -39,7 +39,7 @@ export default function ProductCard({
   const [, setLocation] = useLocation();
   const isPopular = id === "2"; // Eleglide M2 is popular
   const discount = id === "3" ? 20 : null; // DYU has discount
-  const showStockUrgency = stockQuantity !== undefined && stockQuantity > 0 && stockQuantity < 5;
+  const showStockUrgency = stockQuantity !== undefined && stockQuantity > 0 && stockQuantity < 10;
 
   const handleViewDetails = () => {
     if (onViewDetails) {
