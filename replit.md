@@ -55,6 +55,7 @@ The platform is built with a modern web stack designed for performance and scala
 - **Product Comparison Tool**: Side-by-side comparison of up to 3 Electric bikes with detailed specs (motor power, battery, range, speed, weight, frame type). Stored in localStorage for persistence across sessions.
 - **Wishlist/Favorites**: Session-based favorites system with heart icon buttons throughout the site. Dedicated wishlist page shows saved products with quick add-to-cart functionality.
 - **Customer Photo Gallery**: User-generated content gallery showcasing customer photos with their Electric bikes. Photos are moderated (approved flag) and linked to specific products. Encourages social proof and engagement.
+- **Blog System**: Full-featured blog with posts, categories, featured images, and view tracking. Blog images are stored in `public/blog/` directory and served from `/blog/` path.
 
 ### System Design Choices
 - **API Routes**: Standard RESTful API for products, cart management, and reviews.
