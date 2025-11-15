@@ -20,7 +20,7 @@ const features = [
   {
     icon: MapPin,
     title: "UK Registered Company",
-    description: "Ozeco Ltd (Company No: 15445991) established in 2022 and based in Bradford, UK.",
+    description: "Ozeco Ltd (Company No: 15445991) established in 2022 and based in Mildenhall, UK.",
   },
 ];
 

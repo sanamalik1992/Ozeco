@@ -164,8 +164,10 @@ export default function Contact() {
                     Business Address
                   </h3>
                   <p className="text-muted-foreground">
-                    424 Idle Rd<br />
-                    Bradford BD2 2AR<br />
+                    Unit A<br />
+                    82 James Carter Road<br />
+                    Mildenhall<br />
+                    IP28 7DE<br />
                     United Kingdom
                   </p>
                 </div>

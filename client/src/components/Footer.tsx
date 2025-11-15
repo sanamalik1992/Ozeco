@@ -110,7 +110,7 @@ export default function Footer() {
               Contact Us
             </h3>
             <p className="text-sm text-muted-foreground mb-2">
-              424 Idle Rd, Bradford<br />BD2 2AR, United Kingdom
+              Unit A, 82 James Carter Road<br />Mildenhall, IP28 7DE<br />United Kingdom
             </p>
             <p className="text-sm text-muted-foreground mb-2">
               Email: support@ozeco.co.uk
