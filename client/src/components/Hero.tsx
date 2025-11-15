@@ -45,7 +45,7 @@ export default function Hero() {
           Premium Electric Bikes From £359.99
         </p>
         
-        <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+        <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
           <Link href="/shop">
             <Button size="lg" variant="default" className="bg-primary hover:bg-primary border-primary-border text-lg px-8 py-6" data-testid="button-shop-now">
               Shop Black Friday Deals
@@ -58,7 +58,16 @@ export default function Hero() {
           </Link>
         </div>
         
-        <TrustBadges variant="hero" />
+        <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+          <div className="flex items-center gap-2" data-testid="trust-fast-dispatch">
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+            <span>Fast Dispatch</span>
+          </div>
+          <div className="flex items-center gap-2" data-testid="trust-uk-shipping">
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+            <span>UK Shipping</span>
+          </div>
+        </div>
       </div>
     </section>
   );
