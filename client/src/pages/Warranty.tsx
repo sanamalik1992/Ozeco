@@ -151,7 +151,6 @@ export default function Warranty() {
                 To keep your warranty valid, please follow these guidelines:
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li>Register your bike with us within 30 days of purchase</li>
                 <li>Keep your proof of purchase (order confirmation email)</li>
                 <li>Follow the manufacturer's maintenance schedule in your user manual</li>
                 <li>Use only authorized parts and accessories</li>
