@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
-import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User } from "lucide-react";
+import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck } from "lucide-react";
 import type { Product, Review } from "@shared/schema";
 
 export default function ProductDetail() {
@@ -217,6 +217,10 @@ export default function ProductDetail() {
                   <Badge variant="outline" data-testid="badge-category">
                     {product.category}
                   </Badge>
+                </div>
+                <div className="flex items-center gap-2 mb-4 text-primary" data-testid="dealer-badge">
+                  <ShieldCheck className="h-5 w-5" />
+                  <span className="text-sm font-semibold">Authorised UK Dealer</span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-display font-bold mb-4" data-testid="text-product-name">
                   {product.name}

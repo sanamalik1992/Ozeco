@@ -27,6 +27,7 @@ import Referral from "@/pages/Referral";
 import Compare from "@/pages/Compare";
 import Wishlist from "@/pages/Wishlist";
 import Gallery from "@/pages/Gallery";
+import Warranty from "@/pages/Warranty";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -54,6 +55,7 @@ function Router() {
       <Route path="/compare" component={Compare} />
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/gallery" component={Gallery} />
+      <Route path="/warranty" component={Warranty} />
       <Route component={NotFound} />
     </Switch>
   );

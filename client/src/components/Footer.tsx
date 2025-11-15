@@ -89,6 +89,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/warranty">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-warranty">
+                    Warranty
+                  </a>
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact">
                   <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-contact">
                     Contact Us

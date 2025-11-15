@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "@/components/StarRating";
-import { ShoppingCart, Eye, AlertCircle } from "lucide-react";
+import { ShoppingCart, Eye, AlertCircle, ShieldCheck } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 interface ProductCardProps {
@@ -112,6 +112,10 @@ export default function ProductCard({
             <span className="font-semibold">Only {stockQuantity} left in stock!</span>
           </div>
         )}
+        <div className="mb-3 flex items-center gap-2 text-sm text-primary" data-testid={`dealer-badge-${id}`}>
+          <ShieldCheck className="h-4 w-4" />
+          <span className="font-medium">Authorised UK Dealer</span>
+        </div>
         <div className="flex gap-2">
           <Button
             variant="default"
