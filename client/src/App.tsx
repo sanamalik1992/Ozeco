@@ -20,6 +20,7 @@ import ShippingPolicy from "@/pages/ShippingPolicy";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import FAQ from "@/pages/FAQ";
+import SizeFitGuide from "@/pages/SizeFitGuide";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/faq" component={FAQ} />
+      <Route path="/size-guide" component={SizeFitGuide} />
       <Route component={NotFound} />
     </Switch>
   );

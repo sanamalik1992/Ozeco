@@ -64,6 +64,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/size-guide" data-testid="link-footer-size-guide">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                    Size & Fit Guide
+                  </span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/shipping-policy" data-testid="link-footer-shipping">
                   <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                     Shipping Policy
