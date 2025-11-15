@@ -25,31 +25,31 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/shop" data-testid="link-footer-bikes">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/shop">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-bikes">
                     All E-Bikes
-                  </span>
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link href="/shop" data-testid="link-footer-brands">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/shop">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-brands">
                     Brands
-                  </span>
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link href="/referral" data-testid="link-footer-referral">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/referral">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-referral">
                     Referral Program
-                  </span>
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link href="/shop" data-testid="link-footer-bestsellers">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/shop">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-bestsellers">
                     Best Sellers
-                  </span>
+                  </a>
                 </Link>
               </li>
             </ul>
@@ -61,38 +61,38 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/faq" data-testid="link-footer-faq">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/faq">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-faq">
                     FAQ
-                  </span>
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link href="/size-guide" data-testid="link-footer-size-guide">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/size-guide">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-size-guide">
                     Size & Fit Guide
-                  </span>
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link href="/shipping-policy" data-testid="link-footer-shipping">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/shipping-policy">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-shipping">
                     Shipping Policy
-                  </span>
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link href="/returns-policy" data-testid="link-footer-returns">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/returns-policy">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-returns">
                     Returns Policy
-                  </span>
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link href="/contact" data-testid="link-footer-contact">
-                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                <Link href="/contact">
+                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-contact">
                     Contact Us
-                  </span>
+                  </a>
                 </Link>
               </li>
             </ul>
