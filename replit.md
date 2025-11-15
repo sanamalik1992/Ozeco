@@ -3,17 +3,21 @@
 ## Overview
 Ozeco.co.uk is a UK-based e-commerce platform specializing in premium Electric bikes from brands like ENGWE, Eleglide, DYU, Duotts, Touroll, and Fiido. The primary goal is to establish a professional, high-converting online presence with a vibrant design to attract the target demographic, addressing previous shortcomings in online sales despite offline success.
 
+**Google Ads Compliance:** The website is fully compliant with Google Ads policies to prevent misrepresentation suspension. All business information, VAT transparency, and contact details are clearly displayed throughout the site.
+
 ## User Preferences
 - Always use "Electric bikes" with capital E for branding.
 - Use UK English spelling throughout the site (e.g., "authorised" not "authorized", "organised" not "organized").
 - Business phone number: 03333398590 (displayed on all pages and footer).
 - WhatsApp contact: +44 7446 610660 (for chat functionality only).
+- Primary email: support@ozeco.co.uk (consistent across entire site).
 - The primary color should be a vibrant green (HSL 142 85% 42%).
 - Use orange/red badges for urgency and sales.
 - Include an autoplaying HTML5 video on the hero banner.
 - All product data and images should be real from ozeco.co.uk.
 - Implement a brand carousel featuring logos.
 - Focus on a professional, high-converting design.
+- Stock urgency threshold: Products with less than 10 units in stock display urgency messaging.
 
 ## System Architecture
 The platform is built with a modern web stack designed for performance and scalability.
