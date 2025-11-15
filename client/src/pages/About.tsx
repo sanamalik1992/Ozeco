@@ -93,8 +93,8 @@ export default function About() {
                     <h3 className="font-semibold mb-2">Business Status</h3>
                     <p className="text-muted-foreground">
                       Authorised UK Dealer<br />
-                      VAT Registered<br />
-                      All prices include VAT
+                      Registered with Companies House<br />
+                      Est. 2022
                     </p>
                   </div>
                 </div>

@@ -260,7 +260,7 @@ export default function Cart() {
                   <Separator />
                   
                   <div className="flex justify-between text-lg font-bold">
-                    <span>Total (incl. 20% UK VAT)</span>
+                    <span>Total</span>
                     <span data-testid="text-cart-total">£{subtotal.toFixed(2)}</span>
                   </div>
                 </div>

@@ -302,7 +302,7 @@ export default function Checkout() {
                     </div>
                     <Separator />
                     <div className="flex justify-between font-bold text-lg">
-                      <span>Total (incl. 20% UK VAT)</span>
+                      <span>Total</span>
                       <span data-testid="text-checkout-total">£{totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
