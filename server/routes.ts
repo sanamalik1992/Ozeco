@@ -737,6 +737,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Blog routes
+  app.get("/api/blog", async (req, res) => {
+    try {
+      const posts = await storage.getAllBlogPosts();
+      res.json(posts);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/blog/:id", async (req, res) => {
+    try {
+      const post = await storage.getBlogPost(req.params.id);
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+      res.json(post);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/blog/slug/:slug", async (req, res) => {
+    try {
+      const post = await storage.getBlogPostBySlug(req.params.slug);
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+      
+      // Increment views
+      await storage.incrementBlogViews(post.id);
+      
+      res.json(post);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

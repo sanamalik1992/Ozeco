@@ -11,12 +11,15 @@ import {
   type InsertOrder,
   type OrderItem,
   type InsertOrderItem,
+  type BlogPost,
+  type InsertBlogPost,
   users,
   products,
   cartItems,
   reviews,
   orders,
   orderItems,
+  blogPosts,
 } from "@shared/schema";
 import { db } from "@db";
 import { eq, and, desc } from "drizzle-orm";
@@ -54,6 +57,13 @@ export interface IStorage {
   getOrderItems(orderId: string): Promise<(OrderItem & { product: Product })[]>;
   updateOrderFulfillment(id: string, fulfillmentStatus: string): Promise<Order | undefined>;
   updateOrderTracking(id: string, trackingNumber: string | null): Promise<Order | undefined>;
+  
+  // Blog methods
+  getAllBlogPosts(): Promise<BlogPost[]>;
+  getBlogPost(id: string): Promise<BlogPost | undefined>;
+  getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
+  createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
+  incrementBlogViews(id: string): Promise<BlogPost | undefined>;
 }
 
 export class DbStorage implements IStorage {
@@ -228,6 +238,37 @@ export class DbStorage implements IStorage {
     const result = await db.update(orders)
       .set({ trackingNumber })
       .where(eq(orders.id, id))
+      .returning();
+    return result[0];
+  }
+
+  // Blog methods
+  async getAllBlogPosts(): Promise<BlogPost[]> {
+    return await db.select().from(blogPosts).orderBy(desc(blogPosts.publishedDate));
+  }
+
+  async getBlogPost(id: string): Promise<BlogPost | undefined> {
+    const result = await db.select().from(blogPosts).where(eq(blogPosts.id, id));
+    return result[0];
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    const result = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug));
+    return result[0];
+  }
+
+  async createBlogPost(insertBlogPost: InsertBlogPost): Promise<BlogPost> {
+    const result = await db.insert(blogPosts).values(insertBlogPost).returning();
+    return result[0];
+  }
+
+  async incrementBlogViews(id: string): Promise<BlogPost | undefined> {
+    const post = await this.getBlogPost(id);
+    if (!post) return undefined;
+    
+    const result = await db.update(blogPosts)
+      .set({ views: post.views + 1 })
+      .where(eq(blogPosts.id, id))
       .returning();
     return result[0];
   }

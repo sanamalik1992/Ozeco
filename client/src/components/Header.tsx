@@ -21,6 +21,9 @@ export default function Header() {
             <Link href="/shop" data-testid="link-all-bikes">
               <Button variant="ghost" data-testid="button-nav-bikes">All E-Bikes</Button>
             </Link>
+            <Link href="/blog" data-testid="link-blog">
+              <Button variant="ghost" data-testid="button-nav-blog">Blog</Button>
+            </Link>
             <Link href="/about" data-testid="link-about">
               <Button variant="ghost" data-testid="button-nav-about">About</Button>
             </Link>
@@ -78,6 +81,11 @@ export default function Header() {
             <Link href="/shop">
               <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-bikes">
                 All E-Bikes
+              </Button>
+            </Link>
+            <Link href="/blog">
+              <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-blog">
+                Blog
               </Button>
             </Link>
             <Link href="/about">

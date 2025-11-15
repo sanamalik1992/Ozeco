@@ -21,6 +21,8 @@ import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import FAQ from "@/pages/FAQ";
 import SizeFitGuide from "@/pages/SizeFitGuide";
+import Blog from "@/pages/Blog";
+import BlogPost from "@/pages/BlogPost";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -42,6 +44,8 @@ function Router() {
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/faq" component={FAQ} />
       <Route path="/size-guide" component={SizeFitGuide} />
+      <Route path="/blog" component={Blog} />
+      <Route path="/blog/:slug" component={BlogPost} />
       <Route component={NotFound} />
     </Switch>
   );
