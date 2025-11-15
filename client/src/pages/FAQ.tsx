@@ -53,7 +53,7 @@ export default function FAQ() {
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
                   No! As long as your Electric bike meets UK regulations (250W motor, 15.5 mph max assisted speed), 
-                  you don't need a license, insurance, or tax. All our bikes comply with UK law. The minimum age 
+                  you don't need a license, insurance, or tax. The majority of our bikes comply with UK law. The minimum age 
                   to ride is 14 years, and we strongly recommend wearing a helmet.
                 </AccordionContent>
               </AccordionItem>
