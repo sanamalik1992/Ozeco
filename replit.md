@@ -3,7 +3,7 @@
 ## Overview
 Ozeco.co.uk is a UK-based e-commerce platform specializing in premium Electric bikes from brands like ENGWE, Eleglide, DYU, Duotts, Touroll, and Fiido. The primary goal is to establish a professional, high-converting online presence with a vibrant design to attract the target demographic, addressing previous shortcomings in online sales despite offline success.
 
-**Google Ads Compliance:** The website is fully compliant with Google Ads policies to prevent misrepresentation suspension. All business information, VAT transparency, and contact details are clearly displayed throughout the site.
+**Google Ads Compliance:** The website is fully compliant with Google Ads policies to prevent misrepresentation suspension. All business information and contact details are clearly displayed throughout the site. Business is not VAT registered (below UK threshold).
 
 ## User Preferences
 - Always use "Electric bikes" with capital E for branding.

@@ -47,7 +47,7 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">3. Pricing & Payment</h2>
               <p className="text-muted-foreground mb-3">
-                All prices are listed in British Pounds (GBP) and include VAT where applicable:
+                All prices are listed in British Pounds (GBP):
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
                 <li>Prices are subject to change without notice</li>
