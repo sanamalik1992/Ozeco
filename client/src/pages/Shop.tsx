@@ -5,6 +5,8 @@ import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import StarRating from "@/components/StarRating";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -121,9 +123,9 @@ export default function Shop() {
     });
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <section className="bg-gradient-to-b from-accent/20 to-background py-12 md:py-16">
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <section className="flex-1 bg-gradient-to-b from-accent/20 to-background py-12 md:py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-5xl font-display font-bold mb-4" data-testid="text-shop-title">
             Shop All Electric Bikes
@@ -305,6 +307,7 @@ export default function Shop() {
           )}
         </div>
       </section>
+      <Footer />
     </div>
   );
 }
