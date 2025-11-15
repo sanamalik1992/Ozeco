@@ -142,25 +142,17 @@ export default function Footer() {
           {/* Payment Methods */}
           <div className="flex flex-col items-center gap-3">
             <p className="text-sm text-muted-foreground">We Accept</p>
-            <div className="flex items-center gap-3 flex-wrap justify-center">
-              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-visa">
-                <SiVisa className="h-8 w-12 text-[#1A1F71]" />
-              </div>
-              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-mastercard">
-                <SiMastercard className="h-8 w-12 text-[#EB001B]" />
-              </div>
-              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-amex">
-                <SiAmericanexpress className="h-8 w-12 text-[#006FCF]" />
-              </div>
-              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-paypal">
-                <SiPaypal className="h-8 w-12 text-[#0070BA]" />
-              </div>
-              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-applepay">
-                <SiApplepay className="h-8 w-12" />
-              </div>
-              <div className="bg-card px-3 py-2 rounded-md border flex items-center justify-center" data-testid="payment-googlepay">
-                <SiGooglepay className="h-8 w-12" />
-              </div>
+            <div className="flex items-center gap-4 flex-wrap justify-center">
+              <SiVisa className="h-10 w-auto text-[#1A1F71]" data-testid="payment-visa" />
+              <svg className="h-10 w-auto" viewBox="0 0 131.39 86.9" data-testid="payment-mastercard">
+                <rect fill="#ff5f00" x="48.37" width="34.66" height="86.9"/>
+                <circle fill="#eb001b" cx="43.45" cy="43.45" r="43.45"/>
+                <circle fill="#f79e1b" cx="87.94" cy="43.45" r="43.45"/>
+              </svg>
+              <SiAmericanexpress className="h-10 w-auto text-[#006FCF]" data-testid="payment-amex" />
+              <SiPaypal className="h-10 w-auto text-[#0070BA]" data-testid="payment-paypal" />
+              <SiApplepay className="h-10 w-auto" data-testid="payment-applepay" />
+              <SiGooglepay className="h-10 w-auto" data-testid="payment-googlepay" />
             </div>
           </div>
 
