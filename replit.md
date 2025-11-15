@@ -47,6 +47,11 @@ The platform is built with a modern web stack designed for performance and scala
 - **WhatsApp Chat**: Floating button in bottom-right corner with hover-to-expand text, pulse animation, and pre-filled message directing to business WhatsApp (+44 7446 610660).
 - **Social Media Integration**: Instagram and Facebook links in footer with hover effects.
 - **Payment Display**: Footer showcases accepted payment methods (Stripe, PayPal, Credit/Debit Cards) with icons.
+- **Search Functionality**: Live autocomplete search with dropdown showing product images, names, brands, and prices. Searches across product names, brands, descriptions, and categories.
+- **Email Order Confirmations**: Automatic email notifications sent via Resend when orders are placed (order confirmation) and when orders are fulfilled with tracking numbers (shipping confirmation). Professional HTML templates with order details and branding.
+- **Product Comparison Tool**: Side-by-side comparison of up to 3 Electric bikes with detailed specs (motor power, battery, range, speed, weight, frame type). Stored in localStorage for persistence across sessions.
+- **Wishlist/Favorites**: Session-based favorites system with heart icon buttons throughout the site. Dedicated wishlist page shows saved products with quick add-to-cart functionality.
+- **Customer Photo Gallery**: User-generated content gallery showcasing customer photos with their Electric bikes. Photos are moderated (approved flag) and linked to specific products. Encourages social proof and engagement.
 
 ### System Design Choices
 - **API Routes**: Standard RESTful API for products, cart management, and reviews.
@@ -56,6 +61,8 @@ The platform is built with a modern web stack designed for performance and scala
     - `reviews`: Stores customer feedback including product ID, customer name, rating, title, comment, and verification status.
     - `orders` & `order_items`: For tracking completed purchases with shipping addresses and tracking numbers.
     - `newsletter_subscribers`: Stores subscriber emails, discount codes, and subscription timestamps.
+    - `favorites`: Session-based wishlist/favorites system linking session IDs to product IDs.
+    - `customer_photos`: User-generated content gallery with product ID references, customer names, image URLs, captions, and approval status.
 
 ## External Dependencies
 - **Database**: PostgreSQL (via Neon)

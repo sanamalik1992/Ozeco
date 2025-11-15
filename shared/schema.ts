@@ -183,3 +183,36 @@ export const insertReferralCodeSchema = createInsertSchema(referralCodes).omit({
 
 export type InsertReferralCode = z.infer<typeof insertReferralCodeSchema>;
 export type ReferralCode = typeof referralCodes.$inferSelect;
+
+export const favorites = pgTable("favorites", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  productId: varchar("product_id").notNull().references(() => products.id),
+  sessionId: text("session_id").notNull(),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const insertFavoriteSchema = createInsertSchema(favorites).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
+export type Favorite = typeof favorites.$inferSelect;
+
+export const customerPhotos = pgTable("customer_photos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  productId: varchar("product_id").notNull().references(() => products.id),
+  customerName: text("customer_name").notNull(),
+  imageUrl: text("image_url").notNull(),
+  caption: text("caption"),
+  approved: boolean("approved").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const insertCustomerPhotoSchema = createInsertSchema(customerPhotos).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertCustomerPhoto = z.infer<typeof insertCustomerPhotoSchema>;
+export type CustomerPhoto = typeof customerPhotos.$inferSelect;

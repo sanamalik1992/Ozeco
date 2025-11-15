@@ -15,6 +15,10 @@ import {
   type InsertBlogPost,
   type ReferralCode,
   type InsertReferralCode,
+  type Favorite,
+  type InsertFavorite,
+  type CustomerPhoto,
+  type InsertCustomerPhoto,
   users,
   products,
   cartItems,
@@ -23,6 +27,8 @@ import {
   orderItems,
   blogPosts,
   referralCodes,
+  favorites,
+  customerPhotos,
 } from "@shared/schema";
 import { db } from "@db";
 import { eq, and, desc } from "drizzle-orm";
@@ -73,6 +79,18 @@ export interface IStorage {
   getReferralCode(code: string): Promise<ReferralCode | undefined>;
   getReferralsByEmail(email: string): Promise<ReferralCode[]>;
   incrementReferralUses(code: string): Promise<ReferralCode | undefined>;
+  
+  // Favorite methods
+  getFavorites(sessionId: string): Promise<(Favorite & { product: Product })[]>;
+  addFavorite(favorite: InsertFavorite): Promise<Favorite>;
+  removeFavorite(productId: string, sessionId: string): Promise<boolean>;
+  isFavorite(productId: string, sessionId: string): Promise<boolean>;
+  
+  // Customer Photo methods
+  getAllCustomerPhotos(): Promise<(CustomerPhoto & { product: Product })[]>;
+  getCustomerPhotosByProduct(productId: string): Promise<CustomerPhoto[]>;
+  createCustomerPhoto(photo: InsertCustomerPhoto): Promise<CustomerPhoto>;
+  approveCustomerPhoto(id: string): Promise<CustomerPhoto | undefined>;
 }
 
 export class DbStorage implements IStorage {
@@ -304,6 +322,108 @@ export class DbStorage implements IStorage {
     const result = await db.update(referralCodes)
       .set({ uses: referral.uses + 1 })
       .where(eq(referralCodes.code, code))
+      .returning();
+    return result[0];
+  }
+
+  // Favorite methods
+  async getFavorites(sessionId: string): Promise<(Favorite & { product: Product })[]> {
+    const result = await db
+      .select()
+      .from(favorites)
+      .leftJoin(products, eq(favorites.productId, products.id))
+      .where(eq(favorites.sessionId, sessionId))
+      .orderBy(desc(favorites.createdAt));
+    
+    return result.map((row: any) => ({
+      ...row.favorites,
+      product: row.products!,
+    }));
+  }
+
+  async addFavorite(insertFavorite: InsertFavorite): Promise<Favorite> {
+    // Check if already favorited
+    const existing = await db
+      .select()
+      .from(favorites)
+      .where(
+        and(
+          eq(favorites.productId, insertFavorite.productId),
+          eq(favorites.sessionId, insertFavorite.sessionId)
+        )
+      );
+
+    if (existing.length > 0) {
+      return existing[0];
+    }
+
+    const result = await db.insert(favorites).values(insertFavorite).returning();
+    return result[0];
+  }
+
+  async removeFavorite(productId: string, sessionId: string): Promise<boolean> {
+    const result = await db
+      .delete(favorites)
+      .where(
+        and(
+          eq(favorites.productId, productId),
+          eq(favorites.sessionId, sessionId)
+        )
+      )
+      .returning();
+    return result.length > 0;
+  }
+
+  async isFavorite(productId: string, sessionId: string): Promise<boolean> {
+    const result = await db
+      .select()
+      .from(favorites)
+      .where(
+        and(
+          eq(favorites.productId, productId),
+          eq(favorites.sessionId, sessionId)
+        )
+      );
+    return result.length > 0;
+  }
+
+  // Customer Photo methods
+  async getAllCustomerPhotos(): Promise<(CustomerPhoto & { product: Product })[]> {
+    const result = await db
+      .select()
+      .from(customerPhotos)
+      .leftJoin(products, eq(customerPhotos.productId, products.id))
+      .where(eq(customerPhotos.approved, true))
+      .orderBy(desc(customerPhotos.createdAt));
+    
+    return result.map((row: any) => ({
+      ...row.customerPhotos,
+      product: row.products!,
+    }));
+  }
+
+  async getCustomerPhotosByProduct(productId: string): Promise<CustomerPhoto[]> {
+    return await db
+      .select()
+      .from(customerPhotos)
+      .where(
+        and(
+          eq(customerPhotos.productId, productId),
+          eq(customerPhotos.approved, true)
+        )
+      )
+      .orderBy(desc(customerPhotos.createdAt));
+  }
+
+  async createCustomerPhoto(insertCustomerPhoto: InsertCustomerPhoto): Promise<CustomerPhoto> {
+    const result = await db.insert(customerPhotos).values(insertCustomerPhoto).returning();
+    return result[0];
+  }
+
+  async approveCustomerPhoto(id: string): Promise<CustomerPhoto | undefined> {
+    const result = await db.update(customerPhotos)
+      .set({ approved: true })
+      .where(eq(customerPhotos.id, id))
       .returning();
     return result[0];
   }

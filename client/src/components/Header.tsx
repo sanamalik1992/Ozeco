@@ -1,4 +1,4 @@
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, Heart, GitCompare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CartDrawer from "@/components/CartDrawer";
@@ -161,6 +161,26 @@ export default function Header() {
                 <Search className="h-5 w-5" />
               </Button>
             )}
+
+            <Link href="/compare">
+              <Button
+                size="icon"
+                variant="ghost"
+                data-testid="button-compare"
+              >
+                <GitCompare className="h-5 w-5" />
+              </Button>
+            </Link>
+
+            <Link href="/wishlist">
+              <Button
+                size="icon"
+                variant="ghost"
+                data-testid="button-wishlist"
+              >
+                <Heart className="h-5 w-5" />
+              </Button>
+            </Link>
 
             <CartDrawer />
 

@@ -38,6 +38,7 @@ export default function BrandLogo({ brand, className = "" }: BrandLogoProps) {
       src={logoSrc}
       alt={`${brand} logo`}
       className={`h-8 w-auto object-contain ${className}`}
+      style={{ mixBlendMode: 'multiply' }}
       data-testid={`brand-logo-${brand.toLowerCase()}`}
     />
   );

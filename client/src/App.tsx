@@ -24,6 +24,9 @@ import SizeFitGuide from "@/pages/SizeFitGuide";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
 import Referral from "@/pages/Referral";
+import Compare from "@/pages/Compare";
+import Wishlist from "@/pages/Wishlist";
+import Gallery from "@/pages/Gallery";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -48,6 +51,9 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/referral" component={Referral} />
+      <Route path="/compare" component={Compare} />
+      <Route path="/wishlist" component={Wishlist} />
+      <Route path="/gallery" component={Gallery} />
       <Route component={NotFound} />
     </Switch>
   );

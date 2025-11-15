@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProductSchema, insertCartItemSchema, orders, orderItems, products, newsletterSubscribers, insertNewsletterSubscriberSchema } from "@shared/schema";
+import { insertProductSchema, insertCartItemSchema, insertFavoriteSchema, insertCustomerPhotoSchema, orders, orderItems, products, newsletterSubscribers, insertNewsletterSubscriberSchema } from "@shared/schema";
 import { db } from "@db";
 import { sql, eq, and, gte } from "drizzle-orm";
 import Stripe from "stripe";
@@ -828,6 +828,135 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(post);
     } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Favorites routes
+  app.get("/api/favorites", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      const favoritesWithProducts = await storage.getFavorites(sessionId);
+      // Return properly typed response
+      res.json(favoritesWithProducts);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/favorites", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      const validated = insertFavoriteSchema.omit({ sessionId: true }).parse(req.body);
+      
+      const favorite = await storage.addFavorite({ 
+        productId: validated.productId, 
+        sessionId 
+      });
+      res.json(favorite);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/favorites/:productId", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      const { productId } = req.params;
+      
+      const removed = await storage.removeFavorite(productId, sessionId);
+      if (!removed) {
+        return res.status(404).json({ error: "Favorite not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/favorites/check/:productId", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      const { productId } = req.params;
+      
+      const isFavorite = await storage.isFavorite(productId, sessionId);
+      res.json({ isFavorite });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Customer Photos routes
+  app.get("/api/customer-photos", async (req, res) => {
+    try {
+      const photos = await storage.getAllCustomerPhotos();
+      res.json(photos);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/customer-photos/product/:productId", async (req, res) => {
+    try {
+      const photos = await storage.getCustomerPhotosByProduct(req.params.productId);
+      res.json(photos);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Simple in-memory rate limiting for customer photo submissions
+  const photoSubmissionLimits = new Map<string, { count: number; resetTime: number }>();
+  const PHOTO_SUBMISSION_LIMIT = 3; // Max 3 submissions per hour per session
+  const PHOTO_SUBMISSION_WINDOW = 60 * 60 * 1000; // 1 hour
+
+  app.post("/api/customer-photos", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      
+      // Check rate limit
+      const now = Date.now();
+      const limit = photoSubmissionLimits.get(sessionId);
+      
+      if (limit) {
+        if (now < limit.resetTime) {
+          if (limit.count >= PHOTO_SUBMISSION_LIMIT) {
+            return res.status(429).json({ 
+              error: "Rate limit exceeded. Please try again later.",
+              retryAfter: Math.ceil((limit.resetTime - now) / 1000 / 60) // minutes
+            });
+          }
+          limit.count++;
+        } else {
+          photoSubmissionLimits.set(sessionId, { count: 1, resetTime: now + PHOTO_SUBMISSION_WINDOW });
+        }
+      } else {
+        photoSubmissionLimits.set(sessionId, { count: 1, resetTime: now + PHOTO_SUBMISSION_WINDOW });
+      }
+      
+      // Validate request body using Zod schema
+      const validated = insertCustomerPhotoSchema.omit({ approved: true }).parse(req.body);
+      
+      // Create photo with approved=false by default (requires admin approval)
+      const photo = await storage.createCustomerPhoto({
+        ...validated,
+        approved: false,
+      });
+      
+      // Return success but note that photo needs approval
+      res.json({ 
+        success: true, 
+        message: "Photo submitted successfully. It will appear in the gallery after approval.",
+        photoId: photo.id 
+      });
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
       res.status(500).json({ error: error.message });
     }
   });
