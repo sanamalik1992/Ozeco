@@ -253,7 +253,8 @@ export default function Checkout() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <Card>
+              <div className="lg:sticky lg:top-4">
+                <Card>
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
@@ -302,6 +303,7 @@ export default function Checkout() {
                   </div>
                 </CardContent>
               </Card>
+              </div>
             </div>
 
             {/* Main Content */}

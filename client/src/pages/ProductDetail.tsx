@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
-import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck } from "lucide-react";
+import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck, Lock, RotateCcw } from "lucide-react";
 import type { Product, Review } from "@shared/schema";
 
 export default function ProductDetail() {
@@ -297,18 +297,22 @@ export default function ProductDetail() {
                   Add to Cart
                 </Button>
                 
-                <div className="grid grid-cols-3 gap-3 text-center text-sm">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-sm">
                   <div className="flex flex-col items-center gap-1">
                     <Shield className="h-5 w-5 text-primary" />
-                    <span className="text-muted-foreground">12-Month Warranty</span>
+                    <span className="text-muted-foreground text-xs">12-Month Warranty</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <RotateCcw className="h-5 w-5 text-primary" />
+                    <span className="text-muted-foreground text-xs">14-Day Returns</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Lock className="h-5 w-5 text-primary" />
+                    <span className="text-muted-foreground text-xs">Secure Payment</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
                     <Zap className="h-5 w-5 text-primary" />
-                    <span className="text-muted-foreground">Fast Dispatch</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    <span className="text-muted-foreground">UK Shipping</span>
+                    <span className="text-muted-foreground text-xs">Fast Dispatch</span>
                   </div>
                 </div>
               </div>
