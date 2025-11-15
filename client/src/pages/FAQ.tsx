@@ -96,7 +96,7 @@ export default function FAQ() {
                   Can I return my bike if I don't like it?
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Yes! We offer a 30-day return window. If you're not completely satisfied, you can return 
+                  Yes! We offer a 14-day return window. If you're not completely satisfied, you can return 
                   your bike in unused condition with original packaging for a full refund. See our Returns 
                   Policy for complete details.
                 </AccordionContent>

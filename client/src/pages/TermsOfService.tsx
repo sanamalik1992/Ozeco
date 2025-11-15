@@ -84,7 +84,7 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">6. Returns & Refunds</h2>
               <p className="text-muted-foreground">
-                You have a 30-day right to return unused Electric bikes in original condition. 
+                You have a 14-day right to return unused Electric bikes in original condition. 
                 Please see our Returns Policy for full details. Your statutory rights are not affected.
               </p>
             </section>
