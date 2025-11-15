@@ -25,14 +25,14 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/bikes" data-testid="link-footer-bikes">
+                <Link href="/shop" data-testid="link-footer-bikes">
                   <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                     All E-Bikes
                   </span>
                 </Link>
               </li>
               <li>
-                <Link href="/brands" data-testid="link-footer-brands">
+                <Link href="/shop" data-testid="link-footer-brands">
                   <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                     Brands
                   </span>
@@ -46,7 +46,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/bikes" data-testid="link-footer-bestsellers">
+                <Link href="/shop" data-testid="link-footer-bestsellers">
                   <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                     Best Sellers
                   </span>
