@@ -77,7 +77,7 @@ export default function About() {
                     <h3 className="font-semibold mb-2">Contact Details</h3>
                     <p className="text-muted-foreground">
                       Phone: 03333398590<br />
-                      Email: info@ozeco.co.uk<br />
+                      Email: support@ozeco.co.uk<br />
                       WhatsApp: +44 7446 610660
                     </p>
                   </div>
@@ -100,7 +100,7 @@ export default function About() {
                 </div>
                 <div className="mt-6 pt-6 border-t text-center">
                   <p className="text-xs text-muted-foreground">
-                    Ozeco Ltd is a registered company in England and Wales. Company registration details can be verified at <a href="https://find-and-update.company-information.service.gov.uk/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Companies House</a>.
+                    Ozeco Ltd is a registered company in England and Wales. Company registration details can be verified at <a href="https://find-and-update.company-information.service.gov.uk/company/15445991" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Companies House (No. 15445991)</a>.
                   </p>
                 </div>
               </CardContent>

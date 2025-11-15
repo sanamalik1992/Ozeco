@@ -246,7 +246,7 @@ export default function ProductDetail() {
                     </span>
                     <span className="text-sm text-muted-foreground">Free UK Delivery</span>
                   </div>
-                  <p className="text-xs text-muted-foreground">Price includes VAT</p>
+                  <p className="text-xs text-muted-foreground">Price includes 20% UK VAT</p>
                 </div>
               </div>
 
