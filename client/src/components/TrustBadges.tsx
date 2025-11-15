@@ -1,24 +1,45 @@
-import { Shield, Truck, Award, Lock } from "lucide-react";
+import { Shield, Truck, Award, Lock, RotateCcw } from "lucide-react";
 
 interface TrustBadgesProps {
   variant?: "hero" | "checkout";
 }
 
 export default function TrustBadges({ variant = "hero" }: TrustBadgesProps) {
-  const badges = [
+  const badges = variant === "checkout" ? [
     {
-      icon: Award,
-      text: variant === "hero" ? "Rated 4.9/5 Stars" : "4.9/5 Rating",
-      subtext: "2,000+ Reviews",
+      icon: Lock,
+      text: "Secure Payment",
+      subtext: "256-bit SSL",
+    },
+    {
+      icon: RotateCcw,
+      text: "14-Day Returns",
+      subtext: "Money-Back Guarantee",
     },
     {
       icon: Truck,
-      text: variant === "hero" ? "Free UK Delivery" : "Free Delivery",
+      text: "Free Delivery",
       subtext: "1-Day Dispatch",
     },
     {
       icon: Shield,
-      text: variant === "hero" ? "UK Warranty Included" : "UK Warranty",
+      text: "12-Month Warranty",
+      subtext: "UK Coverage",
+    },
+  ] : [
+    {
+      icon: Award,
+      text: "Rated 4.9/5 Stars",
+      subtext: "2,000+ Reviews",
+    },
+    {
+      icon: Truck,
+      text: "Free UK Delivery",
+      subtext: "1-Day Dispatch",
+    },
+    {
+      icon: Shield,
+      text: "UK Warranty Included",
       subtext: "1-2 Year Coverage",
     },
     {
@@ -40,6 +61,7 @@ export default function TrustBadges({ variant = "hero" }: TrustBadgesProps) {
             <badge.icon className="h-5 w-5 text-primary" />
             <div className="text-sm">
               <div className="font-semibold">{badge.text}</div>
+              <div className="text-xs text-muted-foreground">{badge.subtext}</div>
             </div>
           </div>
         ))}

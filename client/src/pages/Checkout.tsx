@@ -11,9 +11,9 @@ import ShippingForm, { type ShippingFormData } from "@/components/ShippingForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, CreditCard, ArrowLeft, Check } from "lucide-react";
+import { Loader2, CreditCard, ArrowLeft, Check, Lock } from "lucide-react";
 import PayPalButton from "@/components/PayPalButton";
-import { SiPaypal, SiShopify } from "react-icons/si";
+import { SiPaypal, SiShopify, SiVisa, SiMastercard, SiAmericanexpress } from "react-icons/si";
 import TrustBadges from "@/components/TrustBadges";
 
 type PaymentMethod = 'stripe' | 'paypal';
@@ -232,6 +232,21 @@ export default function Checkout() {
           </h1>
           
           <TrustBadges variant="checkout" />
+          
+          {/* Payment Security */}
+          <div className="flex flex-col items-center gap-3 pb-6">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4" />
+              <span>Secure Payment</span>
+            </div>
+            <div className="flex items-center gap-4 text-muted-foreground">
+              <SiVisa className="h-8 w-8" />
+              <SiMastercard className="h-8 w-8" />
+              <SiAmericanexpress className="h-8 w-8" />
+              <SiPaypal className="h-8 w-8" />
+              <SiShopify className="h-8 w-8" />
+            </div>
+          </div>
           
           {/* Progress Steps */}
           <div className="flex items-center gap-4 mb-8">
