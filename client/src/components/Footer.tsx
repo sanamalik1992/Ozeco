@@ -144,13 +144,13 @@ export default function Footer() {
             <p className="text-sm text-muted-foreground">We Accept</p>
             <div className="flex items-center gap-4 flex-wrap justify-center">
               <SiVisa className="h-10 w-auto text-[#1A1F71]" data-testid="payment-visa" />
-              <svg className="h-10 w-auto" viewBox="0 0 131.39 86.9" data-testid="payment-mastercard">
+              <svg className="h-8 w-auto" viewBox="0 0 131.39 86.9" data-testid="payment-mastercard">
                 <rect fill="#ff5f00" x="48.37" width="34.66" height="86.9"/>
                 <circle fill="#eb001b" cx="43.45" cy="43.45" r="43.45"/>
                 <circle fill="#f79e1b" cx="87.94" cy="43.45" r="43.45"/>
               </svg>
-              <SiAmericanexpress className="h-10 w-auto text-[#006FCF]" data-testid="payment-amex" />
-              <SiPaypal className="h-10 w-auto text-[#0070BA]" data-testid="payment-paypal" />
+              <SiAmericanexpress className="h-8 w-auto text-[#006FCF]" data-testid="payment-amex" />
+              <SiPaypal className="h-8 w-auto text-[#0070BA]" data-testid="payment-paypal" />
               <SiApplepay className="h-10 w-auto" data-testid="payment-applepay" />
               <SiGooglepay className="h-10 w-auto" data-testid="payment-googlepay" />
             </div>
