@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import BrandLogo from "@/components/BrandLogo";
 import Reviews from "@/components/Reviews";
 import StarRating from "@/components/StarRating";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -27,6 +27,11 @@ export default function ProductDetail() {
 
   const { data: reviews = [] } = useQuery<Review[]>({
     queryKey: [`/api/products/${product?.id}/reviews`],
+    enabled: !!product?.id,
+  });
+
+  const { data: customerPhotos = [] } = useQuery<any[]>({
+    queryKey: [`/api/customer-photos/product/${product?.id}`],
     enabled: !!product?.id,
   });
 
@@ -306,6 +311,47 @@ export default function ProductDetail() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Customer Photos */}
+          {customerPhotos.length > 0 && (
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between flex-wrap gap-4">
+                  <span>Customer Photos ({customerPhotos.length})</span>
+                  <a
+                    href="/gallery"
+                    className="text-sm text-primary hover:underline font-normal"
+                    data-testid="link-view-all-photos"
+                  >
+                    View all photos in gallery →
+                  </a>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {customerPhotos.slice(0, 10).map((photo, index) => (
+                    <div
+                      key={photo.id}
+                      className="group relative aspect-square overflow-hidden rounded-lg border hover-elevate active-elevate-2 cursor-pointer"
+                      data-testid={`customer-photo-${index}`}
+                    >
+                      <img
+                        src={photo.imageUrl}
+                        alt={`Customer photo by ${photo.customerName}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-3 text-white text-center">
+                        <p className="text-xs font-semibold mb-1">{photo.customerName}</p>
+                        {photo.caption && (
+                          <p className="text-xs line-clamp-3">{photo.caption}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Reviews */}
           <div id="reviews" className="mb-12 scroll-mt-20">

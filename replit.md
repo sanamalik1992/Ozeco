@@ -37,7 +37,7 @@ The platform is built with a modern web stack designed for performance and scala
 - **Product Catalog**: Displays 16 real products across various brands with comprehensive specifications, images, star ratings, and review counts. Products are navigable via slugs.
 - **Homepage**: Features an autoplaying HTML5 video hero banner, featured bestseller products, a brand carousel, and trust signals.
 - **Shop Page**: Offers a full product catalog with filtering by brand and category, and sorting options. Supports URL parameters for filtering.
-- **Product Detail Pages**: Provides in-depth product information, high-quality images, average star ratings, customer reviews, and add-to-cart functionality.
+- **Product Detail Pages**: Provides in-depth product information, high-quality images, average star ratings, customer photos (prominently displayed above reviews in Amazon-style gallery), customer reviews, and add-to-cart functionality.
 - **Customer Reviews System**: Includes 2,202 verified reviews per product with pagination, filtering (Most Recent, Highest/Lowest Rated), and expand/collapse functionality. Reviews display customer name, rating, title, comment, verified badge, and date.
 - **Shopping Cart System**: Session-based with full CRUD operations via API. Includes server-side total calculation, input validation, and security features to prevent fraud.
 - **Checkout & Order Management**: Multi-step checkout process, Stripe (including Shop Pay) and PayPal integrations, atomic stock decrement during order completion, and an admin dashboard for inventory and order management with fulfillment tracking and tracking number support.
