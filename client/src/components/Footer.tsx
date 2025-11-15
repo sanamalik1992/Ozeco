@@ -46,9 +46,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  Best Sellers
-                </span>
+                <Link href="/bikes" data-testid="link-footer-bestsellers">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                    Best Sellers
+                  </span>
+                </Link>
               </li>
             </ul>
           </div>

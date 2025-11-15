@@ -19,11 +19,8 @@ export default function Referral() {
 
   const createReferralMutation = useMutation({
     mutationFn: async (email: string) => {
-      const response = await apiRequest("/api/referral/create", {
-        method: "POST",
-        body: JSON.stringify({ email }),
-      });
-      return response as ReferralCode;
+      const response = await apiRequest("POST", "/api/referral/create", { email });
+      return await response.json();
     },
     onSuccess: (data: ReferralCode) => {
       setReferralData(data);
