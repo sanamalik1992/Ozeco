@@ -116,7 +116,7 @@ export default function Footer() {
               Email: support@ozeco.co.uk
             </p>
             <p className="text-sm text-muted-foreground mb-2">
-              Phone: +44 7446 610660
+              Phone: 03333398590
             </p>
             <p className="text-sm text-muted-foreground mb-4">
               Mon-Fri: 9:00 AM - 5:30 PM (GMT)

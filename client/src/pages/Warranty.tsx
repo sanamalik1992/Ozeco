@@ -167,13 +167,13 @@ export default function Warranty() {
               </p>
               <div className="grid md:grid-cols-3 gap-4">
                 <a 
-                  href="tel:+447446610660" 
+                  href="tel:03333398590" 
                   className="flex items-center gap-3 p-4 bg-card rounded-lg hover-elevate active-elevate-2 transition-all"
                 >
                   <Phone className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-semibold text-sm">Phone</div>
-                    <div className="text-xs text-muted-foreground">+44 7446 610660</div>
+                    <div className="text-xs text-muted-foreground">03333398590</div>
                   </div>
                 </a>
                 <a 
