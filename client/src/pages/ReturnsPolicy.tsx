@@ -11,10 +11,10 @@ export default function ReturnsPolicy() {
           
           <div className="bg-card rounded-lg p-8 space-y-6">
             <section>
-              <h2 className="text-2xl font-semibold mb-4">30-Day Return Window</h2>
+              <h2 className="text-2xl font-semibold mb-4">14-Day Return Window</h2>
               <p className="text-muted-foreground">
                 At Ozeco, we want you to be completely satisfied with your Electric bike purchase. 
-                If for any reason you're not happy with your order, you can return it within 30 days 
+                If for any reason you're not happy with your order, you can return it within 14 days 
                 of delivery for a full refund.
               </p>
             </section>
