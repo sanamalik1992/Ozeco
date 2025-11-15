@@ -239,11 +239,14 @@ export default function ProductDetail() {
                     </span>
                   </button>
                 )}
-                <div className="flex items-baseline gap-3 mb-6">
-                  <span className="text-4xl font-bold text-primary" data-testid="text-product-price">
-                    £{parseFloat(product.price).toFixed(2)}
-                  </span>
-                  <span className="text-sm text-muted-foreground">Free UK Delivery</span>
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-3 mb-2">
+                    <span className="text-4xl font-bold text-primary" data-testid="text-product-price">
+                      £{parseFloat(product.price).toFixed(2)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">Free UK Delivery</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Price includes VAT</p>
                 </div>
               </div>
 

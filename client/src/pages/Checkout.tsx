@@ -305,6 +305,7 @@ export default function Checkout() {
                       <span>Total</span>
                       <span data-testid="text-checkout-total">£{totalPrice.toFixed(2)}</span>
                     </div>
+                    <p className="text-xs text-muted-foreground text-right">Includes VAT</p>
                   </div>
 
                   <div className="pt-4 border-t">
