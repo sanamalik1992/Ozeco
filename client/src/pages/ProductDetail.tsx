@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle } from "lucide-react";
 import type { Product, Review } from "@shared/schema";
 
@@ -30,7 +31,7 @@ export default function ProductDetail() {
     enabled: !!product?.id,
   });
 
-  const { data: customerPhotos = [] } = useQuery<any[]>({
+  const { data: customerPhotos = [], isLoading: isLoadingPhotos } = useQuery<any[]>({
     queryKey: [`/api/customer-photos/product/${product?.id}`],
     enabled: !!product?.id,
   });
@@ -313,7 +314,20 @@ export default function ProductDetail() {
           </Card>
 
           {/* Customer Photos */}
-          {customerPhotos.length > 0 && (
+          {isLoadingPhotos ? (
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>Customer Photos</CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 sm:px-6">
+                <div className="flex gap-4 overflow-hidden">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="aspect-square w-1/4 flex-shrink-0 rounded-lg bg-muted animate-pulse" />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : customerPhotos.length > 0 ? (
             <Card className="mb-8">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between flex-wrap gap-4">
@@ -327,31 +341,50 @@ export default function ProductDetail() {
                   </a>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {customerPhotos.slice(0, 10).map((photo, index) => (
-                    <div
-                      key={photo.id}
-                      className="group relative aspect-square overflow-hidden rounded-lg border hover-elevate active-elevate-2 cursor-pointer"
-                      data-testid={`customer-photo-${index}`}
-                    >
-                      <img
-                        src={photo.imageUrl}
-                        alt={`Customer photo by ${photo.customerName}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-3 text-white text-center">
-                        <p className="text-xs font-semibold mb-1">{photo.customerName}</p>
-                        {photo.caption && (
-                          <p className="text-xs line-clamp-3">{photo.caption}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <CardContent className="px-4 sm:px-6">
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: false,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent className="-ml-2 md:-ml-4">
+                    {customerPhotos.map((photo, index) => (
+                      <CarouselItem 
+                        key={photo.id} 
+                        className="pl-2 md:pl-4 basis-3/4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                        data-testid={`customer-photo-${index}`}
+                      >
+                        <div className="group relative aspect-square overflow-hidden rounded-lg border hover-elevate active-elevate-2 cursor-pointer bg-muted">
+                          <img
+                            src={photo.imageUrl}
+                            alt={`Customer photo by ${photo.customerName}`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" fill="%239ca3af" font-size="16" font-family="sans-serif">Image unavailable</text></svg>';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-3 text-white text-center">
+                            <p className="text-xs font-semibold mb-1">{photo.customerName}</p>
+                            {photo.caption && (
+                              <p className="text-xs line-clamp-3">{photo.caption}</p>
+                            )}
+                          </div>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-0" data-testid="button-carousel-prev" />
+                  <CarouselNext className="right-0" data-testid="button-carousel-next" />
+                </Carousel>
               </CardContent>
             </Card>
-          )}
+          ) : null}
 
           {/* Reviews */}
           <div id="reviews" className="mb-12 scroll-mt-20">
