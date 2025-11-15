@@ -160,7 +160,7 @@ export default function FAQ() {
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
                   You can reach us via WhatsApp (click the chat button on our website) or email us at 
-                  info@ozeco.co.uk. We typically respond within a few hours during business hours.
+                  support@ozeco.co.uk. We typically respond within a few hours during business hours.
                 </AccordionContent>
               </AccordionItem>
 
