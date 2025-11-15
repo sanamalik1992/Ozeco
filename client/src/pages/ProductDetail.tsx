@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield } from "lucide-react";
+import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle } from "lucide-react";
 import type { Product, Review } from "@shared/schema";
 
 export default function ProductDetail() {
@@ -187,6 +187,12 @@ export default function ProductDetail() {
 
               {/* Add to Cart */}
               <div className="space-y-4">
+                {product.stockQuantity > 0 && product.stockQuantity < 5 && (
+                  <div className="flex items-center gap-2 text-sm bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-400 px-4 py-3 rounded-md" data-testid="stock-urgency">
+                    <AlertCircle className="h-5 w-5" />
+                    <span className="font-semibold">Only {product.stockQuantity} left in stock - Order soon!</span>
+                  </div>
+                )}
                 <Button size="lg" className="w-full" onClick={handleAddToCart} data-testid="button-add-to-cart">
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Add to Cart

@@ -89,6 +89,7 @@ export default function FeaturedProducts() {
               image={product.image}
               range={product.maxRange || ""}
               maxSpeed={product.topSpeed || ""}
+              stockQuantity={product.stockQuantity}
               onAddToCart={() => handleAddToCart(product)}
             />
           ))}

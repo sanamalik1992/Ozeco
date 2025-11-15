@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "@/components/StarRating";
-import { ShoppingCart, Eye } from "lucide-react";
+import { ShoppingCart, Eye, AlertCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 interface ProductCardProps {
@@ -16,6 +16,7 @@ interface ProductCardProps {
   maxSpeed: string;
   rating?: number;
   reviewCount?: number;
+  stockQuantity?: number;
   onViewDetails?: () => void;
   onAddToCart?: () => void;
 }
@@ -31,12 +32,14 @@ export default function ProductCard({
   maxSpeed,
   rating,
   reviewCount,
+  stockQuantity,
   onViewDetails,
   onAddToCart,
 }: ProductCardProps) {
   const [, setLocation] = useLocation();
   const isPopular = id === "2"; // Eleglide M2 is popular
   const discount = id === "3" ? 20 : null; // DYU has discount
+  const showStockUrgency = stockQuantity !== undefined && stockQuantity > 0 && stockQuantity < 5;
 
   const handleViewDetails = () => {
     if (onViewDetails) {
@@ -103,6 +106,12 @@ export default function ProductCard({
             <span className="font-medium text-foreground">Speed:</span> {maxSpeed}
           </div>
         </div>
+        {showStockUrgency && (
+          <div className="mb-3 flex items-center gap-2 text-sm text-orange-600 dark:text-orange-400" data-testid={`stock-urgency-${id}`}>
+            <AlertCircle className="h-4 w-4" />
+            <span className="font-semibold">Only {stockQuantity} left in stock!</span>
+          </div>
+        )}
         <div className="flex gap-2">
           <Button
             variant="default"
