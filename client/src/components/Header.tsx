@@ -77,6 +77,9 @@ export default function Header() {
               </button>
               <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                 <Card className="p-3 min-w-48 shadow-xl border-2">
+                  <div className="px-3 py-2 mb-1">
+                    <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Brands</h3>
+                  </div>
                   <Link 
                     href="/shop?brand=ENGWE" 
                     className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
@@ -130,6 +133,9 @@ export default function Header() {
               </button>
               <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                 <Card className="p-3 min-w-48 shadow-xl border-2">
+                  <div className="px-3 py-2 mb-1">
+                    <h3 className="text-xs font-semibold text-primary uppercase tracking-wide">Types</h3>
+                  </div>
                   <Link 
                     href="/shop?category=City" 
                     className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
@@ -314,7 +320,7 @@ export default function Header() {
             </Link>
             
             <div className="px-4 py-2">
-              <p className="text-sm font-semibold text-muted-foreground mb-2">Shop by Brand</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Brands</p>
               <div className="flex flex-col gap-1 pl-2">
                 <Link 
                   href="/shop?brand=ENGWE" 
@@ -362,7 +368,7 @@ export default function Header() {
             </div>
 
             <div className="px-4 py-2">
-              <p className="text-sm font-semibold text-muted-foreground mb-2">Shop by Type</p>
+              <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-2">Types</p>
               <div className="flex flex-col gap-1 pl-2">
                 <Link 
                   href="/shop?category=City" 
