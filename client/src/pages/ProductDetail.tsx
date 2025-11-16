@@ -162,7 +162,7 @@ export default function ProductDetail() {
             {/* Product Images Carousel */}
             <div className="space-y-4">
               {/* Main Image Carousel */}
-              <div>
+              <div className="relative">
                 {product.images && product.images.length > 0 ? (
                   <Carousel 
                     setApi={setMainCarouselApi}
@@ -200,6 +200,9 @@ export default function ProductDetail() {
                     data-testid="img-product-main"
                   />
                 )}
+                <div className="absolute top-3 left-3 z-10">
+                  <FavoriteButton productId={product.id} productName={product.name} variant="icon" />
+                </div>
               </div>
               
               {/* Thumbnail Navigation */}
