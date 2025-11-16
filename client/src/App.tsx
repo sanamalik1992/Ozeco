@@ -1,4 +1,5 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
+import { useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { CartProvider } from "@/lib/cart-context";
@@ -30,34 +31,47 @@ import Gallery from "@/pages/Gallery";
 import Warranty from "@/pages/Warranty";
 import NotFound from "@/pages/not-found";
 
+function ScrollToTop() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
+  return null;
+}
+
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/shop" component={Shop} />
-      <Route path="/about" component={About} />
-      <Route path="/contact" component={Contact} />
-      <Route path="/product/:slug" component={ProductDetail} />
-      <Route path="/cart" component={Cart} />
-      <Route path="/checkout" component={Checkout} />
-      <Route path="/order-confirmation" component={OrderConfirmation} />
-      <Route path="/admin/login" component={AdminLogin} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/returns-policy" component={ReturnsPolicy} />
-      <Route path="/shipping-policy" component={ShippingPolicy} />
-      <Route path="/privacy-policy" component={PrivacyPolicy} />
-      <Route path="/terms-of-service" component={TermsOfService} />
-      <Route path="/faq" component={FAQ} />
-      <Route path="/size-guide" component={SizeFitGuide} />
-      <Route path="/blog" component={Blog} />
-      <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/referral" component={Referral} />
-      <Route path="/compare" component={Compare} />
-      <Route path="/wishlist" component={Wishlist} />
-      <Route path="/gallery" component={Gallery} />
-      <Route path="/warranty" component={Warranty} />
-      <Route component={NotFound} />
-    </Switch>
+    <>
+      <ScrollToTop />
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/shop" component={Shop} />
+        <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
+        <Route path="/product/:slug" component={ProductDetail} />
+        <Route path="/cart" component={Cart} />
+        <Route path="/checkout" component={Checkout} />
+        <Route path="/order-confirmation" component={OrderConfirmation} />
+        <Route path="/admin/login" component={AdminLogin} />
+        <Route path="/admin" component={AdminDashboard} />
+        <Route path="/returns-policy" component={ReturnsPolicy} />
+        <Route path="/shipping-policy" component={ShippingPolicy} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/terms-of-service" component={TermsOfService} />
+        <Route path="/faq" component={FAQ} />
+        <Route path="/size-guide" component={SizeFitGuide} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/:slug" component={BlogPost} />
+        <Route path="/referral" component={Referral} />
+        <Route path="/compare" component={Compare} />
+        <Route path="/wishlist" component={Wishlist} />
+        <Route path="/gallery" component={Gallery} />
+        <Route path="/warranty" component={Warranty} />
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
 
