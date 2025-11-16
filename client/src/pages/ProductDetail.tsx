@@ -485,7 +485,7 @@ export default function ProductDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="absolute left-2 bottom-16 z-20 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                    className="absolute left-4 bottom-16 z-20 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
                     onClick={() => customerPhotosApi?.scrollPrev()}
                     data-testid="button-carousel-prev"
                   >
@@ -494,7 +494,7 @@ export default function ProductDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="absolute right-2 bottom-16 z-20 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                    className="absolute right-4 bottom-16 z-20 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
                     onClick={() => customerPhotosApi?.scrollNext()}
                     data-testid="button-carousel-next"
                   >
