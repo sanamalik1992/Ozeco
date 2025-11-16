@@ -62,88 +62,124 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/shop" data-testid="link-all-bikes">
-              <Button variant="ghost" data-testid="button-nav-bikes">All E-Bikes</Button>
+            <Link 
+              href="/shop" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" 
+              data-testid="link-all-bikes"
+            >
+              All E-Bikes
             </Link>
             
             <div className="relative group">
-              <Button variant="ghost" data-testid="button-nav-brands">
+              <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" data-testid="button-nav-brands">
                 Shop by Brand
-              </Button>
+              </button>
               <div className="absolute top-full left-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <Card className="p-2 min-w-40 shadow-lg">
-                  <Link href="/shop?brand=ENGWE">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-engwe">
-                      ENGWE
-                    </Button>
+                  <Link 
+                    href="/shop?brand=ENGWE" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-brand-engwe"
+                  >
+                    ENGWE
                   </Link>
-                  <Link href="/shop?brand=Eleglide">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-eleglide">
-                      Eleglide
-                    </Button>
+                  <Link 
+                    href="/shop?brand=Eleglide" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-brand-eleglide"
+                  >
+                    Eleglide
                   </Link>
-                  <Link href="/shop?brand=DYU">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-dyu">
-                      DYU
-                    </Button>
+                  <Link 
+                    href="/shop?brand=DYU" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-brand-dyu"
+                  >
+                    DYU
                   </Link>
-                  <Link href="/shop?brand=Duotts">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-duotts">
-                      Duotts
-                    </Button>
+                  <Link 
+                    href="/shop?brand=Duotts" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-brand-duotts"
+                  >
+                    Duotts
                   </Link>
-                  <Link href="/shop?brand=Touroll">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-touroll">
-                      Touroll
-                    </Button>
+                  <Link 
+                    href="/shop?brand=Touroll" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-brand-touroll"
+                  >
+                    Touroll
                   </Link>
-                  <Link href="/shop?brand=Fiido">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-fiido">
-                      Fiido
-                    </Button>
+                  <Link 
+                    href="/shop?brand=Fiido" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-brand-fiido"
+                  >
+                    Fiido
                   </Link>
                 </Card>
               </div>
             </div>
             
             <div className="relative group">
-              <Button variant="ghost" data-testid="button-nav-types">
+              <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" data-testid="button-nav-types">
                 Shop by Type
-              </Button>
+              </button>
               <div className="absolute top-full left-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <Card className="p-2 min-w-40 shadow-lg">
-                  <Link href="/shop?category=City">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-type-city">
-                      City
-                    </Button>
+                  <Link 
+                    href="/shop?category=City" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-type-city"
+                  >
+                    City
                   </Link>
-                  <Link href="/shop?category=Folding">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-type-folding">
-                      Folding
-                    </Button>
+                  <Link 
+                    href="/shop?category=Folding" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-type-folding"
+                  >
+                    Folding
                   </Link>
-                  <Link href="/shop?category=Mountain">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-type-mountain">
-                      Mountain
-                    </Button>
+                  <Link 
+                    href="/shop?category=Mountain" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-type-mountain"
+                  >
+                    Mountain
                   </Link>
-                  <Link href="/shop?category=Off-Road">
-                    <Button variant="ghost" className="w-full justify-start" data-testid="button-type-offroad">
-                      Off-Road
-                    </Button>
+                  <Link 
+                    href="/shop?category=Off-Road" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-type-offroad"
+                  >
+                    Off-Road
                   </Link>
                 </Card>
               </div>
             </div>
             
-            <Link href="/blog" data-testid="link-blog">
-              <Button variant="ghost" data-testid="button-nav-blog">Blog</Button>
+            <Link 
+              href="/blog" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" 
+              data-testid="link-blog"
+            >
+              Blog
             </Link>
-            <Link href="/about" data-testid="link-about">
-              <Button variant="ghost" data-testid="button-nav-about">About</Button>
+            <Link 
+              href="/about" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" 
+              data-testid="link-about"
+            >
+              About
             </Link>
-            <Link href="/contact" data-testid="link-contact">
-              <Button variant="ghost" data-testid="button-nav-contact">Contact</Button>
+            <Link 
+              href="/contact" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" 
+              data-testid="link-contact"
+            >
+              Contact
             </Link>
           </nav>
 
@@ -233,25 +269,23 @@ export default function Header() {
               </Button>
             )}
 
-            <Link href="/compare">
-              <Button
-                size="icon"
-                variant="ghost"
-                data-testid="button-compare"
-              >
-                <GitCompare className="h-5 w-5" />
-              </Button>
-            </Link>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => setLocation('/compare')}
+              data-testid="button-compare"
+            >
+              <GitCompare className="h-5 w-5" />
+            </Button>
 
-            <Link href="/wishlist">
-              <Button
-                size="icon"
-                variant="ghost"
-                data-testid="button-wishlist"
-              >
-                <Heart className="h-5 w-5" />
-              </Button>
-            </Link>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => setLocation('/wishlist')}
+              data-testid="button-wishlist"
+            >
+              <Heart className="h-5 w-5" />
+            </Button>
 
             <CartDrawer />
 
@@ -269,44 +303,58 @@ export default function Header() {
 
         {mobileMenuOpen && (
           <nav className="md:hidden py-4 flex flex-col gap-2" data-testid="nav-mobile">
-            <Link href="/shop">
-              <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-bikes">
-                All E-Bikes
-              </Button>
+            <Link 
+              href="/shop" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+              data-testid="button-mobile-bikes"
+            >
+              All E-Bikes
             </Link>
             
             <div className="px-4 py-2">
               <p className="text-sm font-semibold text-muted-foreground mb-2">Shop by Brand</p>
               <div className="flex flex-col gap-1 pl-2">
-                <Link href="/shop?brand=ENGWE">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-engwe">
-                    ENGWE
-                  </Button>
+                <Link 
+                  href="/shop?brand=ENGWE" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-brand-engwe"
+                >
+                  ENGWE
                 </Link>
-                <Link href="/shop?brand=Eleglide">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-eleglide">
-                    Eleglide
-                  </Button>
+                <Link 
+                  href="/shop?brand=Eleglide" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-brand-eleglide"
+                >
+                  Eleglide
                 </Link>
-                <Link href="/shop?brand=DYU">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-dyu">
-                    DYU
-                  </Button>
+                <Link 
+                  href="/shop?brand=DYU" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-brand-dyu"
+                >
+                  DYU
                 </Link>
-                <Link href="/shop?brand=Duotts">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-duotts">
-                    Duotts
-                  </Button>
+                <Link 
+                  href="/shop?brand=Duotts" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-brand-duotts"
+                >
+                  Duotts
                 </Link>
-                <Link href="/shop?brand=Touroll">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-touroll">
-                    Touroll
-                  </Button>
+                <Link 
+                  href="/shop?brand=Touroll" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-brand-touroll"
+                >
+                  Touroll
                 </Link>
-                <Link href="/shop?brand=Fiido">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-fiido">
-                    Fiido
-                  </Button>
+                <Link 
+                  href="/shop?brand=Fiido" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-brand-fiido"
+                >
+                  Fiido
                 </Link>
               </div>
             </div>
@@ -314,43 +362,57 @@ export default function Header() {
             <div className="px-4 py-2">
               <p className="text-sm font-semibold text-muted-foreground mb-2">Shop by Type</p>
               <div className="flex flex-col gap-1 pl-2">
-                <Link href="/shop?category=City">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-type-city">
-                    City
-                  </Button>
+                <Link 
+                  href="/shop?category=City" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-type-city"
+                >
+                  City
                 </Link>
-                <Link href="/shop?category=Folding">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-type-folding">
-                    Folding
-                  </Button>
+                <Link 
+                  href="/shop?category=Folding" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-type-folding"
+                >
+                  Folding
                 </Link>
-                <Link href="/shop?category=Mountain">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-type-mountain">
-                    Mountain
-                  </Button>
+                <Link 
+                  href="/shop?category=Mountain" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-type-mountain"
+                >
+                  Mountain
                 </Link>
-                <Link href="/shop?category=Off-Road">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-type-offroad">
-                    Off-Road
-                  </Button>
+                <Link 
+                  href="/shop?category=Off-Road" 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                  data-testid="button-mobile-type-offroad"
+                >
+                  Off-Road
                 </Link>
               </div>
             </div>
             
-            <Link href="/blog">
-              <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-blog">
-                Blog
-              </Button>
+            <Link 
+              href="/blog" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+              data-testid="button-mobile-blog"
+            >
+              Blog
             </Link>
-            <Link href="/about">
-              <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-about">
-                About
-              </Button>
+            <Link 
+              href="/about" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+              data-testid="button-mobile-about"
+            >
+              About
             </Link>
-            <Link href="/contact">
-              <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-contact">
-                Contact
-              </Button>
+            <Link 
+              href="/contact" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+              data-testid="button-mobile-contact"
+            >
+              Contact
             </Link>
           </nav>
         )}
