@@ -9,9 +9,10 @@ interface FavoriteButtonProps {
   productId: string;
   productName: string;
   variant?: "default" | "icon";
+  size?: "default" | "sm" | "lg" | "icon";
 }
 
-export default function FavoriteButton({ productId, productName, variant = "icon" }: FavoriteButtonProps) {
+export default function FavoriteButton({ productId, productName, variant = "icon", size = "sm" }: FavoriteButtonProps) {
   const { toast } = useToast();
 
   const { data: favoriteStatus } = useQuery<{ isFavorite: boolean }>({
@@ -73,6 +74,7 @@ export default function FavoriteButton({ productId, productName, variant = "icon
   return (
     <Button
       variant={favoriteStatus?.isFavorite ? "default" : "outline"}
+      size={size}
       onClick={handleToggle}
       disabled={toggleFavoriteMutation.isPending}
       className="gap-2"

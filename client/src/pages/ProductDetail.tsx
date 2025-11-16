@@ -9,6 +9,7 @@ import BrandLogo from "@/components/BrandLogo";
 import Reviews from "@/components/Reviews";
 import StarRating from "@/components/StarRating";
 import CompareButton from "@/components/CompareButton";
+import FavoriteButton from "@/components/FavoriteButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -424,7 +425,10 @@ export default function ProductDetail() {
                     <ShoppingCart className="h-5 w-5 mr-2" />
                     Add to Cart
                   </Button>
-                  <CompareButton productId={product.id} productName={product.name} />
+                  <div className="grid grid-cols-2 gap-2">
+                    <FavoriteButton productId={product.id} productName={product.name} variant="default" size="sm" />
+                    <CompareButton productId={product.id} productName={product.name} size="sm" />
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-sm">

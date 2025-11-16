@@ -6,9 +6,10 @@ import { useToast } from "@/hooks/use-toast";
 interface CompareButtonProps {
   productId: string;
   productName: string;
+  size?: "default" | "sm" | "lg" | "icon";
 }
 
-export default function CompareButton({ productId, productName }: CompareButtonProps) {
+export default function CompareButton({ productId, productName, size = "sm" }: CompareButtonProps) {
   const [isInCompare, setIsInCompare] = useState(false);
   const { toast } = useToast();
 
@@ -70,7 +71,7 @@ export default function CompareButton({ productId, productName }: CompareButtonP
   return (
     <Button
       variant={isInCompare ? "default" : "outline"}
-      size="sm"
+      size={size}
       onClick={handleToggleCompare}
       className="gap-1"
       data-testid={`button-compare-${productId}`}
