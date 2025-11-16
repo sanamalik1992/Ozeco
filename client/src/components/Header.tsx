@@ -1,4 +1,4 @@
-import { Search, Menu, X, Heart, GitCompare } from "lucide-react";
+import { Search, Menu, X, Heart, GitCompare, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CartDrawer from "@/components/CartDrawer";
@@ -71,90 +71,92 @@ export default function Header() {
             </Link>
             
             <div className="relative group">
-              <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" data-testid="button-nav-brands">
+              <button className="inline-flex items-center justify-center gap-1 rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" data-testid="button-nav-brands">
                 Shop by Brand
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
               </button>
-              <div className="absolute top-full left-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <Card className="p-2 min-w-40 shadow-lg">
+              <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <Card className="p-3 min-w-48 shadow-xl border-2">
                   <Link 
                     href="/shop?brand=ENGWE" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-brand-engwe"
                   >
-                    ENGWE
+                    <span className="font-semibold">ENGWE</span>
                   </Link>
                   <Link 
                     href="/shop?brand=Eleglide" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-brand-eleglide"
                   >
-                    Eleglide
+                    <span className="font-semibold">Eleglide</span>
                   </Link>
                   <Link 
                     href="/shop?brand=DYU" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-brand-dyu"
                   >
-                    DYU
+                    <span className="font-semibold">DYU</span>
                   </Link>
                   <Link 
                     href="/shop?brand=Duotts" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-brand-duotts"
                   >
-                    Duotts
+                    <span className="font-semibold">Duotts</span>
                   </Link>
                   <Link 
                     href="/shop?brand=Touroll" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-brand-touroll"
                   >
-                    Touroll
+                    <span className="font-semibold">Touroll</span>
                   </Link>
                   <Link 
                     href="/shop?brand=Fiido" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-brand-fiido"
                   >
-                    Fiido
+                    <span className="font-semibold">Fiido</span>
                   </Link>
                 </Card>
               </div>
             </div>
             
             <div className="relative group">
-              <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" data-testid="button-nav-types">
+              <button className="inline-flex items-center justify-center gap-1 rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2" data-testid="button-nav-types">
                 Shop by Type
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
               </button>
-              <div className="absolute top-full left-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <Card className="p-2 min-w-40 shadow-lg">
+              <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <Card className="p-3 min-w-48 shadow-xl border-2">
                   <Link 
                     href="/shop?category=City" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-type-city"
                   >
-                    City
+                    <span className="font-semibold">City</span>
                   </Link>
                   <Link 
                     href="/shop?category=Folding" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-type-folding"
                   >
-                    Folding
+                    <span className="font-semibold">Folding</span>
                   </Link>
                   <Link 
                     href="/shop?category=Mountain" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-type-mountain"
                   >
-                    Mountain
+                    <span className="font-semibold">Mountain</span>
                   </Link>
                   <Link 
                     href="/shop?category=Off-Road" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
                     data-testid="button-type-offroad"
                   >
-                    Off-Road
+                    <span className="font-semibold">Off-Road</span>
                   </Link>
                 </Card>
               </div>

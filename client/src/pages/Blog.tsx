@@ -44,10 +44,10 @@ export default function Blog() {
               Latest News & Guides
             </Badge>
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4" data-testid="text-blog-title">
-              Electric Bikes Blog
+              Powered by Ozeco: The E-Bike Blog
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Expert guides, reviews, and the latest news about electric bikes and sustainable transportation.
+              Expert guides, reviews, and the latest news about Electric bikes and sustainable transportation.
             </p>
           </div>
 
