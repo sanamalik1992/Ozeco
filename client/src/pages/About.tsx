@@ -47,67 +47,6 @@ export default function About() {
           </div>
         </section>
 
-        {/* Company Information - Google Ads Compliance */}
-        <section className="py-12 md:py-16 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <Card className="max-w-4xl mx-auto">
-              <CardContent className="p-8">
-                <h2 className="text-2xl font-display font-bold mb-6 text-center" data-testid="text-company-info">
-                  Company Information
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                  <div>
-                    <h3 className="font-semibold mb-2">Registered Company Name</h3>
-                    <p className="text-muted-foreground">Ozeco Ltd</p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Company Registration Number</h3>
-                    <p className="text-muted-foreground">15445991</p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Registered Office Address</h3>
-                    <p className="text-muted-foreground">
-                      Unit A, 82 James Carter Road<br />
-                      Mildenhall<br />
-                      IP28 7DE<br />
-                      United Kingdom
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Contact Details</h3>
-                    <p className="text-muted-foreground">
-                      Phone: 0333 339 8590<br />
-                      Email: support@ozeco.co.uk<br />
-                      WhatsApp: +44 7446 610660
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Trading History</h3>
-                    <p className="text-muted-foreground">
-                      Established: 2022<br />
-                      Originally based in Yorkshire<br />
-                      Currently operating from Mildenhall, UK
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Business Status</h3>
-                    <p className="text-muted-foreground">
-                      Authorised UK Dealer<br />
-                      Registered with Companies House<br />
-                      Est. 2022
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-6 pt-6 border-t text-center">
-                  <p className="text-xs text-muted-foreground">
-                    Ozeco Ltd is a registered company in England and Wales. Company registration details can be verified at <a href="https://find-and-update.company-information.service.gov.uk/company/15445991" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Companies House (No. 15445991)</a>.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
         {/* Our Story */}
         <section className="py-16 md:py-20">
           <div className="container mx-auto px-4">
