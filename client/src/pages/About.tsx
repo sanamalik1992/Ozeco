@@ -76,7 +76,7 @@ export default function About() {
                   <div>
                     <h3 className="font-semibold mb-2">Contact Details</h3>
                     <p className="text-muted-foreground">
-                      Phone: 03333398590<br />
+                      Phone: 0333 339 8590<br />
                       Email: support@ozeco.co.uk<br />
                       WhatsApp: +44 7446 610660
                     </p>

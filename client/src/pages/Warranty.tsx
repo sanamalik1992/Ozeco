@@ -172,7 +172,7 @@ export default function Warranty() {
                   <Phone className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-semibold text-sm">Phone</div>
-                    <div className="text-xs text-muted-foreground">03333398590</div>
+                    <div className="text-xs text-muted-foreground">0333 339 8590</div>
                   </div>
                 </a>
                 <a 

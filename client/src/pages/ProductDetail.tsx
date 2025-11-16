@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
-import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck, Lock, RotateCcw } from "lucide-react";
+import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck, Lock, RotateCcw, ArrowLeft, ArrowRight } from "lucide-react";
 import type { Product, Review } from "@shared/schema";
 
 export default function ProductDetail() {
@@ -22,6 +22,7 @@ export default function ProductDetail() {
   const { addItem } = useCart();
   const { toast } = useToast();
   const [mainCarouselApi, setMainCarouselApi] = useState<CarouselApi>();
+  const [customerPhotosApi, setCustomerPhotosApi] = useState<CarouselApi>();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const { data: product, isLoading } = useQuery<Product>({
@@ -440,47 +441,66 @@ export default function ProductDetail() {
                   </a>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-4 sm:px-6">
-                <Carousel
-                  opts={{
-                    align: "start",
-                    loop: false,
-                  }}
-                  className="w-full"
-                >
-                  <CarouselContent className="-ml-2 md:-ml-4">
-                    {customerPhotos.map((photo, index) => (
-                      <CarouselItem 
-                        key={photo.id} 
-                        className="pl-2 md:pl-4 basis-3/4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
-                        data-testid={`customer-photo-${index}`}
-                      >
-                        <div className="group relative aspect-square overflow-hidden rounded-lg border hover-elevate active-elevate-2 cursor-pointer bg-muted">
-                          <img
-                            src={photo.imageUrl}
-                            alt={`Customer photo by ${photo.customerName}`}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            decoding="async"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" fill="%239ca3af" font-size="16" font-family="sans-serif">Image unavailable</text></svg>';
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-3 text-white text-center">
-                            <p className="text-xs font-semibold mb-1">{photo.customerName}</p>
-                            {photo.caption && (
-                              <p className="text-xs line-clamp-3">{photo.caption}</p>
-                            )}
+              <CardContent className="px-4 sm:px-6 relative">
+                <div className="relative">
+                  <Carousel
+                    opts={{
+                      align: "start",
+                      loop: false,
+                    }}
+                    setApi={setCustomerPhotosApi}
+                    className="w-full"
+                  >
+                    <CarouselContent className="-ml-2 md:-ml-4">
+                      {customerPhotos.map((photo, index) => (
+                        <CarouselItem 
+                          key={photo.id} 
+                          className="pl-2 md:pl-4 basis-3/4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                          data-testid={`customer-photo-${index}`}
+                        >
+                          <div className="group relative aspect-square overflow-hidden rounded-lg border hover-elevate active-elevate-2 cursor-pointer bg-muted">
+                            <img
+                              src={photo.imageUrl}
+                              alt={`Customer photo by ${photo.customerName}`}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                              decoding="async"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.onerror = null;
+                                target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" fill="%239ca3af" font-size="16" font-family="sans-serif">Image unavailable</text></svg>';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-3 text-white text-center">
+                              <p className="text-xs font-semibold mb-1">{photo.customerName}</p>
+                              {photo.caption && (
+                                <p className="text-xs line-clamp-3">{photo.caption}</p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="!left-2 !bottom-4 !top-auto !translate-y-0 z-10" data-testid="button-carousel-prev" />
-                  <CarouselNext className="!right-2 !bottom-4 !top-auto !translate-y-0 z-10" data-testid="button-carousel-next" />
-                </Carousel>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="absolute left-2 bottom-16 z-20 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                    onClick={() => customerPhotosApi?.scrollPrev()}
+                    data-testid="button-carousel-prev"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="absolute right-2 bottom-16 z-20 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                    onClick={() => customerPhotosApi?.scrollNext()}
+                    data-testid="button-carousel-next"
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ) : null}

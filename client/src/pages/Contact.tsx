@@ -69,7 +69,7 @@ export default function Contact() {
                   <div>
                     <h3 className="font-semibold mb-2">Phone Number</h3>
                     <a href="tel:03333398590" className="text-muted-foreground hover:text-primary transition-colors">
-                      03333398590
+                      0333 339 8590
                     </a>
                     <p className="text-sm text-muted-foreground mt-1">WhatsApp Available</p>
                   </div>

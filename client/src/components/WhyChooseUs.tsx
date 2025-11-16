@@ -15,7 +15,7 @@ const features = [
   {
     icon: Headphones,
     title: "UK-Based Support",
-    description: "Expert customer service available Mon-Fri, 9:00 AM - 5:30 PM (GMT). Call 03333398590.",
+    description: "Expert customer service available Mon-Fri, 9:00 AM - 5:30 PM (GMT). Call 0333 339 8590.",
   },
   {
     icon: MapPin,
