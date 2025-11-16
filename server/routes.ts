@@ -340,6 +340,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/admin/variants/:id", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const { id } = req.params;
+      const updates = req.body;
+
+      // Validate that we have some updates
+      if (Object.keys(updates).length === 0) {
+        return res.status(400).json({ error: "No updates provided" });
+      }
+
+      const variant = await storage.updateProductVariant(id, updates);
+      
+      if (!variant) {
+        return res.status(404).json({ error: "Variant not found" });
+      }
+
+      res.json(variant);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Checkout and order routes
   app.post("/api/checkout/shipping", async (req, res) => {
     try {

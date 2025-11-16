@@ -50,6 +50,7 @@ export interface IStorage {
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: string, updates: Partial<InsertProduct>): Promise<Product | undefined>;
   getProductVariants(productId: string): Promise<ProductVariant[]>;
+  updateProductVariant(id: string, updates: Partial<InsertProductVariant>): Promise<ProductVariant | undefined>;
   
   // Cart methods
   getCartItems(sessionId: string): Promise<(CartItem & { product: Product })[]>;
@@ -148,6 +149,15 @@ export class DbStorage implements IStorage {
 
   async getProductVariants(productId: string): Promise<ProductVariant[]> {
     return await db.select().from(productVariants).where(eq(productVariants.productId, productId));
+  }
+
+  async updateProductVariant(id: string, updates: Partial<InsertProductVariant>): Promise<ProductVariant | undefined> {
+    const result = await db
+      .update(productVariants)
+      .set(updates)
+      .where(eq(productVariants.id, id))
+      .returning();
+    return result[0];
   }
 
   // Cart methods
