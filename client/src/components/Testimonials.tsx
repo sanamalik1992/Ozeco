@@ -3,7 +3,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
 import customer1 from "@assets/stock_images/south_asian_indian_m_d9be52e1.jpg";
 import customer2 from "@assets/stock_images/black_african_britis_8af0b20c.jpg";
-import customer3 from "@assets/stock_images/muslim_woman_hijab_s_657b4732.jpg";
+import customer3 from "@assets/stock_images/white_british_woman__c1d1b9bb.jpg";
 
 const testimonials = [
   {
@@ -21,7 +21,7 @@ const testimonials = [
     text: "The Eleglide M1 Plus has transformed my daily school run. I can fit two child seats and still get 45km range. No more sitting in traffic on the A4. Saved over £200 in petrol this month alone. The customer service team were brilliant when I had questions about the battery warranty.",
   },
   {
-    name: "Fatima Hassan",
+    name: "Charlotte Evans",
     location: "Edinburgh",
     image: customer3,
     rating: 5,
