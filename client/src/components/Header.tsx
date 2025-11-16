@@ -324,11 +324,11 @@ export default function Header() {
             <div className="border-b">
               <button
                 onClick={() => setMobileBrandsOpen(!mobileBrandsOpen)}
-                className="flex items-center justify-between w-full text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3"
+                className="flex items-center justify-center w-full text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 relative"
                 data-testid="button-mobile-brands-toggle"
               >
                 Brands
-                <ChevronDown className={`h-4 w-4 transition-transform ${mobileBrandsOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-4 w-4 transition-transform absolute right-4 ${mobileBrandsOpen ? 'rotate-180' : ''}`} />
               </button>
               {mobileBrandsOpen && (
                 <div className="flex flex-col gap-1 pl-2">
@@ -381,11 +381,11 @@ export default function Header() {
             <div className="border-b">
               <button
                 onClick={() => setMobileTypesOpen(!mobileTypesOpen)}
-                className="flex items-center justify-between w-full text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3"
+                className="flex items-center justify-center w-full text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 relative"
                 data-testid="button-mobile-types-toggle"
               >
                 Types
-                <ChevronDown className={`h-4 w-4 transition-transform ${mobileTypesOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-4 w-4 transition-transform absolute right-4 ${mobileTypesOpen ? 'rotate-180' : ''}`} />
               </button>
               {mobileTypesOpen && (
                 <div className="flex flex-col gap-1 pl-2">
