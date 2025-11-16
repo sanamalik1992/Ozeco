@@ -1,9 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
-import customer1 from "@assets/generated_images/South_Asian_woman_portrait_b6e4a234.png";
-import customer2 from "@assets/generated_images/Black_British_man_portrait_3f828468.png";
-import customer3 from "@assets/generated_images/Middle_Eastern_woman_hijab_portrait_b79a7c37.png";
+import customer1 from "@assets/stock_images/south_asian_indian_w_5a2ef361.jpg";
+import customer2 from "@assets/stock_images/black_african_britis_8af0b20c.jpg";
+import customer3 from "@assets/stock_images/middle_eastern_musli_375760e7.jpg";
 
 const testimonials = [
   {
