@@ -5,7 +5,7 @@ const features = [
   {
     icon: Truck,
     title: "Free UK Delivery",
-    description: "Free shipping on all orders within the United Kingdom. Delivery in 3-6 business days.",
+    description: "Free shipping on all orders within the United Kingdom. Fast delivery.",
   },
   {
     icon: Award,

@@ -1,13 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
-import customer1 from "@assets/stock_images/south_asian_indian_w_5a2ef361.jpg";
+import customer1 from "@assets/stock_images/south_asian_indian_m_d9be52e1.jpg";
 import customer2 from "@assets/stock_images/black_african_britis_8af0b20c.jpg";
-import customer3 from "@assets/stock_images/middle_eastern_musli_375760e7.jpg";
+import customer3 from "@assets/stock_images/muslim_woman_hijab_s_657b4732.jpg";
 
 const testimonials = [
   {
-    name: "Priya Sharma",
+    name: "Rajesh Kumar",
     location: "Manchester",
     image: customer1,
     rating: 5,
