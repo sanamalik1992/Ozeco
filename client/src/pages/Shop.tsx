@@ -230,7 +230,7 @@ export default function Shop() {
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                        className="w-full h-full object-contain p-4 transition-transform group-hover:scale-105"
                         data-testid={`img-product-${product.slug}`}
                       />
                       {product.isBestseller && (

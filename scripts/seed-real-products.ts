@@ -131,7 +131,7 @@ const realProducts = [
     price: "999.99",
     originalPrice: "1049.99",
     description: "Practical cargo Electric bike for family and delivery use with robust design.",
-    image: "https://www.ozeco.co.uk/cdn/shop/files/IMG-2140.webp?v=1756504566&width=533",
+    image: "https://www.ozeco.co.uk/cdn/shop/files/IMG-2140.webp?v=1756504566&width=400",
     features: ["350W Motor", "Cargo Rack", "Step-Through Frame", "Puncture-Resistant Tires"],
     maxRange: "80 km",
     topSpeed: "25 km/h",
