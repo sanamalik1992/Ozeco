@@ -20,7 +20,7 @@ const features = [
   {
     icon: MapPin,
     title: "UK Registered Company",
-    description: "Ozeco Ltd (Company No: 15445991) started in Yorkshire in 2022, now based in Mildenhall, UK.",
+    description: "Ozeco Ltd (Company No: 15445991) - Authorised UK dealer for premium Electric bikes.",
   },
 ];
 
