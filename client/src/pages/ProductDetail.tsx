@@ -478,8 +478,8 @@ export default function ProductDetail() {
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <CarouselPrevious className="!left-2 !top-1/2 !-translate-y-1/2 z-10" data-testid="button-carousel-prev" />
-                  <CarouselNext className="!right-2 !top-1/2 !-translate-y-1/2 z-10" data-testid="button-carousel-next" />
+                  <CarouselPrevious className="!left-2 !bottom-4 !top-auto !translate-y-0 z-10" data-testid="button-carousel-prev" />
+                  <CarouselNext className="!right-2 !bottom-4 !top-auto !translate-y-0 z-10" data-testid="button-carousel-next" />
                 </Carousel>
               </CardContent>
             </Card>
