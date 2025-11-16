@@ -62,9 +62,8 @@ export default function Header() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center md:justify-end gap-2 text-sm">
             <Phone className="h-4 w-4" />
-            <span className="font-medium">Sales & Support, Call us on</span>
-            <a href="tel:03333398590" className="font-bold hover:underline" data-testid="link-header-phone">
-              0333 339 8590
+            <a href="tel:03333398590" className="font-medium hover:underline" data-testid="link-header-phone">
+              Sales & Support, Call us on <span className="font-bold">0333 339 8590</span>
             </a>
             <span className="hidden md:inline text-xs opacity-90 ml-2">Mon-Fri: 9:00 AM - 5:30 PM (GMT)</span>
           </div>

@@ -61,7 +61,7 @@ function Router() {
         <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route path="/terms-of-service" component={TermsOfService} />
         <Route path="/faq" component={FAQ} />
-        <Route path="/size-guide" component={SizeFitGuide} />
+        <Route path="/size-fit-guide" component={SizeFitGuide} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={BlogPost} />
         <Route path="/referral" component={Referral} />

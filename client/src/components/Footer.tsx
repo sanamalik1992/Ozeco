@@ -25,31 +25,23 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/shop">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-bikes">
-                    All E-Bikes
-                  </a>
+                <Link href="/shop" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-bikes">
+                  All E-Bikes
                 </Link>
               </li>
               <li>
-                <Link href="/shop">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-brands">
-                    Brands
-                  </a>
+                <Link href="/shop" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-brands">
+                  Brands
                 </Link>
               </li>
               <li>
-                <Link href="/referral">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-referral">
-                    Referral Program
-                  </a>
+                <Link href="/referral" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-referral">
+                  Referral Program
                 </Link>
               </li>
               <li>
-                <Link href="/shop">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-bestsellers">
-                    Best Sellers
-                  </a>
+                <Link href="/shop" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-bestsellers">
+                  Best Sellers
                 </Link>
               </li>
             </ul>
@@ -61,45 +53,33 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/faq">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-faq">
-                    FAQ
-                  </a>
+                <Link href="/faq" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-faq">
+                  FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/size-guide">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-size-guide">
-                    Size & Fit Guide
-                  </a>
+                <Link href="/size-fit-guide" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-size-guide">
+                  Size & Fit Guide
                 </Link>
               </li>
               <li>
-                <Link href="/shipping-policy">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-shipping">
-                    Shipping Policy
-                  </a>
+                <Link href="/shipping-policy" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-shipping">
+                  Shipping Policy
                 </Link>
               </li>
               <li>
-                <Link href="/returns-policy">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-returns">
-                    Returns Policy
-                  </a>
+                <Link href="/returns-policy" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-returns">
+                  Returns Policy
                 </Link>
               </li>
               <li>
-                <Link href="/warranty">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-warranty">
-                    Warranty
-                  </a>
+                <Link href="/warranty" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-warranty">
+                  Warranty
                 </Link>
               </li>
               <li>
-                <Link href="/contact">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-contact">
-                    Contact Us
-                  </a>
+                <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-contact">
+                  Contact Us
                 </Link>
               </li>
             </ul>
@@ -181,15 +161,11 @@ export default function Footer() {
             </p>
             
             <div className="flex gap-4 text-sm">
-              <Link href="/privacy-policy" data-testid="link-footer-privacy">
-                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  Privacy Policy
-                </span>
+              <Link href="/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-privacy">
+                Privacy Policy
               </Link>
-              <Link href="/terms-of-service" data-testid="link-footer-terms">
-                <span className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  Terms of Service
-                </span>
+              <Link href="/terms-of-service" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-terms">
+                Terms of Service
               </Link>
             </div>
           </div>
