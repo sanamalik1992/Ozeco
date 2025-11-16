@@ -317,6 +317,7 @@ export default function Header() {
               href="/shop" 
               className="inline-flex items-center justify-center text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 w-full justify-start border-b" 
               data-testid="button-mobile-bikes"
+              onClick={() => setMobileMenuOpen(false)}
             >
               All E-Bikes
             </Link>
@@ -336,6 +337,7 @@ export default function Header() {
                     href="/shop?brand=ENGWE" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-brand-engwe"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     ENGWE
                   </Link>
@@ -343,6 +345,7 @@ export default function Header() {
                     href="/shop?brand=Eleglide" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-brand-eleglide"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Eleglide
                   </Link>
@@ -350,6 +353,7 @@ export default function Header() {
                     href="/shop?brand=DYU" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-brand-dyu"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     DYU
                   </Link>
@@ -357,6 +361,7 @@ export default function Header() {
                     href="/shop?brand=Duotts" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-brand-duotts"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Duotts
                   </Link>
@@ -364,6 +369,7 @@ export default function Header() {
                     href="/shop?brand=Touroll" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-brand-touroll"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Touroll
                   </Link>
@@ -371,6 +377,7 @@ export default function Header() {
                     href="/shop?brand=Fiido" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-brand-fiido"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Fiido
                   </Link>
@@ -393,6 +400,7 @@ export default function Header() {
                     href="/shop?category=City" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-type-city"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     City
                   </Link>
@@ -400,6 +408,7 @@ export default function Header() {
                     href="/shop?category=Folding" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-type-folding"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Folding
                   </Link>
@@ -407,6 +416,7 @@ export default function Header() {
                     href="/shop?category=Mountain" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-type-mountain"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Mountain
                   </Link>
@@ -414,6 +424,7 @@ export default function Header() {
                     href="/shop?category=Off-Road" 
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
                     data-testid="button-mobile-type-offroad"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Off-Road
                   </Link>
@@ -425,6 +436,7 @@ export default function Header() {
               href="/blog" 
               className="inline-flex items-center justify-center text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 w-full justify-start border-b" 
               data-testid="button-mobile-blog"
+              onClick={() => setMobileMenuOpen(false)}
             >
               Blog
             </Link>
@@ -432,6 +444,7 @@ export default function Header() {
               href="/about" 
               className="inline-flex items-center justify-center text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 w-full justify-start border-b" 
               data-testid="button-mobile-about"
+              onClick={() => setMobileMenuOpen(false)}
             >
               About
             </Link>
@@ -439,6 +452,7 @@ export default function Header() {
               href="/contact" 
               className="inline-flex items-center justify-center text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 w-full justify-start border-b" 
               data-testid="button-mobile-contact"
+              onClick={() => setMobileMenuOpen(false)}
             >
               Contact
             </Link>
