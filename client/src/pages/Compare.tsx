@@ -131,7 +131,7 @@ export default function Compare() {
                               <img
                                 src={product.image}
                                 alt={product.name}
-                                className="w-full h-32 object-contain mb-3"
+                                className="w-full h-32 object-contain mb-3 bg-background"
                               />
                               <h3 className="font-bold text-sm mb-1">
                                 {product.name}

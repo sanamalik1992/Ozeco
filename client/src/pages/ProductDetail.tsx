@@ -142,7 +142,7 @@ export default function ProductDetail() {
                           <img
                             src={image}
                             alt={`${product.name} - Image ${index + 1}`}
-                            className="w-full aspect-square object-contain p-8"
+                            className="w-full aspect-square object-contain p-8 bg-background rounded-lg"
                             data-testid={`img-product-${index}`}
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
@@ -164,7 +164,7 @@ export default function ProductDetail() {
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full aspect-square object-contain p-8"
+                    className="w-full aspect-square object-contain p-8 bg-background rounded-lg"
                     data-testid="img-product-main"
                   />
                 )}
@@ -189,7 +189,7 @@ export default function ProductDetail() {
                       <img
                         src={image}
                         alt={`Thumbnail ${index + 1}`}
-                        className="w-full aspect-square object-contain p-2"
+                        className="w-full aspect-square object-contain p-2 bg-background"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
