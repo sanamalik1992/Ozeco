@@ -1,4 +1,4 @@
-import { useRoute } from "wouter";
+import { useRoute, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useCart } from "@/lib/cart-context";
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
-import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck, Lock, RotateCcw, ArrowLeft, ArrowRight } from "lucide-react";
+import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck, Lock, RotateCcw, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Product, Review, ProductVariant } from "@shared/schema";
 
 export default function ProductDetail() {
@@ -134,6 +134,29 @@ export default function ProductDetail() {
       <Header />
       <main className="py-8 md:py-12">
         <div className="container mx-auto px-4">
+          {/* Breadcrumb Navigation */}
+          <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+            <Link 
+              href="/shop" 
+              className="hover:text-primary transition-colors hover-elevate active-elevate-2 px-2 py-1 rounded-md"
+              data-testid="link-shop"
+            >
+              Shop
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link 
+              href={`/shop?brand=${encodeURIComponent(product.brand)}`}
+              className="hover:text-primary transition-colors hover-elevate active-elevate-2 px-2 py-1 rounded-md"
+              data-testid="link-brand"
+            >
+              {product.brand}
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-foreground font-medium" data-testid="text-breadcrumb-current">
+              {product.name}
+            </span>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-12">
             {/* Product Images Carousel */}
             <div className="space-y-4">
@@ -313,32 +336,49 @@ export default function ProductDetail() {
                   {variants[0]?.name === 'Color' ? (
                     <div className="flex gap-2 flex-wrap">
                       {variants.map((variant) => (
-                        <button
-                          key={variant.id}
-                          onClick={() => setSelectedVariant(variant)}
-                          className={`
-                            relative border-2 rounded-md overflow-hidden transition-all hover-elevate active-elevate-2 w-20 h-20
-                            ${selectedVariant?.id === variant.id ? 'border-primary ring-2 ring-primary' : 'border-border'}
-                          `}
-                          data-testid={`button-variant-${variant.value.toLowerCase().replace(/\s+/g, '-')}`}
-                        >
-                          {variant.image ? (
-                            <img 
-                              src={variant.image} 
-                              alt={variant.value} 
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-card">
-                              <span className="text-xs font-medium">{variant.value}</span>
-                            </div>
-                          )}
-                          {variant.stockQuantity === 0 && (
-                            <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                              <span className="text-xs font-semibold text-destructive">Sold Out</span>
-                            </div>
-                          )}
-                        </button>
+                        <div key={variant.id} className="flex flex-col items-center gap-1">
+                          <button
+                            onClick={() => setSelectedVariant(variant)}
+                            className={`
+                              relative border-2 rounded-md overflow-visible transition-all hover-elevate active-elevate-2 w-16 h-16 bg-background
+                              ${selectedVariant?.id === variant.id ? 'border-primary ring-2 ring-primary' : 'border-border'}
+                            `}
+                            data-testid={`button-variant-${variant.value.toLowerCase().replace(/\s+/g, '-')}`}
+                          >
+                            {variant.image ? (
+                              <img 
+                                src={variant.image} 
+                                alt={variant.value} 
+                                className="w-full h-full object-contain p-1"
+                                loading="lazy"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.onerror = null;
+                                  target.style.display = 'none';
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    const fallback = document.createElement('div');
+                                    fallback.className = 'w-full h-full flex items-center justify-center bg-muted';
+                                    fallback.innerHTML = `<span class="text-xs font-medium text-center px-1">${variant.value}</span>`;
+                                    parent.appendChild(fallback);
+                                  }
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-muted">
+                                <span className="text-xs font-medium text-center px-1">{variant.value}</span>
+                              </div>
+                            )}
+                            {variant.stockQuantity === 0 && (
+                              <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-md">
+                                <span className="text-xs font-semibold text-destructive">Sold Out</span>
+                              </div>
+                            )}
+                          </button>
+                          <span className="text-xs text-center" data-testid={`text-variant-${variant.value.toLowerCase().replace(/\s+/g, '-')}`}>
+                            {variant.value}
+                          </span>
+                        </div>
                       ))}
                     </div>
                   ) : (
