@@ -19,6 +19,8 @@ import {
   type InsertFavorite,
   type CustomerPhoto,
   type InsertCustomerPhoto,
+  type ProductVariant,
+  type InsertProductVariant,
   users,
   products,
   cartItems,
@@ -29,6 +31,7 @@ import {
   referralCodes,
   favorites,
   customerPhotos,
+  productVariants,
 } from "@shared/schema";
 import { db } from "@db";
 import { eq, and, desc } from "drizzle-orm";
@@ -46,6 +49,7 @@ export interface IStorage {
   getProductsByBrand(brand: string): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: string, updates: Partial<InsertProduct>): Promise<Product | undefined>;
+  getProductVariants(productId: string): Promise<ProductVariant[]>;
   
   // Cart methods
   getCartItems(sessionId: string): Promise<(CartItem & { product: Product })[]>;
@@ -140,6 +144,10 @@ export class DbStorage implements IStorage {
       .where(eq(products.id, id))
       .returning();
     return result[0];
+  }
+
+  async getProductVariants(productId: string): Promise<ProductVariant[]> {
+    return await db.select().from(productVariants).where(eq(productVariants.productId, productId));
   }
 
   // Cart methods

@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
 import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck, Lock, RotateCcw, ArrowLeft, ArrowRight } from "lucide-react";
-import type { Product, Review } from "@shared/schema";
+import type { Product, Review, ProductVariant } from "@shared/schema";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:slug");
@@ -25,10 +25,16 @@ export default function ProductDetail() {
   const [mainCarouselApi, setMainCarouselApi] = useState<CarouselApi>();
   const [customerPhotosApi, setCustomerPhotosApi] = useState<CarouselApi>();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: [`/api/products/slug/${productSlug}`],
     enabled: !!productSlug,
+  });
+
+  const { data: variants = [] } = useQuery<ProductVariant[]>({
+    queryKey: [`/api/products/${product?.id}/variants`],
+    enabled: !!product?.id,
   });
   
   useEffect(() => {
@@ -298,12 +304,79 @@ export default function ProductDetail() {
 
               <Separator />
 
+              {/* Product Variants */}
+              {variants.length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-3">
+                    Select {variants[0]?.name}
+                  </h2>
+                  {variants[0]?.name === 'Color' ? (
+                    <div className="flex gap-2 flex-wrap">
+                      {variants.map((variant) => (
+                        <button
+                          key={variant.id}
+                          onClick={() => setSelectedVariant(variant)}
+                          className={`
+                            relative border-2 rounded-md overflow-hidden transition-all hover-elevate active-elevate-2 w-20 h-20
+                            ${selectedVariant?.id === variant.id ? 'border-primary ring-2 ring-primary' : 'border-border'}
+                          `}
+                          data-testid={`button-variant-${variant.value.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          {variant.image ? (
+                            <img 
+                              src={variant.image} 
+                              alt={variant.value} 
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-card">
+                              <span className="text-xs font-medium">{variant.value}</span>
+                            </div>
+                          )}
+                          {variant.stockQuantity === 0 && (
+                            <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                              <span className="text-xs font-semibold text-destructive">Sold Out</span>
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 flex-wrap">
+                      {variants.map((variant) => (
+                        <Button
+                          key={variant.id}
+                          variant={selectedVariant?.id === variant.id ? "default" : "outline"}
+                          onClick={() => setSelectedVariant(variant)}
+                          disabled={variant.stockQuantity === 0}
+                          data-testid={`button-variant-${variant.value.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          {variant.value}
+                          {variant.price && ` - £${parseFloat(variant.price).toFixed(2)}`}
+                          {variant.stockQuantity === 0 && ' (Sold Out)'}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                  {selectedVariant && selectedVariant.price && (
+                    <div className="mt-3 text-sm text-muted-foreground">
+                      Price for {selectedVariant.value}: <span className="font-semibold text-primary">£{parseFloat(selectedVariant.price).toFixed(2)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {variants.length > 0 && <Separator />}
+
               {/* Add to Cart */}
               <div className="space-y-4">
-                {product.stockQuantity > 0 && product.stockQuantity < 10 && (
+                {((selectedVariant && selectedVariant.stockQuantity > 0 && selectedVariant.stockQuantity < 10) || 
+                  (!selectedVariant && product.stockQuantity > 0 && product.stockQuantity < 10)) && (
                   <div className="flex items-center gap-2 text-sm bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-400 px-4 py-3 rounded-md" data-testid="stock-urgency">
                     <AlertCircle className="h-5 w-5" />
-                    <span className="font-semibold">Only {product.stockQuantity} left in stock - Order soon!</span>
+                    <span className="font-semibold">
+                      Only {selectedVariant ? selectedVariant.stockQuantity : product.stockQuantity} left in stock - Order soon!
+                    </span>
                   </div>
                 )}
                 <div className="space-y-2">

@@ -43,6 +43,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/products/:id/variants", async (req, res) => {
+    try {
+      const variants = await storage.getProductVariants(req.params.id);
+      res.json(variants);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.get("/api/products/brand/:brand", async (req, res) => {
     try {
       const products = await storage.getProductsByBrand(req.params.brand);
