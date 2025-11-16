@@ -94,6 +94,7 @@ export default function FeaturedProducts() {
               name={product.name}
               brand={product.brand}
               price={parseFloat(product.price)}
+              originalPrice={product.originalPrice ? parseFloat(product.originalPrice) : null}
               image={product.image}
               range={product.maxRange || ""}
               maxSpeed={product.topSpeed || ""}

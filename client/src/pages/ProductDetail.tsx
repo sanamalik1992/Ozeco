@@ -241,12 +241,22 @@ export default function ProductDetail() {
                   </button>
                 )}
                 <div className="mb-6">
-                  <div className="flex items-baseline gap-3">
+                  <div className="flex items-baseline gap-3 flex-wrap">
                     <span className="text-4xl font-bold text-primary" data-testid="text-product-price">
                       £{parseFloat(product.price).toFixed(2)}
                     </span>
-                    <span className="text-sm text-muted-foreground">Free UK Delivery</span>
+                    {product.originalPrice && parseFloat(product.originalPrice) > parseFloat(product.price) && (
+                      <>
+                        <span className="text-2xl text-muted-foreground line-through" data-testid="text-original-price">
+                          £{parseFloat(product.originalPrice).toFixed(2)}
+                        </span>
+                        <Badge className="bg-red-500 text-white border-red-600" data-testid="badge-savings">
+                          Save £{(parseFloat(product.originalPrice) - parseFloat(product.price)).toFixed(0)}
+                        </Badge>
+                      </>
+                    )}
                   </div>
+                  <span className="text-sm text-muted-foreground mt-2 block">Free UK Delivery</span>
                 </div>
               </div>
 

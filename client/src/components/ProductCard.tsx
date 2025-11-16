@@ -11,6 +11,7 @@ interface ProductCardProps {
   name: string;
   brand: string;
   price: number;
+  originalPrice?: number | null;
   image: string;
   range: string;
   maxSpeed: string;
@@ -27,6 +28,7 @@ export default function ProductCard({
   name,
   brand,
   price,
+  originalPrice,
   image,
   range,
   maxSpeed,
@@ -38,7 +40,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [, setLocation] = useLocation();
   const isPopular = id === "2"; // Eleglide M2 is popular
-  const discount = id === "3" ? 20 : null; // DYU has discount
+  const hasDiscount = originalPrice && originalPrice > price;
   const showStockUrgency = stockQuantity !== undefined && stockQuantity > 0 && stockQuantity < 10;
 
   const handleViewDetails = () => {
@@ -70,9 +72,9 @@ export default function ProductCard({
             ⭐ Bestseller
           </Badge>
         )}
-        {discount && (
+        {hasDiscount && originalPrice && (
           <Badge className="absolute top-3 right-3 bg-red-500 text-white border-red-600">
-            Save £{discount}
+            Save £{(originalPrice - price).toFixed(0)}
           </Badge>
         )}
       </div>
@@ -92,9 +94,9 @@ export default function ProductCard({
         )}
         <p className="text-3xl font-bold text-primary mb-4" data-testid={`text-price-${id}`}>
           £{price.toLocaleString()}
-          {discount && (
+          {hasDiscount && originalPrice && (
             <span className="text-base text-muted-foreground line-through ml-2">
-              £{(price + discount).toFixed(2)}
+              £{originalPrice.toLocaleString()}
             </span>
           )}
         </p>

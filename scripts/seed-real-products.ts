@@ -32,6 +32,7 @@ const realProducts = [
     brand: "Eleglide",
     category: "Electric Mountain Bikes",
     price: "594.99",
+    originalPrice: "644.99",
     description: "High-spec electric mountain bike built for both adventure and everyday riding. Featuring powerful 250W motor, long-lasting 15Ah battery, and advanced components like hydraulic suspension and disc brakes.",
     image: "https://www.ozeco.co.uk/cdn/shop/files/kvo5ypxk.png?v=1747598026&width=533",
     images: [
@@ -71,6 +72,7 @@ const realProducts = [
     brand: "DYU",
     category: "Electric Folding Bikes",
     price: "399.99",
+    originalPrice: "449.99",
     description: "Smart, space-saving electric bike designed for everyday urban commuting. With 250W motor, pedal assist, and foldable aluminium frame.",
     image: "https://www.ozeco.co.uk/cdn/shop/files/hyw8o05i.png?v=1747601600&width=533",
     images: [
@@ -110,6 +112,7 @@ const realProducts = [
     brand: "ENGWE",
     category: "Electric Mountain Bikes",
     price: "849.99",
+    originalPrice: "899.99",
     description: "High-performance mountain Electric bike with impressive range and advanced features.",
     image: "https://www.ozeco.co.uk/cdn/shop/files/xs5uq1va.png?v=1747601026&width=533",
     features: ["500W Motor", "Front Suspension", "Mechanical Disc Brakes", "Removable Battery"],
@@ -126,6 +129,7 @@ const realProducts = [
     brand: "ENGWE",
     category: "Electric Cargo Bikes",
     price: "999.99",
+    originalPrice: "1049.99",
     description: "Practical cargo Electric bike for family and delivery use with robust design.",
     image: "https://www.ozeco.co.uk/cdn/shop/files/IMG-2140.webp?v=1756504566&width=533",
     features: ["350W Motor", "Cargo Rack", "Step-Through Frame", "Puncture-Resistant Tires"],
