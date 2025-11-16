@@ -55,64 +55,78 @@ function ProductVariants({ productId, onUpdateVariant, editingVariantPrice, edit
   }
 
   return (
-    <div className="p-4 bg-muted/50">
-      <h4 className="text-sm font-medium mb-3">Product Variants</h4>
-      <div className="space-y-2">
+    <div className="p-6 bg-accent/20 border-l-4 border-l-primary">
+      <div className="flex items-center gap-2 mb-4">
+        <Package className="h-5 w-5 text-primary" />
+        <h4 className="text-base font-semibold">Product Variants - Adjust Price & Stock</h4>
+        <Badge variant="default" className="ml-auto">{variants.length} variant{variants.length !== 1 ? 's' : ''}</Badge>
+      </div>
+      <div className="space-y-3">
         {variants.map((variant) => (
-          <Card key={variant.id} className="p-3">
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <Badge variant="outline" className="mb-1" data-testid={`badge-variant-type-${variant.id}`}>{variant.name}</Badge>
-                <p className="text-sm font-medium" data-testid={`text-variant-value-${variant.id}`}>{variant.value}</p>
+          <Card key={variant.id} className="p-4 bg-card">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex flex-col">
+                <Badge variant="outline" className="mb-2 w-fit" data-testid={`badge-variant-type-${variant.id}`}>{variant.name}</Badge>
+                <p className="text-base font-semibold" data-testid={`text-variant-value-${variant.id}`}>{variant.value}</p>
+                {variant.image && (
+                  <img 
+                    src={variant.image} 
+                    alt={variant.value}
+                    className="mt-2 w-20 h-20 object-contain rounded bg-muted"
+                  />
+                )}
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col gap-1">
-                  <Label className="text-xs">Price</Label>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium" data-testid={`text-variant-price-${variant.id}`}>£{variant.price}</span>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="New price"
-                      value={editingVariantPrice[variant.id] || ""}
-                      onChange={(e) => setEditingVariantPrice({ ...editingVariantPrice, [variant.id]: e.target.value })}
-                      className="w-24 text-sm"
-                      data-testid={`input-variant-price-${variant.id}`}
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onUpdateVariant(variant.id, editingVariantPrice[variant.id])}
-                      disabled={!editingVariantPrice[variant.id] || isPending}
-                      data-testid={`button-update-variant-price-${variant.id}`}
-                    >
-                      Update
-                    </Button>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-medium">Price</Label>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-lg font-bold text-primary">
+                    £<span data-testid={`text-variant-price-${variant.id}`}>{variant.price}</span>
                   </div>
+                  <span className="text-muted-foreground">→</span>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="New price"
+                    value={editingVariantPrice[variant.id] || ""}
+                    onChange={(e) => setEditingVariantPrice({ ...editingVariantPrice, [variant.id]: e.target.value })}
+                    className="w-28"
+                    data-testid={`input-variant-price-${variant.id}`}
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => onUpdateVariant(variant.id, editingVariantPrice[variant.id])}
+                    disabled={!editingVariantPrice[variant.id] || isPending}
+                    data-testid={`button-update-variant-price-${variant.id}`}
+                  >
+                    Update
+                  </Button>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <Label className="text-xs">Stock</Label>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-medium">Stock Quantity</Label>
+                <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium" data-testid={`text-variant-stock-${variant.id}`}>{variant.stockQuantity}</span>
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="Qty"
-                      value={editingVariantStock[variant.id] || ""}
-                      onChange={(e) => setEditingVariantStock({ ...editingVariantStock, [variant.id]: e.target.value })}
-                      className="w-20 text-sm"
-                      data-testid={`input-variant-stock-${variant.id}`}
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onUpdateVariant(variant.id, undefined, editingVariantStock[variant.id])}
-                      disabled={!editingVariantStock[variant.id] || isPending}
-                      data-testid={`button-update-variant-stock-${variant.id}`}
-                    >
-                      Set
-                    </Button>
+                    <span className="text-lg font-bold" data-testid={`text-variant-stock-${variant.id}`}>{variant.stockQuantity}</span>
+                    <span className="text-sm text-muted-foreground">units</span>
                   </div>
+                  <span className="text-muted-foreground">→</span>
+                  <Input
+                    type="number"
+                    min="0"
+                    placeholder="Qty"
+                    value={editingVariantStock[variant.id] || ""}
+                    onChange={(e) => setEditingVariantStock({ ...editingVariantStock, [variant.id]: e.target.value })}
+                    className="w-24"
+                    data-testid={`input-variant-stock-${variant.id}`}
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => onUpdateVariant(variant.id, undefined, editingVariantStock[variant.id])}
+                    disabled={!editingVariantStock[variant.id] || isPending}
+                    data-testid={`button-update-variant-stock-${variant.id}`}
+                  >
+                    Set
+                  </Button>
                 </div>
               </div>
             </div>
@@ -132,6 +146,7 @@ export default function AdminDashboard() {
   const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
   const [editingVariantPrice, setEditingVariantPrice] = useState<{ [key: string]: string }>({});
   const [editingVariantStock, setEditingVariantStock] = useState<{ [key: string]: string }>({});
+  const [variantCounts, setVariantCounts] = useState<{ [key: string]: number }>({});
 
   // Check if admin is authenticated
   const { data: authCheck, isLoading: authLoading } = useQuery<{ authenticated: boolean }>({
@@ -142,6 +157,37 @@ export default function AdminDashboard() {
   const { data: products = [], isLoading: productsLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
+
+  // Auto-expand products with variants and fetch variant counts
+  useEffect(() => {
+    if (products.length > 0) {
+      const fetchVariantCounts = async () => {
+        const counts: { [key: string]: number } = {};
+        const newExpanded = new Set<string>();
+        
+        for (const product of products) {
+          try {
+            const response = await fetch(`/api/products/${product.id}/variants`);
+            if (response.ok) {
+              const variants = await response.json();
+              counts[product.id] = variants.length;
+              // Auto-expand products with variants
+              if (variants.length > 0) {
+                newExpanded.add(product.id);
+              }
+            }
+          } catch (error) {
+            console.error(`Failed to fetch variants for ${product.id}:`, error);
+          }
+        }
+        
+        setVariantCounts(counts);
+        setExpandedProducts(newExpanded);
+      };
+      
+      fetchVariantCounts();
+    }
+  }, [products]);
 
   // Fetch newsletter subscribers
   const { data: newsletterSubscribers = [], isLoading: subscribersLoading } = useQuery<NewsletterSubscriber[]>({
@@ -435,7 +481,14 @@ export default function AdminDashboard() {
                                 className="w-12 h-12 object-cover rounded bg-muted"
                               />
                               <div>
-                                <p className="font-medium">{product.name}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="font-medium">{product.name}</p>
+                                  {variantCounts[product.id] > 0 && (
+                                    <Badge variant="secondary" className="text-xs" data-testid={`badge-variant-count-${product.slug}`}>
+                                      {variantCounts[product.id]} variant{variantCounts[product.id] !== 1 ? 's' : ''}
+                                    </Badge>
+                                  )}
+                                </div>
                                 <p className="text-xs text-muted-foreground">{product.slug}</p>
                               </div>
                             </div>
