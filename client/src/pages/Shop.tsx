@@ -23,13 +23,16 @@ export default function Shop() {
   const { addItem } = useCart();
   const { toast } = useToast();
 
-  // Update selected brand when URL param changes
+  // Update selected brand and category when URL params change
   useEffect(() => {
     const searchParams = new URLSearchParams(search);
     const brandParam = searchParams.get('brand') || 'all';
+    const categoryParam = searchParams.get('category') || 'all';
     console.log('Search string:', search);
     console.log('Brand param:', brandParam);
+    console.log('Category param:', categoryParam);
     setSelectedBrand(brandParam);
+    setSelectedCategory(categoryParam);
   }, [search]);
 
   const handleAddToCart = async (product: Product, e: React.MouseEvent) => {
