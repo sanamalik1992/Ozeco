@@ -106,6 +106,36 @@ export default function Header() {
               </div>
             </div>
             
+            <div className="relative group">
+              <Button variant="ghost" data-testid="button-nav-types">
+                Shop by Type
+              </Button>
+              <div className="absolute top-full left-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <Card className="p-2 min-w-40 shadow-lg">
+                  <Link href="/shop?category=City">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-type-city">
+                      City
+                    </Button>
+                  </Link>
+                  <Link href="/shop?category=Folding">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-type-folding">
+                      Folding
+                    </Button>
+                  </Link>
+                  <Link href="/shop?category=Mountain">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-type-mountain">
+                      Mountain
+                    </Button>
+                  </Link>
+                  <Link href="/shop?category=Off-Road">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-type-offroad">
+                      Off-Road
+                    </Button>
+                  </Link>
+                </Card>
+              </div>
+            </div>
+            
             <Link href="/blog" data-testid="link-blog">
               <Button variant="ghost" data-testid="button-nav-blog">Blog</Button>
             </Link>
@@ -276,6 +306,32 @@ export default function Header() {
                 <Link href="/shop?brand=Fiido">
                   <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-fiido">
                     Fiido
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="px-4 py-2">
+              <p className="text-sm font-semibold text-muted-foreground mb-2">Shop by Type</p>
+              <div className="flex flex-col gap-1 pl-2">
+                <Link href="/shop?category=City">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-type-city">
+                    City
+                  </Button>
+                </Link>
+                <Link href="/shop?category=Folding">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-type-folding">
+                    Folding
+                  </Button>
+                </Link>
+                <Link href="/shop?category=Mountain">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-type-mountain">
+                    Mountain
+                  </Button>
+                </Link>
+                <Link href="/shop?category=Off-Road">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-type-offroad">
+                    Off-Road
                   </Button>
                 </Link>
               </div>

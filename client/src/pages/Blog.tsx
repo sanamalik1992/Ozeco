@@ -68,6 +68,11 @@ export default function Blog() {
                         alt={post.title}
                         className="w-full h-full object-cover"
                         data-testid={`img-blog-${post.slug}`}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null;
+                          target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450"><rect width="800" height="450" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" fill="%239ca3af" font-size="20" font-family="sans-serif">Image unavailable</text></svg>';
+                        }}
                       />
                     </div>
                     <CardContent className="p-6 space-y-4">
