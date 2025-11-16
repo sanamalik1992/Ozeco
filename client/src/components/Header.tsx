@@ -1,4 +1,4 @@
-import { Search, Menu, X, Heart, GitCompare, ChevronDown } from "lucide-react";
+import { Search, Menu, X, Heart, GitCompare, ChevronDown, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CartDrawer from "@/components/CartDrawer";
@@ -57,6 +57,19 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b">
+      {/* Top bar with phone number for Google Ads compliance */}
+      <div className="bg-primary text-primary-foreground py-2">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center md:justify-end gap-2 text-sm">
+            <Phone className="h-4 w-4" />
+            <a href="tel:03333398590" className="font-medium hover:underline" data-testid="link-header-phone">
+              0333 339 8590
+            </a>
+            <span className="hidden md:inline text-xs opacity-90 ml-2">Mon-Fri: 9:00 AM - 5:30 PM (GMT)</span>
+          </div>
+        </div>
+      </div>
+      
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 gap-4">
           <Link href="/" data-testid="link-home">
