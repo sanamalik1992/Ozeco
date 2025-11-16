@@ -169,7 +169,7 @@ export default function TermsOfService() {
               <h2 className="text-2xl font-semibold mb-4">14. Contact Information</h2>
               <p className="text-muted-foreground">
                 For questions about these Terms or any other matter:<br />
-                <strong>Email:</strong> support@ozeco.co.uk<br />
+                <strong>Email:</strong> <a href="mailto:support@ozeco.co.uk" className="text-primary hover:underline">support@ozeco.co.uk</a><br />
                 <strong>Company:</strong> Ozeco Ltd<br />
                 <strong>Location:</strong> United Kingdom
               </p>

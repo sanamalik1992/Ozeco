@@ -161,7 +161,7 @@ export default function SizeFitGuide() {
                     These are general guidelines. Individual body proportions can vary. If you're between sizes or have questions about specific models, our team is here to help!
                   </p>
                   <p className="text-orange-800 dark:text-orange-200 text-sm">
-                    <strong>Contact us:</strong> support@ozeco.co.uk or 0333 339 8590
+                    <strong>Contact us:</strong> <a href="mailto:support@ozeco.co.uk" className="hover:underline">support@ozeco.co.uk</a> or <a href="tel:03333398590" className="hover:underline">0333 339 8590</a>
                   </p>
                 </div>
               </div>

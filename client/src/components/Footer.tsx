@@ -93,10 +93,10 @@ export default function Footer() {
               Unit A, 82 James Carter Road<br />Mildenhall, IP28 7DE<br />United Kingdom
             </p>
             <p className="text-sm text-muted-foreground mb-2">
-              Email: support@ozeco.co.uk
+              Email: <a href="mailto:support@ozeco.co.uk" className="hover:text-primary transition-colors" data-testid="link-footer-email">support@ozeco.co.uk</a>
             </p>
             <p className="text-sm text-muted-foreground mb-2">
-              Phone: 0333 339 8590
+              Phone: <a href="tel:03333398590" className="hover:text-primary transition-colors" data-testid="link-footer-phone">0333 339 8590</a>
             </p>
             <p className="text-sm text-muted-foreground mb-4">
               Mon-Fri: 9:00 AM - 5:30 PM (GMT)

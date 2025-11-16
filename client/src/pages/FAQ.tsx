@@ -159,8 +159,7 @@ export default function FAQ() {
                   How can I contact customer service?
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  You can reach us via WhatsApp (click the chat button on our website) or email us at 
-                  support@ozeco.co.uk. We typically respond within a few hours during business hours.
+                  You can reach us via WhatsApp (click the chat button on our website) or email us at <a href="mailto:support@ozeco.co.uk" className="text-primary hover:underline">support@ozeco.co.uk</a>. We typically respond within a few hours during business hours.
                 </AccordionContent>
               </AccordionItem>
 
