@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { type Product, type NewsletterSubscriber } from "@shared/schema";
+import { type Product, type NewsletterSubscriber, type ProductVariant } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail } from "lucide-react";
+import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -22,12 +22,116 @@ import {
 } from "@/components/ui/table";
 import AdminOrders from "./AdminOrders";
 
+interface ProductVariantsProps {
+  productId: string;
+  onUpdateVariant: (variantId: string, price?: string, stock?: string) => void;
+  editingVariantPrice: { [key: string]: string };
+  editingVariantStock: { [key: string]: string };
+  setEditingVariantPrice: (state: { [key: string]: string }) => void;
+  setEditingVariantStock: (state: { [key: string]: string }) => void;
+  isPending: boolean;
+}
+
+function ProductVariants({ productId, onUpdateVariant, editingVariantPrice, editingVariantStock, setEditingVariantPrice, setEditingVariantStock, isPending }: ProductVariantsProps) {
+  const { data: variants = [], isLoading } = useQuery<ProductVariant[]>({
+    queryKey: ["/api/products", productId, "variants"],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="p-4 flex items-center gap-2 text-muted-foreground">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <span className="text-sm">Loading variants...</span>
+      </div>
+    );
+  }
+
+  if (variants.length === 0) {
+    return (
+      <div className="p-4 text-sm text-muted-foreground">
+        No variants configured for this product
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4 bg-muted/50">
+      <h4 className="text-sm font-medium mb-3">Product Variants</h4>
+      <div className="space-y-2">
+        {variants.map((variant) => (
+          <Card key={variant.id} className="p-3">
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <Badge variant="outline" className="mb-1" data-testid={`badge-variant-type-${variant.id}`}>{variant.name}</Badge>
+                <p className="text-sm font-medium" data-testid={`text-variant-value-${variant.id}`}>{variant.value}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-1">
+                  <Label className="text-xs">Price</Label>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-medium" data-testid={`text-variant-price-${variant.id}`}>£{variant.price}</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="New price"
+                      value={editingVariantPrice[variant.id] || ""}
+                      onChange={(e) => setEditingVariantPrice({ ...editingVariantPrice, [variant.id]: e.target.value })}
+                      className="w-24 text-sm"
+                      data-testid={`input-variant-price-${variant.id}`}
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onUpdateVariant(variant.id, editingVariantPrice[variant.id])}
+                      disabled={!editingVariantPrice[variant.id] || isPending}
+                      data-testid={`button-update-variant-price-${variant.id}`}
+                    >
+                      Update
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <Label className="text-xs">Stock</Label>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-medium" data-testid={`text-variant-stock-${variant.id}`}>{variant.stockQuantity}</span>
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder="Qty"
+                      value={editingVariantStock[variant.id] || ""}
+                      onChange={(e) => setEditingVariantStock({ ...editingVariantStock, [variant.id]: e.target.value })}
+                      className="w-20 text-sm"
+                      data-testid={`input-variant-stock-${variant.id}`}
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onUpdateVariant(variant.id, undefined, editingVariantStock[variant.id])}
+                      disabled={!editingVariantStock[variant.id] || isPending}
+                      data-testid={`button-update-variant-stock-${variant.id}`}
+                    >
+                      Set
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [editingPrice, setEditingPrice] = useState<{ [key: string]: string }>({});
   const [editingStock, setEditingStock] = useState<{ [key: string]: string }>({});
+  const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
+  const [editingVariantPrice, setEditingVariantPrice] = useState<{ [key: string]: string }>({});
+  const [editingVariantStock, setEditingVariantStock] = useState<{ [key: string]: string }>({});
 
   // Check if admin is authenticated
   const { data: authCheck, isLoading: authLoading } = useQuery<{ authenticated: boolean }>({
@@ -63,6 +167,36 @@ export default function AdminDashboard() {
       toast({
         title: "Update failed",
         description: "Failed to update product",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update variant mutation
+  const updateVariantMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<ProductVariant> }) => {
+      const response = await apiRequest("PATCH", `/api/admin/variants/${id}`, updates);
+      if (!response.ok) throw new Error("Failed to update variant");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ 
+        predicate: (query) => 
+          Array.isArray(query.queryKey) &&
+          query.queryKey.length >= 3 &&
+          query.queryKey[0] === "/api/products" &&
+          query.queryKey[2] === "variants"
+      });
+      toast({
+        title: "Variant updated",
+        description: "Changes saved successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Update failed",
+        description: "Failed to update variant",
         variant: "destructive",
       });
     },
@@ -127,6 +261,34 @@ export default function AdminDashboard() {
       });
       setEditingPrice({ ...editingPrice, [productId]: "" });
     }
+  };
+
+  const handleVariantUpdate = (variantId: string, price?: string, stock?: string) => {
+    const updates: Partial<ProductVariant> = {};
+    
+    if (price && !isNaN(parseFloat(price))) {
+      updates.price = price;
+      setEditingVariantPrice({ ...editingVariantPrice, [variantId]: "" });
+    }
+    
+    if (stock && !isNaN(parseInt(stock))) {
+      updates.stockQuantity = parseInt(stock);
+      setEditingVariantStock({ ...editingVariantStock, [variantId]: "" });
+    }
+
+    if (Object.keys(updates).length > 0) {
+      updateVariantMutation.mutate({ id: variantId, updates });
+    }
+  };
+
+  const toggleProductExpansion = (productId: string) => {
+    const newExpanded = new Set(expandedProducts);
+    if (newExpanded.has(productId)) {
+      newExpanded.delete(productId);
+    } else {
+      newExpanded.add(productId);
+    }
+    setExpandedProducts(newExpanded);
   };
 
   // Filter products by search query
@@ -251,21 +413,33 @@ export default function AdminDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.map((product) => (
-                    <TableRow key={product.id} data-testid={`row-product-${product.slug}`}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-12 h-12 object-cover rounded bg-muted"
-                          />
-                          <div>
-                            <p className="font-medium">{product.name}</p>
-                            <p className="text-xs text-muted-foreground">{product.slug}</p>
-                          </div>
-                        </div>
-                      </TableCell>
+                  {filteredProducts.map((product) => {
+                    const isExpanded = expandedProducts.has(product.id);
+                    return (
+                      <>
+                        <TableRow key={product.id} data-testid={`row-product-${product.slug}`}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => toggleProductExpansion(product.id)}
+                                className="h-8 w-8"
+                                data-testid={`button-toggle-variants-${product.slug}`}
+                              >
+                                {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                              </Button>
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                className="w-12 h-12 object-cover rounded bg-muted"
+                              />
+                              <div>
+                                <p className="font-medium">{product.name}</p>
+                                <p className="text-xs text-muted-foreground">{product.slug}</p>
+                              </div>
+                            </div>
+                          </TableCell>
                       <TableCell>
                         <Badge variant="secondary">{product.brand}</Badge>
                       </TableCell>
@@ -361,7 +535,24 @@ export default function AdminDashboard() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                    {isExpanded && (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <ProductVariants
+                            productId={product.id}
+                            onUpdateVariant={handleVariantUpdate}
+                            editingVariantPrice={editingVariantPrice}
+                            editingVariantStock={editingVariantStock}
+                            setEditingVariantPrice={setEditingVariantPrice}
+                            setEditingVariantStock={setEditingVariantStock}
+                            isPending={updateVariantMutation.isPending}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
+                );
+              })}
                 </TableBody>
               </Table>
             </div>
