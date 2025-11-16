@@ -231,6 +231,7 @@ export default function Shop() {
                         src={product.image}
                         alt={product.name}
                         className="w-full h-full object-contain p-6 transition-transform group-hover:scale-105"
+                        style={{ filter: 'brightness(1.05) contrast(0.98)' }}
                         data-testid={`img-product-${product.slug}`}
                       />
                       {product.isBestseller && (
