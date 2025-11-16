@@ -109,8 +109,8 @@ export default function Compare() {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr>
-                      <th className="sticky left-0 bg-background border-b-2 border-primary p-4 text-left min-w-[200px]">
-                        <span className="font-bold">Features</span>
+                      <th className="sticky left-0 bg-background border-b-2 border-primary p-2 text-left w-32 min-w-[120px]">
+                        <span className="font-bold text-sm">Features</span>
                       </th>
                       {compareProducts.map((product) => (
                         <th
@@ -255,7 +255,7 @@ export default function Compare() {
 
                     {/* Actions */}
                     <tr>
-                      <td className="sticky left-0 bg-background p-4 font-semibold border-t-2 border-primary">
+                      <td className="sticky left-0 bg-background p-2 font-semibold border-t-2 border-primary text-sm w-32">
                         Actions
                       </td>
                       {compareProducts.map((product) => (
@@ -310,7 +310,7 @@ function CompareRow({
 }) {
   return (
     <tr className={highlight ? "bg-muted/50" : ""}>
-      <td className="sticky left-0 bg-background p-4 font-semibold border-b">
+      <td className="sticky left-0 bg-background p-2 font-semibold border-b text-sm w-32">
         {label}
       </td>
       {values.map((value, idx) => (
