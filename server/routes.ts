@@ -7,6 +7,7 @@ import { sql, eq, and, gte } from "drizzle-orm";
 import Stripe from "stripe";
 import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault, isPayPalConfigured } from "./paypal";
 import { sendOrderConfirmationEmail, sendShippingConfirmationEmail } from "./email";
+import { getUncachableResendClient } from "./resend";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
@@ -671,6 +672,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(subscribers);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Contact form route
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const { name, email, phone, message } = req.body;
+
+      // Validate required fields
+      if (!name || !email || !message) {
+        return res.status(400).json({ error: "Name, email, and message are required." });
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Invalid email address." });
+      }
+
+      // Get Resend client
+      const { client: resend, fromEmail } = await getUncachableResendClient();
+
+      // Send email to support@ozeco.co.uk
+      await resend.emails.send({
+        from: fromEmail,
+        to: 'support@ozeco.co.uk',
+        subject: `Contact Form Submission from ${name}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #10b981;">New Contact Form Message</h2>
+            <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p><strong>Name:</strong> ${name}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+              <p><strong>Message:</strong></p>
+              <p style="white-space: pre-wrap;">${message}</p>
+            </div>
+            <p style="color: #6b7280; font-size: 14px;">This message was sent from the Ozeco.co.uk contact form.</p>
+          </div>
+        `,
+      });
+
+      res.json({ 
+        success: true,
+        message: "Message sent successfully!"
+      });
+    } catch (error: any) {
+      console.error('Contact form error:', error);
+      res.status(500).json({ error: "Failed to send message. Please try again later." });
     }
   });
 
