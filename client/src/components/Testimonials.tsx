@@ -1,31 +1,31 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
-import customer1 from "@assets/generated_images/Happy_male_customer_portrait_42c7cbc3.png";
-import customer2 from "@assets/generated_images/Happy_female_customer_portrait_d98e7f1d.png";
-import customer3 from "@assets/generated_images/Happy_senior_customer_portrait_d1ccc04a.png";
+import customer1 from "@assets/generated_images/South_Asian_woman_portrait_b6e4a234.png";
+import customer2 from "@assets/generated_images/Black_British_man_portrait_3f828468.png";
+import customer3 from "@assets/generated_images/Middle_Eastern_woman_hijab_portrait_b79a7c37.png";
 
 const testimonials = [
   {
-    name: "James M.",
+    name: "Priya Sharma",
     location: "Manchester",
     image: customer1,
     rating: 5,
     text: "Bought the ENGWE Engine Pro 2.0 three months ago for my 12-mile commute. Battery still shows 70% after the full journey even in eco mode. The steep hills on my route used to kill me on my old bike - now they're effortless. Dispatched same day, arrived in perfect condition.",
   },
   {
-    name: "Sarah K.",
+    name: "Marcus Johnson",
     location: "Bristol",
     image: customer2,
     rating: 5,
     text: "The Eleglide M1 Plus has transformed my daily school run. I can fit two child seats and still get 45km range. No more sitting in traffic on the A4. Saved over £200 in petrol this month alone. The customer service team were brilliant when I had questions about the battery warranty.",
   },
   {
-    name: "Robert T.",
+    name: "Fatima Hassan",
     location: "Edinburgh",
     image: customer3,
     rating: 5,
-    text: "At 68, I was nervous about electric bikes, but the DYU D3F folding bike has given me my independence back. Folds in 15 seconds so I can take it on the bus to Portobello, then cycle along the prom. The throttle is perfect for when my knees play up. Absolutely life-changing.",
+    text: "The DYU D3F folding bike is perfect for my daily routine. Folds in 15 seconds so I can take it on the bus to Portobello, then cycle along the prom. The compact design fits perfectly in my flat, and the throttle makes hills effortless. Absolutely brilliant purchase!",
   },
 ];
 
