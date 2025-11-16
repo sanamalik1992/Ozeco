@@ -3,7 +3,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
 import customer1 from "@assets/stock_images/south_asian_indian_m_d9be52e1.jpg";
 import customer2 from "@assets/stock_images/black_african_britis_8af0b20c.jpg";
-import customer3 from "@assets/stock_images/young_white_british__b6e5798d.jpg";
+import customer3 from "@assets/stock_images/casual_white_woman_s_149cfe95.jpg";
 
 const testimonials = [
   {
