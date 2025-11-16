@@ -312,19 +312,19 @@ export default function Header() {
         </div>
 
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 flex flex-col gap-2" data-testid="nav-mobile">
+          <nav className="md:hidden py-4 flex flex-col border-t" data-testid="nav-mobile">
             <Link 
               href="/shop" 
-              className="inline-flex items-center justify-center rounded-md text-xs font-semibold text-white bg-primary uppercase tracking-wide px-4 py-3 w-full justify-start" 
+              className="inline-flex items-center justify-center text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 w-full justify-start border-b" 
               data-testid="button-mobile-bikes"
             >
               All E-Bikes
             </Link>
             
-            <div className="py-2">
+            <div className="border-b">
               <button
                 onClick={() => setMobileBrandsOpen(!mobileBrandsOpen)}
-                className="flex items-center justify-between w-full text-xs font-semibold text-white bg-primary uppercase tracking-wide px-4 py-3 rounded-md mb-2"
+                className="flex items-center justify-between w-full text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3"
                 data-testid="button-mobile-brands-toggle"
               >
                 Brands
@@ -378,10 +378,10 @@ export default function Header() {
               )}
             </div>
 
-            <div className="py-2">
+            <div className="border-b">
               <button
                 onClick={() => setMobileTypesOpen(!mobileTypesOpen)}
-                className="flex items-center justify-between w-full text-xs font-semibold text-white bg-primary uppercase tracking-wide px-4 py-3 rounded-md mb-2"
+                className="flex items-center justify-between w-full text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3"
                 data-testid="button-mobile-types-toggle"
               >
                 Types
@@ -423,21 +423,21 @@ export default function Header() {
             
             <Link 
               href="/blog" 
-              className="inline-flex items-center justify-center rounded-md text-xs font-semibold text-white bg-primary uppercase tracking-wide px-4 py-3 w-full justify-start" 
+              className="inline-flex items-center justify-center text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 w-full justify-start border-b" 
               data-testid="button-mobile-blog"
             >
               Blog
             </Link>
             <Link 
               href="/about" 
-              className="inline-flex items-center justify-center rounded-md text-xs font-semibold text-white bg-primary uppercase tracking-wide px-4 py-3 w-full justify-start" 
+              className="inline-flex items-center justify-center text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 w-full justify-start border-b" 
               data-testid="button-mobile-about"
             >
               About
             </Link>
             <Link 
               href="/contact" 
-              className="inline-flex items-center justify-center rounded-md text-xs font-semibold text-white bg-primary uppercase tracking-wide px-4 py-3 w-full justify-start" 
+              className="inline-flex items-center justify-center text-sm font-semibold text-primary uppercase tracking-wide px-4 py-3 w-full justify-start border-b" 
               data-testid="button-mobile-contact"
             >
               Contact
