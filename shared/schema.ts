@@ -217,3 +217,22 @@ export const insertCustomerPhotoSchema = createInsertSchema(customerPhotos).omit
 
 export type InsertCustomerPhoto = z.infer<typeof insertCustomerPhotoSchema>;
 export type CustomerPhoto = typeof customerPhotos.$inferSelect;
+
+export const productVariants = pgTable("product_variants", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  productId: varchar("product_id").notNull().references(() => products.id),
+  name: text("name").notNull(),
+  value: text("value").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }),
+  stockQuantity: integer("stock_quantity").notNull().default(0),
+  image: text("image"),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const insertProductVariantSchema = createInsertSchema(productVariants).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertProductVariant = z.infer<typeof insertProductVariantSchema>;
+export type ProductVariant = typeof productVariants.$inferSelect;

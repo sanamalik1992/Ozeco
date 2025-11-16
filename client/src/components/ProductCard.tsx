@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "@/components/StarRating";
+import CompareButton from "@/components/CompareButton";
 import { ShoppingCart, Eye, AlertCircle, ShieldCheck } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
@@ -118,7 +119,7 @@ export default function ProductCard({
           <ShieldCheck className="h-4 w-4" />
           <span className="font-medium">Authorised UK Dealer</span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 mb-2">
           <Button
             variant="default"
             className="flex-1"
@@ -144,6 +145,9 @@ export default function ProductCard({
           >
             <Eye className="h-4 w-4" />
           </Button>
+        </div>
+        <div onClick={(e) => e.stopPropagation()}>
+          <CompareButton productId={id} productName={name} />
         </div>
       </CardContent>
     </Card>

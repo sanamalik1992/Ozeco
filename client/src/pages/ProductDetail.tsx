@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import BrandLogo from "@/components/BrandLogo";
 import Reviews from "@/components/Reviews";
 import StarRating from "@/components/StarRating";
+import CompareButton from "@/components/CompareButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -305,10 +306,13 @@ export default function ProductDetail() {
                     <span className="font-semibold">Only {product.stockQuantity} left in stock - Order soon!</span>
                   </div>
                 )}
-                <Button size="lg" className="w-full" onClick={handleAddToCart} data-testid="button-add-to-cart">
-                  <ShoppingCart className="h-5 w-5 mr-2" />
-                  Add to Cart
-                </Button>
+                <div className="space-y-2">
+                  <Button size="lg" className="w-full" onClick={handleAddToCart} data-testid="button-add-to-cart">
+                    <ShoppingCart className="h-5 w-5 mr-2" />
+                    Add to Cart
+                  </Button>
+                  <CompareButton productId={product.id} productName={product.name} />
+                </div>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-sm">
                   <div className="flex flex-col items-center gap-1">
