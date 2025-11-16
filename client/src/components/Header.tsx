@@ -65,6 +65,47 @@ export default function Header() {
             <Link href="/shop" data-testid="link-all-bikes">
               <Button variant="ghost" data-testid="button-nav-bikes">All E-Bikes</Button>
             </Link>
+            
+            <div className="relative group">
+              <Button variant="ghost" data-testid="button-nav-brands">
+                Shop by Brand
+              </Button>
+              <div className="absolute top-full left-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <Card className="p-2 min-w-40 shadow-lg">
+                  <Link href="/shop?brand=ENGWE">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-engwe">
+                      ENGWE
+                    </Button>
+                  </Link>
+                  <Link href="/shop?brand=Eleglide">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-eleglide">
+                      Eleglide
+                    </Button>
+                  </Link>
+                  <Link href="/shop?brand=DYU">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-dyu">
+                      DYU
+                    </Button>
+                  </Link>
+                  <Link href="/shop?brand=Duotts">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-duotts">
+                      Duotts
+                    </Button>
+                  </Link>
+                  <Link href="/shop?brand=Touroll">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-touroll">
+                      Touroll
+                    </Button>
+                  </Link>
+                  <Link href="/shop?brand=Fiido">
+                    <Button variant="ghost" className="w-full justify-start" data-testid="button-brand-fiido">
+                      Fiido
+                    </Button>
+                  </Link>
+                </Card>
+              </div>
+            </div>
+            
             <Link href="/blog" data-testid="link-blog">
               <Button variant="ghost" data-testid="button-nav-blog">Blog</Button>
             </Link>
@@ -129,7 +170,7 @@ export default function Header() {
                         {filteredProducts.length === 5 && (
                           <div className="p-2 text-center">
                             <Button
-                              variant="link"
+                              variant="ghost"
                               onClick={() => {
                                 setLocation(`/shop?search=${searchQuery}`);
                                 setSearchOpen(false);
@@ -203,6 +244,43 @@ export default function Header() {
                 All E-Bikes
               </Button>
             </Link>
+            
+            <div className="px-4 py-2">
+              <p className="text-sm font-semibold text-muted-foreground mb-2">Shop by Brand</p>
+              <div className="flex flex-col gap-1 pl-2">
+                <Link href="/shop?brand=ENGWE">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-engwe">
+                    ENGWE
+                  </Button>
+                </Link>
+                <Link href="/shop?brand=Eleglide">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-eleglide">
+                    Eleglide
+                  </Button>
+                </Link>
+                <Link href="/shop?brand=DYU">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-dyu">
+                    DYU
+                  </Button>
+                </Link>
+                <Link href="/shop?brand=Duotts">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-duotts">
+                    Duotts
+                  </Button>
+                </Link>
+                <Link href="/shop?brand=Touroll">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-touroll">
+                    Touroll
+                  </Button>
+                </Link>
+                <Link href="/shop?brand=Fiido">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-brand-fiido">
+                    Fiido
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            
             <Link href="/blog">
               <Button variant="ghost" className="w-full justify-start" data-testid="button-mobile-blog">
                 Blog
