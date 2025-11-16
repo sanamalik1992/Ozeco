@@ -159,13 +159,6 @@ export default function Header() {
                   >
                     <span className="font-semibold">Mountain</span>
                   </Link>
-                  <Link 
-                    href="/shop?category=Off-Road" 
-                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
-                    data-testid="button-type-offroad"
-                  >
-                    <span className="font-semibold">Off-Road</span>
-                  </Link>
                 </Card>
               </div>
             </div>
@@ -419,14 +412,6 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Mountain
-                  </Link>
-                  <Link 
-                    href="/shop?category=Off-Road" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                    data-testid="button-mobile-type-offroad"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Off-Road
                   </Link>
                 </div>
               )}
