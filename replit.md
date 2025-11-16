@@ -42,9 +42,10 @@ The platform is built with a modern web stack designed for performance and scala
 
 ### Feature Specifications
 - **Product Catalog**: Displays 16 real products across various brands with comprehensive specifications, images, star ratings, and review counts. Products are navigable via slugs.
+- **Product Variants System**: Complete variant management for Electric bikes including wheel sizes (27.5", 29"), colors (with color swatch UI), and battery options (single/double). Each variant has independent pricing, stock quantities, and optional variant-specific images. API endpoint `/api/products/:id/variants` provides variant data. Currently configured for 9 products: ENGWE T14 (4 colors), ENGWE Engine Pro (3 colors), ENGWE Engine X (3 colors), ENGWE EP-2 Boost (3 colors), ENGWE L20 (2 colors), Eleglide M1 Plus (2 wheel sizes), Duotts C29 (2 battery options), Touroll U1 (2 wheel sizes), and Fiido D3 Pro (2 colors).
 - **Homepage**: Features an autoplaying HTML5 video hero banner, featured bestseller products, a brand carousel, and trust signals.
 - **Shop Page**: Offers a full product catalog with filtering by brand and category, and sorting options. Supports URL parameters for filtering.
-- **Product Detail Pages**: Provides in-depth product information, high-quality images, average star ratings, customer photos (prominently displayed above reviews in Amazon-style gallery), customer reviews, and add-to-cart functionality.
+- **Product Detail Pages**: Provides in-depth product information, high-quality images, average star ratings, customer photos (prominently displayed above reviews in Amazon-style gallery), customer reviews, and add-to-cart functionality with variant selection UI (color swatches for colors, buttons for other variant types).
 - **Customer Reviews System**: Includes 2,202 verified reviews per product with pagination, filtering (Most Recent, Highest/Lowest Rated), and expand/collapse functionality. Reviews display customer name, rating, title, comment, verified badge, and date.
 - **Shopping Cart System**: Session-based with full CRUD operations via API. Includes server-side total calculation, input validation, and security features to prevent fraud.
 - **Checkout & Order Management**: Multi-step checkout process, Stripe (including Shop Pay) and PayPal integrations, atomic stock decrement during order completion, and an admin dashboard for inventory and order management with fulfillment tracking and tracking number support.
@@ -65,6 +66,7 @@ The platform is built with a modern web stack designed for performance and scala
 - **API Routes**: Standard RESTful API for products, cart management, and reviews.
 - **Database Schema**:
     - `products`: Stores detailed e-bike information including unique identifiers, pricing, descriptions, images, technical specs, and inventory status (`inStock`, `stockQuantity`).
+    - `product_variants`: Stores product variations with columns: id, product_id (FK to products), name (variant type: Color/Wheel Size/Battery), value (specific option: Black/29 Inch/Double Battery), price (variant-specific price), stock_quantity, in_stock (boolean), image (optional variant-specific image URL), created_at.
     - `cart_items`: Links session IDs to product IDs and quantities.
     - `reviews`: Stores customer feedback including product ID, customer name, rating, title, comment, and verification status.
     - `orders` & `order_items`: For tracking completed purchases with shipping addresses and tracking numbers.
