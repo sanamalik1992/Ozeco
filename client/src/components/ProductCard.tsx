@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "@/components/StarRating";
 import CompareButton from "@/components/CompareButton";
+import FavoriteButton from "@/components/FavoriteButton";
 import { ShoppingCart, Eye, AlertCircle, ShieldCheck } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
@@ -68,16 +69,21 @@ export default function ProductCard({
         <Badge className="absolute top-3 left-3" variant="secondary" data-testid={`badge-brand-${id}`}>
           {brand}
         </Badge>
-        {isPopular && (
-          <Badge className="absolute top-3 right-3 bg-orange-500 text-white border-orange-600">
-            ⭐ Bestseller
-          </Badge>
-        )}
-        {hasDiscount && originalPrice && (
-          <Badge className="absolute top-3 right-3 bg-red-500 text-white border-red-600">
-            Save £{(originalPrice - price).toFixed(0)}
-          </Badge>
-        )}
+        <div className="absolute top-3 right-3 flex flex-col gap-2 items-end">
+          <div onClick={(e) => e.stopPropagation()}>
+            <FavoriteButton productId={id} productName={name} variant="icon" />
+          </div>
+          {isPopular && (
+            <Badge className="bg-orange-500 text-white border-orange-600">
+              ⭐ Bestseller
+            </Badge>
+          )}
+          {hasDiscount && originalPrice && (
+            <Badge className="bg-red-500 text-white border-red-600">
+              Save £{(originalPrice - price).toFixed(0)}
+            </Badge>
+          )}
+        </div>
       </div>
       <CardContent className="p-6">
         <h3 className="text-xl font-semibold mb-2" data-testid={`text-product-name-${id}`}>
