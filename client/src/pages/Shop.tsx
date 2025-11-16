@@ -5,6 +5,7 @@ import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import StarRating from "@/components/StarRating";
+import FavoriteButton from "@/components/FavoriteButton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -239,11 +240,16 @@ export default function Shop() {
                           Bestseller
                         </Badge>
                       )}
-                      {product.originalPrice && (
-                        <Badge className="absolute top-2 right-2 bg-red-600 text-white" data-testid="badge-sale">
-                          Save £{(parseFloat(product.originalPrice) - parseFloat(product.price)).toFixed(2)}
-                        </Badge>
-                      )}
+                      <div className="absolute top-2 right-2 flex flex-col gap-2 items-end">
+                        <div onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}>
+                          <FavoriteButton productId={product.id} productName={product.name} variant="icon" />
+                        </div>
+                        {product.originalPrice && (
+                          <Badge className="bg-red-600 text-white" data-testid="badge-sale">
+                            Save £{(parseFloat(product.originalPrice) - parseFloat(product.price)).toFixed(2)}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </Link>
                   
