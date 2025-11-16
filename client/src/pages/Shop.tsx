@@ -226,11 +226,11 @@ export default function Shop() {
               {filteredProducts.map(product => (
                 <Card key={product.id} className="group overflow-hidden hover-elevate" data-testid={`card-product-${product.slug}`}>
                   <Link href={`/product/${product.slug}`}>
-                    <div className="aspect-square overflow-hidden bg-muted relative">
+                    <div className="aspect-square overflow-hidden bg-background relative">
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-full object-contain p-4 transition-transform group-hover:scale-105"
+                        className="w-full h-full object-contain p-6 transition-transform group-hover:scale-105"
                         data-testid={`img-product-${product.slug}`}
                       />
                       {product.isBestseller && (
