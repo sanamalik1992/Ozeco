@@ -12,6 +12,8 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileBrandsOpen, setMobileBrandsOpen] = useState(false);
+  const [mobileTypesOpen, setMobileTypesOpen] = useState(false);
   const [, setLocation] = useLocation();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -320,85 +322,103 @@ export default function Header() {
             </Link>
             
             <div className="px-4 py-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Brands</p>
-              <div className="flex flex-col gap-1 pl-2">
-                <Link 
-                  href="/shop?brand=ENGWE" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-brand-engwe"
-                >
-                  ENGWE
-                </Link>
-                <Link 
-                  href="/shop?brand=Eleglide" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-brand-eleglide"
-                >
-                  Eleglide
-                </Link>
-                <Link 
-                  href="/shop?brand=DYU" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-brand-dyu"
-                >
-                  DYU
-                </Link>
-                <Link 
-                  href="/shop?brand=Duotts" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-brand-duotts"
-                >
-                  Duotts
-                </Link>
-                <Link 
-                  href="/shop?brand=Touroll" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-brand-touroll"
-                >
-                  Touroll
-                </Link>
-                <Link 
-                  href="/shop?brand=Fiido" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-brand-fiido"
-                >
-                  Fiido
-                </Link>
-              </div>
+              <button
+                onClick={() => setMobileBrandsOpen(!mobileBrandsOpen)}
+                className="flex items-center justify-between w-full text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+                data-testid="button-mobile-brands-toggle"
+              >
+                Brands
+                <ChevronDown className={`h-4 w-4 transition-transform ${mobileBrandsOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {mobileBrandsOpen && (
+                <div className="flex flex-col gap-1 pl-2">
+                  <Link 
+                    href="/shop?brand=ENGWE" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-brand-engwe"
+                  >
+                    ENGWE
+                  </Link>
+                  <Link 
+                    href="/shop?brand=Eleglide" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-brand-eleglide"
+                  >
+                    Eleglide
+                  </Link>
+                  <Link 
+                    href="/shop?brand=DYU" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-brand-dyu"
+                  >
+                    DYU
+                  </Link>
+                  <Link 
+                    href="/shop?brand=Duotts" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-brand-duotts"
+                  >
+                    Duotts
+                  </Link>
+                  <Link 
+                    href="/shop?brand=Touroll" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-brand-touroll"
+                  >
+                    Touroll
+                  </Link>
+                  <Link 
+                    href="/shop?brand=Fiido" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-brand-fiido"
+                  >
+                    Fiido
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="px-4 py-2">
-              <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-2">Types</p>
-              <div className="flex flex-col gap-1 pl-2">
-                <Link 
-                  href="/shop?category=City" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-type-city"
-                >
-                  City
-                </Link>
-                <Link 
-                  href="/shop?category=Folding" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-type-folding"
-                >
-                  Folding
-                </Link>
-                <Link 
-                  href="/shop?category=Mountain" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-type-mountain"
-                >
-                  Mountain
-                </Link>
-                <Link 
-                  href="/shop?category=Off-Road" 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
-                  data-testid="button-mobile-type-offroad"
-                >
-                  Off-Road
-                </Link>
-              </div>
+              <button
+                onClick={() => setMobileTypesOpen(!mobileTypesOpen)}
+                className="flex items-center justify-between w-full text-xs font-semibold text-primary uppercase tracking-wide mb-2"
+                data-testid="button-mobile-types-toggle"
+              >
+                Types
+                <ChevronDown className={`h-4 w-4 transition-transform ${mobileTypesOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {mobileTypesOpen && (
+                <div className="flex flex-col gap-1 pl-2">
+                  <Link 
+                    href="/shop?category=City" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-type-city"
+                  >
+                    City
+                  </Link>
+                  <Link 
+                    href="/shop?category=Folding" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-type-folding"
+                  >
+                    Folding
+                  </Link>
+                  <Link 
+                    href="/shop?category=Mountain" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-type-mountain"
+                  >
+                    Mountain
+                  </Link>
+                  <Link 
+                    href="/shop?category=Off-Road" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-type-offroad"
+                  >
+                    Off-Road
+                  </Link>
+                </div>
+              )}
             </div>
             
             <Link 
