@@ -321,10 +321,10 @@ export default function Header() {
               All E-Bikes
             </Link>
             
-            <div className="px-4 py-2">
+            <div className="py-2">
               <button
                 onClick={() => setMobileBrandsOpen(!mobileBrandsOpen)}
-                className="flex items-center justify-between w-full text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+                className="flex items-center justify-between w-full text-xs font-semibold text-white bg-primary uppercase tracking-wide px-4 py-3 rounded-md mb-2"
                 data-testid="button-mobile-brands-toggle"
               >
                 Brands
@@ -378,10 +378,10 @@ export default function Header() {
               )}
             </div>
 
-            <div className="px-4 py-2">
+            <div className="py-2">
               <button
                 onClick={() => setMobileTypesOpen(!mobileTypesOpen)}
-                className="flex items-center justify-between w-full text-xs font-semibold text-primary uppercase tracking-wide mb-2"
+                className="flex items-center justify-between w-full text-xs font-semibold text-white bg-primary uppercase tracking-wide px-4 py-3 rounded-md mb-2"
                 data-testid="button-mobile-types-toggle"
               >
                 Types
