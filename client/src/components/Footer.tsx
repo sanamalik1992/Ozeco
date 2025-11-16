@@ -14,12 +14,8 @@ export default function Footer() {
             <p className="text-sm text-muted-foreground mb-2">
               UK-based Electric bike specialists since 2022, bringing you premium Electric bikes from trusted brands.
             </p>
-            <p className="text-xs text-muted-foreground mb-1">
-              Company No: 15445991
-            </p>
             <p className="text-xs text-muted-foreground">
-              Unit A, 82 James Carter Road<br />
-              Mildenhall, IP28 7DE, UK
+              Company No: 15445991
             </p>
           </div>
 
