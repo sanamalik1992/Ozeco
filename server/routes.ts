@@ -315,8 +315,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/reset-production-data", async (req, res) => {
     try {
       const isAdmin = req.session && (req.session as any).isAdmin === true;
+      console.log('🔐 Reset request - Session exists:', !!req.session, 'isAdmin:', isAdmin);
       if (!isAdmin) {
-        return res.status(403).json({ error: "Unauthorized" });
+        return res.status(403).json({ 
+          error: "Unauthorized - Please login to admin dashboard first",
+          hint: "Go to /admin and login with your admin password, then try again"
+        });
       }
 
       const isDevelopment = process.env.NODE_ENV === 'development';
