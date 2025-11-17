@@ -9,6 +9,8 @@ import { Calendar, Clock, Eye, ArrowLeft, Share2 } from "lucide-react";
 import type { BlogPost as BlogPostType } from "@shared/schema";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { marked } from "marked";
+import { useMemo } from "react";
 
 export default function BlogPost() {
   const [, params] = useRoute("/blog/:slug");
@@ -19,6 +21,11 @@ export default function BlogPost() {
     queryKey: [`/api/blog/slug/${slug}`],
     enabled: !!slug,
   });
+
+  const htmlContent = useMemo(() => {
+    if (!post) return '';
+    return marked(post.content);
+  }, [post]);
 
   const handleShare = async () => {
     if (navigator.share && post) {
@@ -147,7 +154,7 @@ export default function BlogPost() {
               <CardContent className="p-6 md:p-8">
                 <div
                   className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-display prose-headings:font-bold prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: htmlContent }}
                   data-testid="text-content"
                 />
               </CardContent>

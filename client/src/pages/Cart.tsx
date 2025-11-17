@@ -148,7 +148,7 @@ export default function Cart() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-24 lg:pb-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item) => (
@@ -239,8 +239,8 @@ export default function Cart() {
               ))}
             </div>
 
-            {/* Order Summary */}
-            <div className="lg:col-span-1">
+            {/* Order Summary - Hidden on mobile, shown on desktop */}
+            <div className="lg:col-span-1 hidden lg:block">
               <Card className="p-6 sticky top-4">
                 <h2 className="text-xl font-display font-bold mb-4">Order Summary</h2>
                 
@@ -285,6 +285,26 @@ export default function Cart() {
                   </Button>
                 </Link>
               </Card>
+            </div>
+          </div>
+
+          {/* Mobile Sticky Checkout Bar */}
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t p-4 z-50">
+            <div className="container mx-auto max-w-6xl">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total ({totalItems} {totalItems === 1 ? "item" : "items"})</p>
+                  <p className="text-2xl font-bold" data-testid="text-mobile-total">£{subtotal.toFixed(2)}</p>
+                </div>
+                <Link href="/checkout" className="flex-1 ml-4">
+                  <Button className="w-full" size="lg" data-testid="button-mobile-checkout">
+                    Checkout
+                  </Button>
+                </Link>
+              </div>
+              <p className="text-xs text-center text-muted-foreground">
+                Free delivery • Dispatch within 1 day
+              </p>
             </div>
           </div>
         </div>
