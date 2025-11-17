@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -20,10 +20,394 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import AdminOrders from "./AdminOrders";
+
+const variantFormSchema = z.object({
+  name: z.string().min(1, "Variant type is required"),
+  customName: z.string().optional(),
+  value: z.string().min(1, "Variant value is required"),
+  price: z.string().min(1, "Price is required").refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, "Price must be a positive number"),
+  stockQuantity: z.string().min(1, "Stock quantity is required").refine((val) => !isNaN(parseInt(val)) && parseInt(val) >= 0, "Stock must be a non-negative integer"),
+  image: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+});
+
+type VariantFormValues = z.infer<typeof variantFormSchema>;
+
+interface ManageVariantsDialogProps {
+  productId: string;
+  productName: string;
+}
+
+function ManageVariantsDialog({ productId, productName }: ManageVariantsDialogProps) {
+  const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [variantToDelete, setVariantToDelete] = useState<ProductVariant | null>(null);
+
+  const { data: variants = [], isLoading } = useQuery<ProductVariant[]>({
+    queryKey: ["/api/products", productId, "variants"],
+  });
+
+  const form = useForm<VariantFormValues>({
+    resolver: zodResolver(variantFormSchema),
+    defaultValues: {
+      name: "",
+      customName: "",
+      value: "",
+      price: "",
+      stockQuantity: "",
+      image: "",
+    },
+  });
+
+  const watchedName = form.watch("name");
+
+  const createVariantMutation = useMutation({
+    mutationFn: async (data: VariantFormValues) => {
+      const variantName = data.name === "Other" ? (data.customName || "Other") : data.name;
+      const payload = {
+        name: variantName,
+        value: data.value,
+        price: data.price,
+        stockQuantity: parseInt(data.stockQuantity),
+        image: data.image || null,
+      };
+      const response = await apiRequest("POST", `/api/admin/products/${productId}/variants`, payload);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create variant");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ 
+        predicate: (query) => 
+          query.queryKey[0] === "/api/products" && 
+          query.queryKey[2] === "variants"
+      });
+      toast({
+        title: "Variant created",
+        description: "The variant has been successfully added",
+      });
+      form.reset();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to create variant",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteVariantMutation = useMutation({
+    mutationFn: async (variantId: string) => {
+      const response = await apiRequest("DELETE", `/api/admin/variants/${variantId}`, {});
+      if (!response.ok) throw new Error("Failed to delete variant");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ 
+        predicate: (query) => 
+          query.queryKey[0] === "/api/products" && 
+          query.queryKey[2] === "variants"
+      });
+      toast({
+        title: "Variant deleted",
+        description: "The variant has been successfully removed",
+      });
+      setDeleteDialogOpen(false);
+      setVariantToDelete(null);
+    },
+    onError: () => {
+      toast({
+        title: "Failed to delete variant",
+        description: "An error occurred while deleting the variant",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteClick = (variant: ProductVariant) => {
+    setVariantToDelete(variant);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (variantToDelete) {
+      deleteVariantMutation.mutate(variantToDelete.id);
+    }
+  };
+
+  const onSubmit = (data: VariantFormValues) => {
+    createVariantMutation.mutate(data);
+  };
+
+  return (
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm" data-testid="button-manage-variants">
+            <Edit className="h-4 w-4 mr-2" />
+            Manage Variants
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Manage Product Variants - {productName}</DialogTitle>
+            <DialogDescription>
+              Add, edit, or delete product variant options (colours, wheel sizes, battery options, etc.)
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Add New Variant</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Variant Type</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger data-testid="select-variant-type">
+                                  <SelectValue placeholder="Select type..." />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Color">Colour</SelectItem>
+                                <SelectItem value="Wheel Size">Wheel Size</SelectItem>
+                                <SelectItem value="Battery">Battery</SelectItem>
+                                <SelectItem value="Other">Other (Custom)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      {watchedName === "Other" && (
+                        <FormField
+                          control={form.control}
+                          name="customName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Custom Type Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="e.g., Motor Type" {...field} data-testid="input-custom-variant-type" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+
+                      <FormField
+                        control={form.control}
+                        name="value"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Variant Value</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Black, 29 Inch, Double Battery" {...field} data-testid="input-variant-value" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Price (£)</FormLabel>
+                            <FormControl>
+                              <Input type="number" step="0.01" placeholder="999.99" {...field} data-testid="input-new-variant-price" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="stockQuantity"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Stock Quantity</FormLabel>
+                            <FormControl>
+                              <Input type="number" min="0" placeholder="10" {...field} data-testid="input-new-variant-stock" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="image"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image URL (Optional)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://example.com/variant-image.jpg" {...field} data-testid="input-variant-image" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button 
+                      type="submit" 
+                      disabled={createVariantMutation.isPending}
+                      data-testid="button-create-variant"
+                    >
+                      {createVariantMutation.isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Creating...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Variant
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Current Variants ({variants.length})</h3>
+              {isLoading ? (
+                <div className="flex items-center gap-2 text-muted-foreground p-4">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Loading variants...</span>
+                </div>
+              ) : variants.length === 0 ? (
+                <p className="text-sm text-muted-foreground p-4 bg-muted rounded-md">
+                  No variants configured yet. Add your first variant above.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {variants.map((variant) => (
+                    <Card key={variant.id} data-testid={`card-variant-${variant.id}`}>
+                      <CardContent className="p-4">
+                        <div className="flex items-start gap-4">
+                          {variant.image && (
+                            <img 
+                              src={variant.image} 
+                              alt={variant.value}
+                              className="w-16 h-16 object-contain rounded bg-muted"
+                            />
+                          )}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant="outline">{variant.name}</Badge>
+                              <span className="font-semibold">{variant.value}</span>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <span>Price: £{variant.price}</span>
+                              <span>Stock: {variant.stockQuantity} units</span>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteClick(variant)}
+                            disabled={deleteVariantMutation.isPending}
+                            data-testid={`button-delete-variant-${variant.id}`}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Variant?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the variant "{variantToDelete?.name}: {variantToDelete?.value}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-delete-variant">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover-elevate"
+              data-testid="button-confirm-delete-variant"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
 
 interface ProductVariantsProps {
   productId: string;
+  productName: string;
   onUpdateVariant: (variantId: string, price?: string, stock?: string) => void;
   editingVariantPrice: { [key: string]: string };
   editingVariantStock: { [key: string]: string };
@@ -32,7 +416,7 @@ interface ProductVariantsProps {
   isPending: boolean;
 }
 
-function ProductVariants({ productId, onUpdateVariant, editingVariantPrice, editingVariantStock, setEditingVariantPrice, setEditingVariantStock, isPending }: ProductVariantsProps) {
+function ProductVariants({ productId, productName, onUpdateVariant, editingVariantPrice, editingVariantStock, setEditingVariantPrice, setEditingVariantStock, isPending }: ProductVariantsProps) {
   const { data: variants = [], isLoading } = useQuery<ProductVariant[]>({
     queryKey: ["/api/products", productId, "variants"],
   });
@@ -56,10 +440,11 @@ function ProductVariants({ productId, onUpdateVariant, editingVariantPrice, edit
 
   return (
     <div className="p-6 bg-accent/20 border-l-4 border-l-primary">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
         <Package className="h-5 w-5 text-primary" />
         <h4 className="text-base font-semibold">Product Variants - Adjust Price & Stock</h4>
-        <Badge variant="default" className="ml-auto">{variants.length} variant{variants.length !== 1 ? 's' : ''}</Badge>
+        <Badge variant="default">{variants.length} variant{variants.length !== 1 ? 's' : ''}</Badge>
+        <ManageVariantsDialog productId={productId} productName={productName} />
       </div>
       <div className="space-y-3">
         {variants.map((variant) => (
@@ -593,6 +978,7 @@ export default function AdminDashboard() {
                         <TableCell colSpan={6}>
                           <ProductVariants
                             productId={product.id}
+                            productName={product.name}
                             onUpdateVariant={handleVariantUpdate}
                             editingVariantPrice={editingVariantPrice}
                             editingVariantStock={editingVariantStock}
