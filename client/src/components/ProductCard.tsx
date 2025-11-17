@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +42,7 @@ export default function ProductCard({
   onAddToCart,
 }: ProductCardProps) {
   const [, setLocation] = useLocation();
+  const [imageError, setImageError] = useState(false);
   const isPopular = id === "2"; // Eleglide M2 is popular
   const hasDiscount = originalPrice && originalPrice > price;
   const showStockUrgency = stockQuantity !== undefined && stockQuantity > 0 && stockQuantity < 10;
@@ -60,12 +62,24 @@ export default function ProductCard({
       onClick={handleViewDetails}
     >
       <div className="aspect-square bg-gradient-to-br from-muted to-accent/20 relative overflow-hidden">
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-full object-cover"
-          data-testid={`img-product-${id}`}
-        />
+        {imageError ? (
+          <div className="w-full h-full flex items-center justify-center bg-muted">
+            <div className="text-center p-8">
+              <div className="text-4xl mb-2">🚲</div>
+              <p className="text-sm text-muted-foreground">{name}</p>
+            </div>
+          </div>
+        ) : (
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-contain p-4"
+            onError={() => setImageError(true)}
+            crossOrigin="anonymous"
+            loading="lazy"
+            data-testid={`img-product-${id}`}
+          />
+        )}
         <Badge className="absolute top-3 left-3" variant="secondary" data-testid={`badge-brand-${id}`}>
           {brand}
         </Badge>
