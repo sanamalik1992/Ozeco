@@ -1,5 +1,5 @@
 import { db } from '@db';
-import { products } from '@shared/schema';
+import { products, reviews, customerPhotos } from '@shared/schema';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -117,7 +117,85 @@ export async function seedProductionIfEmpty() {
       },
     ]);
 
-    console.log('✅ Production database seeded with 4 bestseller products!');
+    // Get the inserted product IDs for adding reviews
+    const insertedProducts = await db.select().from(products).where(sql`is_bestseller = true`);
+    
+    console.log('📝 Seeding reviews and customer photos...');
+    
+    // Add sample reviews for each bestseller product
+    for (const product of insertedProducts) {
+      // Add 5 reviews per product
+      await db.insert(reviews).values([
+        {
+          id: sql`gen_random_uuid()`,
+          productId: product.id,
+          customerName: 'Sarah Williams',
+          rating: 5,
+          title: 'Excellent Electric bike!',
+          comment: 'Absolutely love this Electric bike. Great battery life and very comfortable to ride. Highly recommend!',
+          verified: true,
+        },
+        {
+          id: sql`gen_random_uuid()`,
+          productId: product.id,
+          customerName: 'James Thompson',
+          rating: 5,
+          title: 'Best purchase this year',
+          comment: 'This Electric bike has transformed my daily commute. No more sweating on the way to work!',
+          verified: true,
+        },
+        {
+          id: sql`gen_random_uuid()`,
+          productId: product.id,
+          customerName: 'Emily Davies',
+          rating: 4,
+          title: 'Great value for money',
+          comment: 'Really impressed with the quality and performance. The only minor issue is the weight, but overall fantastic.',
+          verified: true,
+        },
+        {
+          id: sql`gen_random_uuid()`,
+          productId: product.id,
+          customerName: 'Michael Brown',
+          rating: 5,
+          title: 'Perfect for city commuting',
+          comment: 'Exactly what I needed for my daily commute. Battery lasts all week on my 10-mile round trips.',
+          verified: true,
+        },
+        {
+          id: sql`gen_random_uuid()`,
+          productId: product.id,
+          customerName: 'Sophie Taylor',
+          rating: 5,
+          title: 'Highly recommended',
+          comment: 'Fast delivery, easy assembly, and brilliant customer service. The Electric bike itself is top quality!',
+          verified: true,
+        },
+      ]);
+
+      // Add 2 customer photos per product
+      await db.insert(customerPhotos).values([
+        {
+          id: sql`gen_random_uuid()`,
+          productId: product.id,
+          customerName: 'Sarah W.',
+          imageUrl: product.image,
+          caption: `Love my new ${product.brand} Electric bike!`,
+          approved: true,
+        },
+        {
+          id: sql`gen_random_uuid()`,
+          productId: product.id,
+          customerName: 'James T.',
+          imageUrl: product.image,
+          caption: 'Best commute upgrade ever!',
+          approved: true,
+        },
+      ]);
+    }
+
+    console.log('✅ Production database seeded successfully!');
+    console.log(`📊 Added ${insertedProducts.length} products, ${insertedProducts.length * 5} reviews, and ${insertedProducts.length * 2} customer photos`);
     console.log('🎉 www.ozeco.co.uk is now ready!');
   } catch (error) {
     console.error('⚠️  Failed to seed production database:', error);
