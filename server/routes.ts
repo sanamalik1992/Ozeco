@@ -221,25 +221,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
       
+      console.log("Payment intent request - Stripe configured:", !!stripeSecretKey);
+      
       if (!stripeSecretKey) {
+        console.error("Stripe secret key not configured");
         return res.status(400).json({ 
           error: "Stripe is not configured. Please contact support." 
         });
       }
 
       if (!req.session) {
-        return res.status(500).json({ error: "Session not initialized" });
+        console.error("Session not initialized");
+        return res.status(500).json({ error: "Session not initialised" });
       }
 
       // Use valid Stripe API version (YYYY-MM-DD format)
       const stripe = new Stripe(stripeSecretKey);
 
       const sessionId = req.session.id || req.sessionID;
+      console.log("Session ID:", sessionId);
 
       // SECURITY: Recalculate total from server-side cart (never trust client amount!)
       const cartItems = await storage.getCartItems(sessionId);
+      console.log("Cart items found:", cartItems.length);
 
       if (cartItems.length === 0) {
+        console.error("Cart is empty for session:", sessionId);
         return res.status(400).json({ error: "Cart is empty" });
       }
 
@@ -248,6 +255,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const priceInPence = Math.round(parseFloat(item.product.price) * 100);
         return sum + (priceInPence * item.quantity);
       }, 0);
+      
+      console.log("Total amount (pence):", totalInPence);
 
       // Create a PaymentIntent with the server-calculated amount
       const paymentIntent = await stripe.paymentIntents.create({
@@ -262,13 +271,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
+      console.log("Payment intent created:", paymentIntent.id);
+      
       res.json({
         clientSecret: paymentIntent.client_secret,
         paymentIntentId: paymentIntent.id,
       });
     } catch (error: any) {
-      console.error("Stripe error:", error);
-      res.status(500).json({ error: error.message });
+      console.error("Stripe error details:", error);
+      res.status(500).json({ error: error.message || "Payment initialisation failed" });
     }
   });
 

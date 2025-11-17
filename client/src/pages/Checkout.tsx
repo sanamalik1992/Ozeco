@@ -32,23 +32,36 @@ function CheckoutForm({ shippingData, clientSecret, totalPrice }: { shippingData
     e.preventDefault();
 
     if (!stripe || !elements) {
+      console.error("Stripe or elements not loaded");
       return;
     }
 
     setIsProcessing(true);
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/order-confirmation`,
-        receipt_email: shippingData.customerEmail,
-      },
-    });
+    try {
+      console.log("Attempting to confirm payment...");
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/order-confirmation`,
+          receipt_email: shippingData.customerEmail,
+        },
+      });
 
-    if (error) {
+      if (error) {
+        console.error("Stripe payment error:", error);
+        toast({
+          title: "Payment Failed",
+          description: error.message || "A processing error occurred",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+      }
+    } catch (err: any) {
+      console.error("Unexpected error during payment:", err);
       toast({
         title: "Payment Failed",
-        description: error.message,
+        description: err.message || "An unexpected error occurred",
         variant: "destructive",
       });
       setIsProcessing(false);
@@ -114,11 +127,16 @@ export default function Checkout() {
 
   // Fetch payment configuration from backend on mount
   useEffect(() => {
+    console.log("Fetching payment configuration...");
     Promise.all([
       fetch("/api/config/stripe-key", { credentials: "include" }).then(res => res.json()),
       fetch("/api/config/payment-methods", { credentials: "include" }).then(res => res.json())
     ])
       .then(([stripeData, paymentMethodsData]) => {
+        console.log("Payment config received:", { 
+          hasStripeKey: !!stripeData.publishableKey,
+          paymentMethods: paymentMethodsData 
+        });
         setStripePublicKey(stripeData.publishableKey);
         setAvailablePaymentMethods(paymentMethodsData);
         
@@ -157,24 +175,27 @@ export default function Checkout() {
       
       // Create PaymentIntent for Stripe if selected
       if (paymentMethod === 'stripe' && stripePublicKey) {
+        console.log("Creating payment intent...");
         apiRequest("POST", "/api/create-payment-intent", {})
           .then((res) => res.json())
           .then((data) => {
+            console.log("Payment intent created successfully");
             setClientSecret(data.clientSecret);
           })
           .catch((error) => {
             console.error("Error creating payment intent:", error);
             toast({
               title: "Error",
-              description: "Failed to initialize payment",
+              description: error.message || "Failed to initialise payment",
               variant: "destructive",
             });
           });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Error saving shipping info:", error);
       toast({
         title: "Error",
-        description: "Failed to save shipping information",
+        description: error.message || "Failed to save shipping information",
         variant: "destructive",
       });
     }
