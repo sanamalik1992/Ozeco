@@ -133,7 +133,7 @@ export async function seedProductionIfEmpty() {
         const batch = reviewsData.slice(i, i + BATCH_SIZE);
         const reviewsToInsert = batch
           .map((r: any) => {
-            const { id, createdAt, productId: oldProductId, ...rest } = r;
+            const { id, productId: oldProductId, ...rest } = r;
             const newProductId = oldToNewId[oldProductId];
             
             if (!newProductId) {
@@ -143,7 +143,8 @@ export async function seedProductionIfEmpty() {
             
             return {
               ...rest,
-              productId: newProductId
+              productId: newProductId,
+              createdAt: new Date(r.createdAt)
             };
           })
           .filter(Boolean);
@@ -180,14 +181,15 @@ export async function seedProductionIfEmpty() {
     
     const photosToInsert = photosData
       .map((p: any) => {
-        const { id, createdAt, productId: oldProductId, ...rest } = p;
+        const { id, productId: oldProductId, ...rest } = p;
         const newProductId = oldToNewId[oldProductId];
         
         if (!newProductId) return null;
         
         return {
           ...rest,
-          productId: newProductId
+          productId: newProductId,
+          createdAt: new Date(p.createdAt)
         };
       })
       .filter(Boolean);
