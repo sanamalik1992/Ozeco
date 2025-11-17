@@ -235,11 +235,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: "Session not initialised" });
       }
 
-      // Use valid Stripe API version (YYYY-MM-DD format)
-      const stripe = new Stripe(stripeSecretKey);
-
       const sessionId = req.session.id || req.sessionID;
-      console.log("Session ID:", sessionId);
+      const shippingData = (req.session as any).shippingData;
+      
+      if (!shippingData) {
+        console.error("Shipping data missing from session");
+        return res.status(400).json({ error: "Shipping information not found" });
+      }
 
       // SECURITY: Recalculate total from server-side cart (never trust client amount!)
       const cartItems = await storage.getCartItems(sessionId);
@@ -255,31 +257,209 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const priceInPence = Math.round(parseFloat(item.product.price) * 100);
         return sum + (priceInPence * item.quantity);
       }, 0);
+      const totalAmount = (totalInPence / 100).toFixed(2);
       
       console.log("Total amount (pence):", totalInPence);
 
-      // Create a PaymentIntent with the server-calculated amount
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: totalInPence, // Amount already in pence
-        currency: "gbp",
-        automatic_payment_methods: {
-          enabled: true,
-        },
-        metadata: {
+      // Wrap order creation and PaymentIntent in transaction for atomicity
+      const result = await db.transaction(async (tx) => {
+        // STEP 1: Create pending order BEFORE payment to prevent data loss
+        const [pendingOrder] = await tx.insert(orders).values({
           sessionId,
-          itemCount: cartItems.length.toString(),
-        },
+          totalAmount,
+          status: "pending",
+          fulfillmentStatus: "pending",
+          paymentMethod: "stripe",
+          customerEmail: shippingData.customerEmail,
+          customerName: shippingData.customerName,
+          shippingAddressLine1: shippingData.shippingAddressLine1,
+          shippingAddressLine2: shippingData.shippingAddressLine2 || null,
+          shippingCity: shippingData.shippingCity,
+          shippingPostalCode: shippingData.shippingPostalCode,
+          shippingCountry: shippingData.shippingCountry || "GB",
+          customerPhone: shippingData.customerPhone || null,
+        }).returning();
+
+        console.log("Pending order created:", pendingOrder.id);
+
+        // STEP 2: Create order items linked to pending order
+        for (const item of cartItems) {
+          await tx.insert(orderItems).values({
+            orderId: pendingOrder.id,
+            productId: item.product.id,
+            quantity: item.quantity,
+            priceAtTime: item.product.price,
+          });
+        }
+
+        // STEP 3: Create PaymentIntent with orderId in metadata
+        const stripe = new Stripe(stripeSecretKey);
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: totalInPence,
+          currency: "gbp",
+          automatic_payment_methods: {
+            enabled: true,
+          },
+          metadata: {
+            orderId: pendingOrder.id,
+            sessionId,
+            itemCount: cartItems.length.toString(),
+            totalAmount: totalAmount, // Store for validation
+          },
+        });
+
+        // STEP 4: Update order with payment intent ID
+        await tx.update(orders)
+          .set({ stripePaymentIntentId: paymentIntent.id })
+          .where(eq(orders.id, pendingOrder.id));
+
+        console.log("Payment intent created:", paymentIntent.id);
+        
+        return { pendingOrder, paymentIntent };
       });
 
-      console.log("Payment intent created:", paymentIntent.id);
-      
       res.json({
-        clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id,
+        clientSecret: result.paymentIntent.client_secret,
+        paymentIntentId: result.paymentIntent.id,
+        orderId: result.pendingOrder.id,
       });
     } catch (error: any) {
       console.error("Stripe error details:", error);
       res.status(500).json({ error: error.message || "Payment initialisation failed" });
+    }
+  });
+
+  // Stripe webhook handler (must use raw body for signature verification)
+  app.post("/api/webhooks/stripe", async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!webhookSecret) {
+      console.error("Stripe webhook secret not configured");
+      return res.status(400).send("Webhook secret not configured");
+    }
+
+    let event: any;
+
+    try {
+      const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+      if (!stripeSecretKey) {
+        return res.status(400).send("Stripe not configured");
+      }
+
+      const stripe = new Stripe(stripeSecretKey);
+      event = stripe.webhooks.constructEvent(req.rawBody as Buffer, sig as string, webhookSecret);
+    } catch (err: any) {
+      console.error("Webhook signature verification failed:", err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    console.log("Stripe webhook event:", event.type);
+
+    // Handle payment_intent.succeeded event
+    if (event.type === 'payment_intent.succeeded') {
+      const paymentIntent = event.data.object;
+      const orderId = paymentIntent.metadata.orderId;
+
+      console.log("Payment succeeded for order:", orderId);
+
+      if (!orderId) {
+        console.error("No orderId in payment intent metadata");
+        return res.status(400).send("No orderId in metadata");
+      }
+
+      try {
+        // Finalize the order in a transaction
+        await db.transaction(async (tx) => {
+          // Get the order
+          const orderResults = await tx.select().from(orders).where(eq(orders.id, orderId));
+          const order = orderResults[0];
+
+          if (!order) {
+            throw new Error(`Order ${orderId} not found`);
+          }
+
+          // IDEMPOTENCY: Check if order is already completed
+          if (order.status === "paid" || order.status === "completed") {
+            console.log("Order already paid/completed, skipping (idempotent)");
+            return;
+          }
+
+          // VALIDATION: Verify Stripe amount matches order total
+          const expectedAmount = Math.round(parseFloat(order.totalAmount) * 100);
+          if (paymentIntent.amount !== expectedAmount) {
+            console.error(`Amount mismatch! Stripe: ${paymentIntent.amount}, Order: ${expectedAmount}`);
+            throw new Error("Payment amount mismatch - manual review required");
+          }
+
+          // Get order items
+          const items = await tx.select({
+            id: orderItems.id,
+            productId: orderItems.productId,
+            quantity: orderItems.quantity,
+          }).from(orderItems).where(eq(orderItems.orderId, orderId));
+
+          // Decrement stock for each item
+          for (const item of items) {
+            const result = await tx.execute(sql`
+              SELECT stock_quantity, in_stock 
+              FROM products 
+              WHERE id = ${item.productId}
+              FOR UPDATE
+            `);
+
+            const product = result.rows[0] as { stock_quantity: number | null; in_stock: boolean } | undefined;
+            if (product && product.in_stock) {
+              const newQuantity = Math.max(0, (product.stock_quantity ?? 0) - item.quantity);
+              await tx
+                .update(products)
+                .set({
+                  stockQuantity: newQuantity,
+                  inStock: newQuantity > 0,
+                })
+                .where(eq(products.id, item.productId));
+            }
+          }
+
+          // Update order status to paid
+          await tx.update(orders)
+            .set({ 
+              status: "paid",
+              fulfillmentStatus: "pending",
+            })
+            .where(eq(orders.id, orderId));
+
+          console.log("Order finalized:", orderId);
+
+          // Clear the cart (if session still exists)
+          try {
+            await storage.clearCart(order.sessionId);
+          } catch (e) {
+            console.log("Cart already cleared or session expired");
+          }
+
+          // Send confirmation email
+          try {
+            const orderItemsWithDetails = await storage.getOrderItems(orderId);
+            await sendOrderConfirmationEmail({
+              ...order,
+              status: "paid",
+              items: orderItemsWithDetails,
+            });
+            console.log("Confirmation email sent for order:", orderId);
+          } catch (emailError) {
+            console.error("Failed to send confirmation email:", emailError);
+          }
+        });
+
+        res.json({ received: true });
+      } catch (error: any) {
+        console.error("Error processing webhook:", error);
+        res.status(500).send("Webhook processing failed");
+      }
+    } else {
+      console.log("Unhandled event type:", event.type);
+      res.json({ received: true });
     }
   });
 
@@ -536,19 +716,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get order by ID (for order confirmation page)
+  app.get("/api/orders/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const order = await storage.getOrder(id);
+      
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const items = await storage.getOrderItems(id);
+      res.json({ ...order, items });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post("/api/orders/complete", async (req, res) => {
     try {
       const sessionId = req.sessionID;
       const shippingData = (req.session as any).shippingData;
+      
+      console.log("Order completion request:", {
+        sessionId,
+        hasShippingData: !!shippingData,
+        paymentMethod: req.body.paymentMethod,
+        stripePaymentIntentId: req.body.stripePaymentIntentId
+      });
 
       if (!shippingData) {
-        return res.status(400).json({ error: "Shipping information not found" });
+        console.error("Shipping data missing from session");
+        return res.status(400).json({ error: "Shipping information not found. Your payment was processed - please contact support with your payment confirmation." });
       }
 
       // Get cart items with total calculation (server-side for security)
       const cartItems = await storage.getCartItems(sessionId);
+      console.log("Cart items for session:", cartItems.length);
+      
       if (cartItems.length === 0) {
-        return res.status(400).json({ error: "Cart is empty" });
+        console.error("Cart empty for session:", sessionId);
+        return res.status(400).json({ error: "Cart is empty. Your payment was processed - please contact support with your payment confirmation." });
       }
 
       const totalInPence = cartItems.reduce((sum, item) => {

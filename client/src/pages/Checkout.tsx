@@ -20,7 +20,7 @@ import TrustBadges from "@/components/TrustBadges";
 type PaymentMethod = 'stripe' | 'paypal';
 type CheckoutStep = 'shipping' | 'payment';
 
-function CheckoutForm({ shippingData, clientSecret, totalPrice }: { shippingData: ShippingFormData; clientSecret: string; totalPrice: number }) {
+function CheckoutForm({ shippingData, clientSecret, totalPrice, orderId }: { shippingData: ShippingFormData; clientSecret: string; totalPrice: number; orderId: string }) {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -43,7 +43,7 @@ function CheckoutForm({ shippingData, clientSecret, totalPrice }: { shippingData
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/order-confirmation`,
+          return_url: `${window.location.origin}/order-confirmation?orderId=${orderId}`,
           receipt_email: shippingData.customerEmail,
         },
       });
@@ -105,6 +105,7 @@ export default function Checkout() {
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
   const [shippingData, setShippingData] = useState<ShippingFormData | null>(null);
   const [clientSecret, setClientSecret] = useState("");
+  const [orderId, setOrderId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [stripePublicKey, setStripePublicKey] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
@@ -179,8 +180,9 @@ export default function Checkout() {
         apiRequest("POST", "/api/create-payment-intent", {})
           .then((res) => res.json())
           .then((data) => {
-            console.log("Payment intent created successfully");
+            console.log("Payment intent created successfully, orderId:", data.orderId);
             setClientSecret(data.clientSecret);
+            setOrderId(data.orderId);
           })
           .catch((error) => {
             console.error("Error creating payment intent:", error);
@@ -482,7 +484,7 @@ export default function Checkout() {
                         <CardContent>
                           {paymentMethod === 'stripe' && availablePaymentMethods.stripe && clientSecret && stripePromise ? (
                             <Elements stripe={stripePromise} options={{ clientSecret }}>
-                              <CheckoutForm shippingData={shippingData!} clientSecret={clientSecret} totalPrice={totalPrice} />
+                              <CheckoutForm shippingData={shippingData!} clientSecret={clientSecret} totalPrice={totalPrice} orderId={orderId!} />
                             </Elements>
                           ) : paymentMethod === 'paypal' && availablePaymentMethods.paypal ? (
                             <div className="space-y-4">

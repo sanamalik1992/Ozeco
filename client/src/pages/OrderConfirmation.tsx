@@ -14,39 +14,73 @@ export default function OrderConfirmation() {
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [order, setOrder] = useState<any | null>(null);
 
   useEffect(() => {
-    const completeOrder = async () => {
+    const fetchOrder = async () => {
       try {
-        // Check if this is a Stripe return with payment_intent parameter
+        // Get orderId from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const paymentIntentId = urlParams.get('payment_intent');
-        const paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
+        const orderId = urlParams.get('orderId');
 
-        if (paymentIntentId && paymentIntentClientSecret) {
-          // Complete the Stripe order
-          await apiRequest("POST", "/api/orders/complete", {
-            stripePaymentIntentId: paymentIntentId,
-            paymentMethod: 'stripe',
-          });
+        if (!orderId) {
+          setError("Order ID not found. Please check your email for order details.");
+          setIsProcessing(false);
+          return;
         }
 
-        // Clear the cart
+        console.log("Fetching order:", orderId);
+
+        // Poll for order status (webhook may still be processing)
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        while (attempts < maxAttempts) {
+          const response = await fetch(`/api/orders/${orderId}`);
+          
+          if (!response.ok) {
+            if (attempts === maxAttempts - 1) {
+              throw new Error("Order not found");
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            attempts++;
+            continue;
+          }
+
+          const orderData = await response.json();
+          
+          // If order is still pending, wait and try again
+          if (orderData.status === 'pending' && attempts < maxAttempts - 1) {
+            console.log("Order still pending, waiting for webhook...");
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            attempts++;
+            continue;
+          }
+
+          setOrder(orderData);
+          await clearCart();
+          setIsProcessing(false);
+          return;
+        }
+
+        // If we get here, order is still pending after max attempts
+        setOrder({ status: 'pending', id: orderId });
         await clearCart();
         setIsProcessing(false);
+
       } catch (error: any) {
-        console.error("Order completion error:", error);
-        setError("There was an issue processing your order. Please contact support.");
+        console.error("Order fetch error:", error);
+        setError("Unable to load order details. Your payment was processed - please check your email for confirmation.");
         toast({
-          title: "Order Processing Error",
-          description: "Please contact support to verify your order status.",
+          title: "Order Loading Error",
+          description: "Please check your email for order confirmation.",
           variant: "destructive",
         });
         setIsProcessing(false);
       }
     };
 
-    completeOrder();
+    fetchOrder();
   }, [clearCart, toast]);
 
   if (isProcessing) {
