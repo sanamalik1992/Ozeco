@@ -407,6 +407,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/admin/products/:productId/variants", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const { productId } = req.params;
+      const variantData = { ...req.body, productId };
+
+      // Check for duplicate variant (same name and value for this product)
+      const existingVariants = await storage.getProductVariants(productId);
+      const duplicate = existingVariants.find(
+        v => v.name === variantData.name && v.value === variantData.value
+      );
+
+      if (duplicate) {
+        return res.status(400).json({ 
+          error: `A variant with ${variantData.name}: ${variantData.value} already exists for this product` 
+        });
+      }
+
+      const variant = await storage.createProductVariant(variantData);
+      res.json(variant);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/admin/variants/:id", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const { id } = req.params;
+      const success = await storage.deleteProductVariant(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Variant not found" });
+      }
+
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Checkout and order routes
   app.post("/api/checkout/shipping", async (req, res) => {
     try {
