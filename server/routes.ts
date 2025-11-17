@@ -378,15 +378,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let updatedCount = 0;
       for (const productData of productsData) {
-        const { slug, image } = productData;
+        const { slug, image, images } = productData;
         const result = await db.update(products)
-          .set({ image })
+          .set({ 
+            image,
+            images: images || [image]
+          })
           .where(eq(products.slug, slug))
           .returning();
         
         if (result.length > 0) {
           updatedCount++;
-          console.log(`   ✅ Updated image for: ${result[0].name}`);
+          console.log(`   ✅ Updated images for: ${result[0].name}`);
         }
       }
 
