@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProductSchema, insertCartItemSchema, insertFavoriteSchema, insertCustomerPhotoSchema, orders, orderItems, products, newsletterSubscribers, insertNewsletterSubscriberSchema } from "@shared/schema";
+import { insertProductSchema, insertCartItemSchema, insertFavoriteSchema, insertCustomerPhotoSchema, orders, orderItems, products, newsletterSubscribers, insertNewsletterSubscriberSchema, reviews, customerPhotos, blogPosts } from "@shared/schema";
 import { db } from "@db";
 import { sql, eq, and, gte } from "drizzle-orm";
 import Stripe from "stripe";
@@ -308,6 +308,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isAdmin = req.session && (req.session as any).isAdmin === true;
       res.json({ authenticated: isAdmin });
     } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/admin/reset-production-data", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      if (isDevelopment) {
+        return res.status(400).json({ error: "This endpoint is for production use only. Development database uses local seed script." });
+      }
+
+      console.log('🔄 Admin-triggered production data reset...');
+      
+      await db.delete(reviews).execute();
+      await db.delete(customerPhotos).execute();
+      await db.delete(blogPosts).execute();
+      
+      console.log('✅ Production data deleted');
+      console.log(`   - Deleted all reviews`);
+      console.log(`   - Deleted all customer photos`);
+      console.log(`   - Deleted all blog posts`);
+      console.log('🔄 Triggering re-seed...\n');
+
+      const { seedProductionIfEmpty } = await import('./seed-production');
+      await seedProductionIfEmpty();
+
+      res.json({ 
+        success: true, 
+        message: "Production data has been reset and re-seeded successfully.",
+        note: "All reviews, customer photos, and blog posts now have correct dates."
+      });
+    } catch (error: any) {
+      console.error('❌ Failed to reset production data:', error);
       res.status(500).json({ error: error.message });
     }
   });

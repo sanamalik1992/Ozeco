@@ -69,7 +69,7 @@ export default function ProductCard({
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
-            target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="600" height="600" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" fill="%239ca3af" font-size="24" font-family="sans-serif">🚲</text><text x="50%" y="60%" text-anchor="middle" fill="%236b7280" font-size="14" font-family="sans-serif">' + encodeURIComponent(name) + '</text></svg>';
+            target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"%3E%3Crect width="400" height="400" fill="%23f3f4f6"/%3E%3Ctext x="200" y="200" text-anchor="middle" dominant-baseline="middle" fill="%239ca3af" font-size="80" font-family="sans-serif"%3E%F0%9F%9A%B2%3C/text%3E%3C/svg%3E';
           }}
         />
         <Badge className="absolute top-3 left-3" variant="secondary" data-testid={`badge-brand-${id}`}>
