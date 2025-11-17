@@ -3,6 +3,7 @@ import session from "express-session";
 import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { seedProductionIfEmpty } from "./seed-production";
 
 const app = express();
 
@@ -92,7 +93,10 @@ app.use((req, res, next) => {
     port,
     host: "0.0.0.0",
     reusePort: true,
-  }, () => {
+  }, async () => {
     log(`serving on port ${port}`);
+    
+    // Auto-seed production database if empty
+    await seedProductionIfEmpty();
   });
 })();
