@@ -74,6 +74,87 @@ interface ManageVariantsDialogProps {
   productName: string;
 }
 
+function ProductionResetButton() {
+  const { toast } = useToast();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const resetMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/admin/reset-production-data", {});
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to reset production data");
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries();
+      toast({
+        title: "Production data reset successful",
+        description: data.message || "All reviews, photos, and blog posts have been reset with correct dates and images.",
+      });
+      setConfirmOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Reset failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <>
+      <Button
+        variant="outline"
+        onClick={() => setConfirmOpen(true)}
+        data-testid="button-reset-production"
+        className="border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950"
+      >
+        <TrendingUp className="h-4 w-4 mr-2" />
+        Reset Production Data
+      </Button>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reset Production Database?</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p><strong>This will delete and re-seed:</strong></p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>All reviews (will be replaced with 100-150 per product with varied dates 2023-2025)</li>
+                <li>All customer photos (will be replaced with 33 approved photos)</li>
+                <li>All blog posts (will be replaced with 5 posts with working images)</li>
+              </ul>
+              <p className="text-orange-600 dark:text-orange-400 font-semibold mt-4">⚠️ Products and orders will NOT be affected.</p>
+              <p className="mt-2">This operation typically takes 10-20 seconds. Are you sure?</p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-reset">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => resetMutation.mutate()}
+              disabled={resetMutation.isPending}
+              className="bg-orange-600 text-white hover:bg-orange-700"
+              data-testid="button-confirm-reset"
+            >
+              {resetMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Resetting...
+                </>
+              ) : (
+                "Reset Production Data"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
 function ManageVariantsDialog({ productId, productName }: ManageVariantsDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -1068,6 +1149,29 @@ export default function AdminDashboard() {
                     </TableBody>
                   </Table>
                 )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-orange-200 dark:border-orange-900">
+              <CardHeader>
+                <CardTitle className="text-orange-600 dark:text-orange-400">Production Database Management</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Use this only on your published production site</strong> if reviews have wrong dates, blog posts are missing, or images aren't loading correctly.
+                </p>
+                <div className="bg-muted p-4 rounded-md space-y-2">
+                  <p className="text-sm font-semibold">What this does:</p>
+                  <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                    <li>Deletes all reviews and customer photos</li>
+                    <li>Deletes all blog posts</li>
+                    <li>Re-seeds with 100-150 reviews per product (varied dates 2023-2025)</li>
+                    <li>Re-seeds with 33 customer photos</li>
+                    <li>Re-seeds with 5 blog posts with working images</li>
+                    <li><strong className="text-primary">Products, orders, and variants are NOT affected</strong></li>
+                  </ul>
+                </div>
+                <ProductionResetButton />
               </CardContent>
             </Card>
           </TabsContent>
