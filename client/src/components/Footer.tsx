@@ -30,18 +30,28 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-brands">
-                  Brands
+                <Link href="/shop?category=Mountain" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-mountain">
+                  Mountain Bikes
                 </Link>
               </li>
               <li>
-                <Link href="/referral" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-referral">
-                  Referral Program
+                <Link href="/shop?category=City" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-city">
+                  City Bikes
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-bestsellers">
+                <Link href="/shop?category=Folding" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-folding">
+                  Folding Bikes
+                </Link>
+              </li>
+              <li>
+                <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-bestsellers">
                   Best Sellers
+                </Link>
+              </li>
+              <li>
+                <Link href="/compare" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" data-testid="link-footer-compare">
+                  Compare E-Bikes
                 </Link>
               </li>
             </ul>
