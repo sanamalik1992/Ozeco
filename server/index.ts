@@ -8,12 +8,13 @@ import { seedProductionIfEmpty } from "./seed-production";
 const app = express();
 
 // Session configuration
+const isProduction = process.env.REPLIT_DEPLOYMENT === '1' || process.env.NODE_ENV === 'production';
 app.use(session({
   secret: process.env.SESSION_SECRET || 'ozeco-secret-key-change-in-production',
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProduction,
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
   },

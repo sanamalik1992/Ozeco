@@ -4,13 +4,14 @@ import { sql, inArray } from 'drizzle-orm';
 
 /**
  * Auto-seeds production database with bestseller products if empty
- * Only runs in production mode
+ * Only runs in production mode (Replit deployment)
  */
 export async function seedProductionIfEmpty() {
-  console.log('🔍 Seed check - NODE_ENV:', process.env.NODE_ENV);
+  const isProduction = process.env.REPLIT_DEPLOYMENT === '1' || process.env.NODE_ENV === 'production';
+  console.log('🔍 Seed check - REPLIT_DEPLOYMENT:', process.env.REPLIT_DEPLOYMENT, 'NODE_ENV:', process.env.NODE_ENV);
   
   // Only run in production
-  if (process.env.NODE_ENV !== 'production') {
+  if (!isProduction) {
     console.log('⏭️  Skipping seed - not in production mode');
     return;
   }
