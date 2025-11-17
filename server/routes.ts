@@ -354,6 +354,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/admin/fix-product-images", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ 
+          error: "Unauthorized - Please login to admin dashboard first",
+        });
+      }
+
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      if (isDevelopment) {
+        return res.status(400).json({ error: "This endpoint is for production use only." });
+      }
+
+      console.log('🖼️  Admin-triggered product image fix...');
+      
+      const fs = await import('fs');
+      const path = await import('path');
+      const dataDir = path.join(process.cwd(), 'server', 'data');
+      const productsRaw = await fs.promises.readFile(path.join(dataDir, 'products.json'), 'utf-8');
+      const productsData = JSON.parse(productsRaw);
+      
+      let updatedCount = 0;
+      for (const productData of productsData) {
+        const { slug, image } = productData;
+        const result = await db.update(products)
+          .set({ image })
+          .where(eq(products.slug, slug))
+          .returning();
+        
+        if (result.length > 0) {
+          updatedCount++;
+          console.log(`   ✅ Updated image for: ${result[0].name}`);
+        }
+      }
+
+      res.json({ 
+        success: true, 
+        message: `Successfully updated images for ${updatedCount} products.`,
+        updatedCount
+      });
+    } catch (error: any) {
+      console.error('❌ Failed to fix product images:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Admin product management routes
   app.patch("/api/admin/products/:id", async (req, res) => {
     try {

@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit } from "lucide-react";
+import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit, ImageIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -146,6 +146,82 @@ function ProductionResetButton() {
                 </>
               ) : (
                 "Reset Production Data"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
+function FixProductImagesButton() {
+  const { toast } = useToast();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const fixImagesMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/admin/fix-product-images", {});
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to fix product images");
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({
+        title: "Product images updated",
+        description: data.message || `Updated ${data.updatedCount} product images.`,
+      });
+      setConfirmOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Image fix failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <>
+      <Button
+        variant="outline"
+        onClick={() => setConfirmOpen(true)}
+        data-testid="button-fix-images"
+        className="border-primary text-primary hover:bg-primary/10"
+      >
+        <ImageIcon className="h-4 w-4 mr-2" />
+        Fix Product Images
+      </Button>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Fix Product Images?</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>This will update all 16 product images to use the correct URLs from the seed file.</p>
+              <p className="text-muted-foreground">Useful if product images are broken or showing placeholders.</p>
+              <p className="mt-2">This operation takes a few seconds. Continue?</p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-fix-images">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => fixImagesMutation.mutate()}
+              disabled={fixImagesMutation.isPending}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              data-testid="button-confirm-fix-images"
+            >
+              {fixImagesMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Fixing...
+                </>
+              ) : (
+                "Fix Images"
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -1161,7 +1237,7 @@ export default function AdminDashboard() {
                   <strong>Use this only on your published production site</strong> if reviews have wrong dates, blog posts are missing, or images aren't loading correctly.
                 </p>
                 <div className="bg-muted p-4 rounded-md space-y-2">
-                  <p className="text-sm font-semibold">What this does:</p>
+                  <p className="text-sm font-semibold">Reset Production Data:</p>
                   <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
                     <li>Deletes all reviews and customer photos</li>
                     <li>Deletes all blog posts</li>
@@ -1171,7 +1247,10 @@ export default function AdminDashboard() {
                     <li><strong className="text-primary">Products, orders, and variants are NOT affected</strong></li>
                   </ul>
                 </div>
-                <ProductionResetButton />
+                <div className="flex gap-3">
+                  <ProductionResetButton />
+                  <FixProductImagesButton />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
