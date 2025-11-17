@@ -1,6 +1,6 @@
 import { db } from '@db';
 import { products, reviews, customerPhotos } from '@shared/schema';
-import { sql } from 'drizzle-orm';
+import { sql, inArray } from 'drizzle-orm';
 
 /**
  * Auto-seeds production database with bestseller products if empty
@@ -22,6 +22,9 @@ export async function seedProductionIfEmpty() {
     }
 
     console.log('📦 Production database empty - seeding products...');
+
+    // Define the specific slugs we're inserting
+    const newProductSlugs = ['dyu-a1f-pro', 'eleglide-m2', 'engwe-engine-x', 'eleglide-m1-plus'];
 
     // Insert 4 bestseller products
     await db.insert(products).values([
@@ -117,9 +120,18 @@ export async function seedProductionIfEmpty() {
       },
     ]);
 
-    // Get the inserted product IDs for adding reviews
-    const insertedProducts = await db.select().from(products).where(sql`is_bestseller = true`);
+    // Get the exact products we just inserted using their unique slugs
+    const insertedProducts = await db.select().from(products).where(
+      inArray(products.slug, newProductSlugs)
+    );
     
+    // Verify all products were inserted correctly
+    if (insertedProducts.length !== newProductSlugs.length) {
+      console.error(`⚠️ Expected ${newProductSlugs.length} products but found ${insertedProducts.length}`);
+      return;
+    }
+    
+    console.log(`✅ Found ${insertedProducts.length} products to seed with reviews and photos`);
     console.log('📝 Seeding reviews and customer photos...');
     
     // Add sample reviews for each bestseller product
