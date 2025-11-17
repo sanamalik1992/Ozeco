@@ -9,13 +9,18 @@ import path from 'path';
  * Uses streaming approach to avoid bundle size issues
  */
 export async function seedProductionIfEmpty() {
-  const isProduction = process.env.REPLIT_DEPLOYMENT === '1' || process.env.NODE_ENV === 'production';
-  console.log('🔍 Seed check - REPLIT_DEPLOYMENT:', process.env.REPLIT_DEPLOYMENT, 'NODE_ENV:', process.env.NODE_ENV);
+  // Run seeding in ANY production-like environment (not just development)
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isProduction = !isDevelopment;
+  
+  console.log('🔍 Seed check - NODE_ENV:', process.env.NODE_ENV, 'isDevelopment:', isDevelopment, 'isProduction:', isProduction);
   
   if (!isProduction) {
-    console.log('⏭️  Skipping seed - not in production mode');
+    console.log('⏭️  Skipping seed - development mode (database already seeded manually)');
     return;
   }
+  
+  console.log('🚀 Production environment detected - checking if database needs seeding...');
 
   try {
     console.log('🔄 Checking if production database needs seeding...\n');

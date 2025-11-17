@@ -7,16 +7,19 @@ import { seedProductionIfEmpty } from "./seed-production";
 
 const app = express();
 
-// Session configuration
-const isProduction = process.env.REPLIT_DEPLOYMENT === '1' || process.env.NODE_ENV === 'production';
+// Trust proxy for Replit deployment (needed for secure cookies behind HTTPS proxy)
+app.set('trust proxy', 1);
+
+// Session configuration - secure: 'auto' works for both HTTP (dev) and HTTPS (prod)
 app.use(session({
   secret: process.env.SESSION_SECRET || 'ozeco-secret-key-change-in-production',
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: isProduction,
+    secure: 'auto', // Auto-detects HTTPS - works in dev AND production
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    sameSite: 'lax',
   },
 }));
 
