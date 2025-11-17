@@ -1,0 +1,299 @@
+export const seedCustomerPhotos = [
+  {
+    "id": "0c6637e0-446d-4e25-91e4-d8745aadf71a",
+    "productId": "804c4b9d-bd10-4c08-b5fc-a53d41a18804",
+    "customerName": "Oliver Brown",
+    "imageUrl": "/customer-photos/IMG_5323_1763214245227.jpeg",
+    "caption": "Perfect for countryside rides! The Eleglide M2 handles rough terrain brilliantly.",
+    "approved": true,
+    "createdAt": "2025-10-21T14:03:44.275Z"
+  },
+  {
+    "id": "3ef8b139-847f-4536-852a-451b0ed54e67",
+    "productId": "804c4b9d-bd10-4c08-b5fc-a53d41a18804",
+    "customerName": "Imran Sheikh",
+    "imageUrl": "/customer-photos/IMG_5324_1763214245227.jpeg",
+    "caption": "Just arrived! Easy to assemble and can't wait to take it for a spin.",
+    "approved": true,
+    "createdAt": "2025-10-04T14:03:44.275Z"
+  },
+  {
+    "id": "e81864d6-30c2-4622-acb9-00bd685759f9",
+    "productId": "600382aa-7fd0-47a5-b448-54217b32e632",
+    "customerName": "Natalia Ivanov",
+    "imageUrl": "/customer-photos/IMG_5343_1763214654415.jpeg",
+    "caption": "Love the compact design! Perfect for my daily park rides.",
+    "approved": true,
+    "createdAt": "2025-10-13T14:03:44.275Z"
+  },
+  {
+    "id": "b496e6e3-97c1-4abf-8d54-10c922a6e722",
+    "productId": "600382aa-7fd0-47a5-b448-54217b32e632",
+    "customerName": "Anna Wojcik",
+    "imageUrl": "/customer-photos/IMG_5342_1763214654415.jpeg",
+    "caption": "Compact and portable. The D3F is exactly what I needed for city commuting!",
+    "approved": true,
+    "createdAt": "2025-09-17T14:03:44.275Z"
+  },
+  {
+    "id": "260ad9c1-7e3d-4cbb-81f3-883fe7da8e0b",
+    "productId": "600382aa-7fd0-47a5-b448-54217b32e632",
+    "customerName": "George Taylor",
+    "imageUrl": "/customer-photos/IMG_5341_1763214654415.jpeg",
+    "caption": "So easy to store and transport. Brilliant little bike!",
+    "approved": true,
+    "createdAt": "2025-10-05T14:03:44.275Z"
+  },
+  {
+    "id": "1ff83a44-0d08-45ab-bfaa-725fa9c70418",
+    "productId": "2848cc9b-4992-45a8-a8db-b8705ad48558",
+    "customerName": "Ali Farooq",
+    "imageUrl": "/customer-photos/IMG_5340_1763214671045.jpeg",
+    "caption": "Compact and perfect for indoor storage! Love the folding design.",
+    "approved": true,
+    "createdAt": "2025-09-05T14:03:44.275Z"
+  },
+  {
+    "id": "d79f754e-ddb2-4afa-9ade-1f6e912f6cea",
+    "productId": "2848cc9b-4992-45a8-a8db-b8705ad48558",
+    "customerName": "Michael Davies",
+    "imageUrl": "/customer-photos/IMG_5339_1763214671045.jpeg",
+    "caption": "Great for garden rides and comes with a handy bag. Highly practical!",
+    "approved": true,
+    "createdAt": "2025-09-28T14:03:44.275Z"
+  },
+  {
+    "id": "0aa22918-83aa-41aa-827a-e675d1f9568a",
+    "productId": "2848cc9b-4992-45a8-a8db-b8705ad48558",
+    "customerName": "Emily Taylor",
+    "imageUrl": "/customer-photos/IMG_5338_1763214671045.jpeg",
+    "caption": "Perfect for neighbourhood rides. The A1F Pro is incredibly convenient!",
+    "approved": true,
+    "createdAt": "2025-10-19T14:03:44.275Z"
+  },
+  {
+    "id": "2aa47657-50ee-4ac3-b4c8-e6d664efe764",
+    "productId": "b975671f-5467-46c7-a73b-cbe87e2cd6f7",
+    "customerName": "Mikhail Sokolov",
+    "imageUrl": "/customer-photos/IMG_5344_1763214790691.jpeg",
+    "caption": "Absolutely stunning design! The EP-2 Boost looks amazing in my home.",
+    "approved": true,
+    "createdAt": "2025-09-14T14:03:44.275Z"
+  },
+  {
+    "id": "16d55c1a-5c55-42dc-9877-f19c3ef95113",
+    "productId": "b975671f-5467-46c7-a73b-cbe87e2cd6f7",
+    "customerName": "Marcus Johnson",
+    "imageUrl": "/customer-photos/IMG_5345_1763214790691.webp",
+    "caption": "Bought two EP-2 Boost bikes for the family. Perfect for weekend adventures!",
+    "approved": true,
+    "createdAt": "2025-10-07T14:03:44.275Z"
+  },
+  {
+    "id": "0b03f538-8f7d-4d81-9022-b6a1eb7f0d2a",
+    "productId": "00b6dea8-85bd-45bc-a2fc-c7095b2c1e23",
+    "customerName": "Jun Chen",
+    "imageUrl": "/customer-photos/IMG_5347_1763214920177.jpeg",
+    "caption": "The Engine Pro 2.0 is a beast! Perfect against this rustic stone wall backdrop.",
+    "approved": true,
+    "createdAt": "2025-09-20T14:03:44.275Z"
+  },
+  {
+    "id": "60b8ba83-6bdd-4646-8a52-c7b0f1f85cd7",
+    "productId": "00b6dea8-85bd-45bc-a2fc-c7095b2c1e23",
+    "customerName": "Oliver Brown",
+    "imageUrl": "/customer-photos/IMG_5346_1763214920178.jpeg",
+    "caption": "Love my morning rides in the garden. The rear rack is incredibly useful!",
+    "approved": true,
+    "createdAt": "2025-09-03T14:03:44.275Z"
+  },
+  {
+    "id": "711615cf-cbc7-4382-b464-30548026cf4d",
+    "productId": "fe5d310f-8758-42c4-a651-adea08706e9a",
+    "customerName": "Petra Horvath",
+    "imageUrl": "/customer-photos/IMG_5350_1763215003727.jpeg",
+    "caption": "The L20 fits perfectly in my hallway! Love the step-through design.",
+    "approved": true,
+    "createdAt": "2025-09-09T14:03:44.275Z"
+  },
+  {
+    "id": "1e6cdddc-3325-4dd9-86f5-cd9b4ff9f7ac",
+    "productId": "fe5d310f-8758-42c4-a651-adea08706e9a",
+    "customerName": "Imran Sheikh",
+    "imageUrl": "/customer-photos/IMG_5349_1763215003728.jpeg",
+    "caption": "Perfect for getting around town. The cargo capacity is fantastic!",
+    "approved": true,
+    "createdAt": "2025-09-24T14:03:44.275Z"
+  },
+  {
+    "id": "d65cda27-9a98-41f6-9041-970f7c55b8da",
+    "productId": "fe5d310f-8758-42c4-a651-adea08706e9a",
+    "customerName": "Emma Wilson",
+    "imageUrl": "/customer-photos/IMG_5348_1763215003728.jpeg",
+    "caption": "Just unboxed! Can't wait to try it out. The packaging was excellent!",
+    "approved": true,
+    "createdAt": "2025-08-29T14:03:44.275Z"
+  },
+  {
+    "id": "a982b10b-178b-4ca6-bd1b-b9163e956f36",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Thomas Moore",
+    "imageUrl": "/customer-photos/IMG_5355_1763215164693.jpeg",
+    "caption": "Perfect for countryside adventures! The Touroll U1 handles any terrain.",
+    "approved": true,
+    "createdAt": "2025-09-27T14:03:44.275Z"
+  },
+  {
+    "id": "0f62619e-f223-4f09-8443-df256b34ab37",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Lily Anderson",
+    "imageUrl": "/customer-photos/IMG_5356_1763215164693.jpeg",
+    "caption": "Just received my U1! The build quality is exceptional. Can't wait to explore!",
+    "approved": true,
+    "createdAt": "2025-09-01T14:03:44.275Z"
+  },
+  {
+    "id": "7815e804-e5a8-47fc-a1cc-a3682abd6825",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "James Smith",
+    "imageUrl": "/customer-photos/IMG_5352_1763215171049.jpeg",
+    "caption": "Great bike for daily commuting. Comfortable and powerful!",
+    "approved": true,
+    "createdAt": "2025-10-12T14:03:44.275Z"
+  },
+  {
+    "id": "607da6f4-f29b-4745-b162-b6452a9bb472",
+    "productId": "cb7c0da2-0b83-47d7-811b-c42cc6e34aee",
+    "customerName": "Yusuf Ibrahim",
+    "imageUrl": "/customer-photos/IMG_5357_1763215227013.jpeg",
+    "caption": "Stunning lakeside ride with my Touroll B1. Perfect for scenic routes!",
+    "approved": true,
+    "createdAt": "2025-10-01T14:03:44.275Z"
+  },
+  {
+    "id": "cff2f7d8-344a-4af2-805d-72596fcb9691",
+    "productId": "19a9dd64-b011-44ed-b627-3347d950e1c4",
+    "customerName": "Jack Walker",
+    "imageUrl": "/customer-photos/IMG_5360_1763215320351.jpeg",
+    "caption": "The folding mechanism is brilliant! So compact for storage and transport.",
+    "approved": true,
+    "createdAt": "2025-09-10T14:03:44.275Z"
+  },
+  {
+    "id": "441d8abc-8c64-4884-a060-1da624e9582c",
+    "productId": "19a9dd64-b011-44ed-b627-3347d950e1c4",
+    "customerName": "Zainab Malik",
+    "imageUrl": "/customer-photos/IMG_5359_1763215320351.jpeg",
+    "caption": "Taking my Engine X on countryside adventures. Absolutely love it!",
+    "approved": true,
+    "createdAt": "2025-09-23T14:03:44.275Z"
+  },
+  {
+    "id": "7d408256-c814-4cd9-ac31-890eb46c5109",
+    "productId": "19a9dd64-b011-44ed-b627-3347d950e1c4",
+    "customerName": "Emily Taylor",
+    "imageUrl": "/customer-photos/IMG_5358_1763215320351.jpeg",
+    "caption": "The red color is stunning! Eye-catching and powerful performance.",
+    "approved": true,
+    "createdAt": "2025-10-17T14:03:44.275Z"
+  },
+  {
+    "id": "7808ee76-51ce-4c42-88cf-9135961bb4bc",
+    "productId": "804c4b9d-bd10-4c08-b5fc-a53d41a18804",
+    "customerName": "Sophie Turner",
+    "imageUrl": "/customer-photos/IMG_5325_1763214245227.jpeg",
+    "caption": "Well packaged and arrived quickly. Dispatch within 1 day as promised!",
+    "approved": true,
+    "createdAt": "2025-09-21T14:03:44.275Z"
+  },
+  {
+    "id": "1c57b5a5-ec99-440b-95ef-b1b3abb4c93c",
+    "productId": "804c4b9d-bd10-4c08-b5fc-a53d41a18804",
+    "customerName": "Dmitri Volkov",
+    "imageUrl": "/customer-photos/IMG_5326_1763214245227.jpeg",
+    "caption": "Absolutely love my new Eleglide M2! Perfect for my daily commute.",
+    "approved": true,
+    "createdAt": "2025-10-08T14:03:44.275Z"
+  },
+  {
+    "id": "08c01ac4-00ea-4f4a-814b-5afabdeede24",
+    "productId": "804c4b9d-bd10-4c08-b5fc-a53d41a18804",
+    "customerName": "Emily Taylor",
+    "imageUrl": "/customer-photos/IMG_5328_1763214245227.jpeg",
+    "caption": "Beautiful sunset ride on my M2. The battery range is excellent!",
+    "approved": true,
+    "createdAt": "2025-10-28T14:03:44.275Z"
+  },
+  {
+    "id": "e68ba828-da88-4127-8d5a-859daacdc2cf",
+    "productId": "804c4b9d-bd10-4c08-b5fc-a53d41a18804",
+    "customerName": "Imran Sheikh",
+    "imageUrl": "/customer-photos/IMG_5329_1763214245227.jpeg",
+    "caption": "Great bike for both city and home use. Very versatile!",
+    "approved": true,
+    "createdAt": "2025-09-29T14:03:44.275Z"
+  },
+  {
+    "id": "3188c449-649b-4b29-bc4a-736bfbd6b27f",
+    "productId": "804c4b9d-bd10-4c08-b5fc-a53d41a18804",
+    "customerName": "Mikhail Sokolov",
+    "imageUrl": "/customer-photos/IMG_5330_1763214245227.jpeg",
+    "caption": "Enjoying weekend rides with my Eleglide. Highly recommend!",
+    "approved": true,
+    "createdAt": "2025-10-15T14:03:44.275Z"
+  },
+  {
+    "id": "37767715-bfeb-4275-8591-424cd1827a0c",
+    "productId": "804c4b9d-bd10-4c08-b5fc-a53d41a18804",
+    "customerName": "Harry Thompson",
+    "imageUrl": "/customer-photos/IMG_5331_1763214245227.jpeg",
+    "caption": "Smooth ride and great build quality. Worth every penny!",
+    "approved": true,
+    "createdAt": "2025-10-24T14:03:44.275Z"
+  },
+  {
+    "id": "90b4ddbe-5d62-4ce0-a912-e99f62a65265",
+    "productId": "2865bc55-4d48-461f-9ac3-0db1460783f8",
+    "customerName": "Fatima Hassan",
+    "imageUrl": "/customer-photos/IMG_5332_1763214428728.jpeg",
+    "caption": "Just unboxed my M1 Plus! The build quality is outstanding.",
+    "approved": true,
+    "createdAt": "2025-10-10T14:03:44.275Z"
+  },
+  {
+    "id": "1adece73-318d-47cd-b5e9-212fcab0bba9",
+    "productId": "2865bc55-4d48-461f-9ac3-0db1460783f8",
+    "customerName": "Lily Anderson",
+    "imageUrl": "/customer-photos/IMG_5333_1763214428728.jpeg",
+    "caption": "Perfect addition to my garden setup. Love the versatility!",
+    "approved": true,
+    "createdAt": "2025-09-25T14:03:44.275Z"
+  },
+  {
+    "id": "dab18872-498b-4149-95e6-726f2f2122e2",
+    "productId": "2865bc55-4d48-461f-9ac3-0db1460783f8",
+    "customerName": "Rajesh Kumar",
+    "imageUrl": "/customer-photos/IMG_5334_1763214428728.jpeg",
+    "caption": "Sleek design and powerful motor. Exceeds my expectations!",
+    "approved": true,
+    "createdAt": "2025-09-08T14:03:44.275Z"
+  },
+  {
+    "id": "df4b86e0-8916-4c78-8c02-0eaa20744c6d",
+    "productId": "2865bc55-4d48-461f-9ac3-0db1460783f8",
+    "customerName": "Jessica Clarke",
+    "imageUrl": "/customer-photos/IMG_5335_1763214428728.jpeg",
+    "caption": "Beautiful springtime rides with my M1 Plus. Couldn't be happier!",
+    "approved": true,
+    "createdAt": "2025-10-18T14:03:44.275Z"
+  },
+  {
+    "id": "acd0b3e9-c174-43d2-8718-907d31ac90be",
+    "productId": "2865bc55-4d48-461f-9ac3-0db1460783f8",
+    "customerName": "Emily Taylor",
+    "imageUrl": "/customer-photos/IMG_5336_1763214428728.jpeg",
+    "caption": "Great for garden and outdoor storage. Very happy with this purchase!",
+    "approved": true,
+    "createdAt": "2025-10-02T14:03:44.275Z"
+  }
+];
