@@ -8,6 +8,7 @@ import { useLocation } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShippingForm, { type ShippingFormData } from "@/components/ShippingForm";
+import ApplePayButton from "@/components/ApplePayButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -19,7 +20,7 @@ import TrustBadges from "@/components/TrustBadges";
 type PaymentMethod = 'stripe' | 'paypal';
 type CheckoutStep = 'shipping' | 'payment';
 
-function CheckoutForm({ shippingData }: { shippingData: ShippingFormData }) {
+function CheckoutForm({ shippingData, clientSecret, totalPrice }: { shippingData: ShippingFormData; clientSecret: string; totalPrice: number }) {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -55,25 +56,32 @@ function CheckoutForm({ shippingData }: { shippingData: ShippingFormData }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement />
-      <Button 
-        type="submit" 
-        className="w-full" 
-        size="lg" 
-        disabled={!stripe || isProcessing}
-        data-testid="button-pay"
-      >
-        {isProcessing ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing...
-          </>
-        ) : (
-          "Complete Payment"
-        )}
-      </Button>
-    </form>
+    <div className="space-y-6">
+      <ApplePayButton 
+        shippingData={shippingData} 
+        totalAmount={totalPrice} 
+        clientSecret={clientSecret}
+      />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <PaymentElement />
+        <Button 
+          type="submit" 
+          className="w-full" 
+          size="lg" 
+          disabled={!stripe || isProcessing}
+          data-testid="button-pay"
+        >
+          {isProcessing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            "Complete Payment"
+          )}
+        </Button>
+      </form>
+    </div>
   );
 }
 
@@ -453,7 +461,7 @@ export default function Checkout() {
                         <CardContent>
                           {paymentMethod === 'stripe' && availablePaymentMethods.stripe && clientSecret && stripePromise ? (
                             <Elements stripe={stripePromise} options={{ clientSecret }}>
-                              <CheckoutForm shippingData={shippingData!} />
+                              <CheckoutForm shippingData={shippingData!} clientSecret={clientSecret} totalPrice={totalPrice} />
                             </Elements>
                           ) : paymentMethod === 'paypal' && availablePaymentMethods.paypal ? (
                             <div className="space-y-4">
