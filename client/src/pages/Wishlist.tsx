@@ -25,7 +25,7 @@ export default function Wishlist() {
       await addItem(product.id);
       toast({
         title: "Added to cart",
-        description: `${product.name} has been added to your cart.`,
+        description: `${product.name}`,
       });
     } catch (error) {
       toast({

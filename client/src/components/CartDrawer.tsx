@@ -21,12 +21,12 @@ export default function CartDrawer() {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg">
+      <SheetContent className="w-full sm:max-w-lg flex flex-col">
         <SheetHeader>
           <SheetTitle>Shopping Cart ({totalItems} {totalItems === 1 ? 'item' : 'items'})</SheetTitle>
         </SheetHeader>
         
-        <div className="flex flex-col h-full mt-6">
+        <div className="flex flex-col flex-1 mt-6 overflow-hidden">
           {items.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
               <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
@@ -38,7 +38,7 @@ export default function CartDrawer() {
             </div>
           ) : (
             <>
-              <div className="flex-1 overflow-y-auto space-y-4">
+              <div className="flex-1 overflow-y-auto space-y-4 pb-4">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-4" data-testid={`cart-item-${item.product.slug}`}>
                     <img
@@ -96,8 +96,7 @@ export default function CartDrawer() {
                 ))}
               </div>
               
-              <div className="mt-6 space-y-4">
-                <Separator />
+              <div className="border-t bg-background pt-4 space-y-3">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
@@ -119,6 +118,9 @@ export default function CartDrawer() {
                     Proceed to Checkout
                   </Button>
                 </Link>
+                <p className="text-xs text-center text-muted-foreground">
+                  Free delivery • Dispatch within 1 day
+                </p>
               </div>
             </>
           )}

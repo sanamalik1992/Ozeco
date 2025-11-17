@@ -30,7 +30,7 @@ export default function FeaturedProducts() {
     addItem(product.id, 1);
     toast({
       title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
+      description: `${product.name}`,
     });
   };
 
