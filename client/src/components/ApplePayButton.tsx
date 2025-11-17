@@ -10,9 +10,10 @@ interface ApplePayButtonProps {
   shippingData: ShippingFormData;
   totalAmount: number;
   clientSecret: string;
+  orderId: string;
 }
 
-export default function ApplePayButton({ shippingData, totalAmount, clientSecret }: ApplePayButtonProps) {
+export default function ApplePayButton({ shippingData, totalAmount, clientSecret, orderId }: ApplePayButtonProps) {
   const stripe = useStripe();
   const { clearCart } = useCart();
   const { toast } = useToast();
@@ -59,17 +60,13 @@ export default function ApplePayButton({ shippingData, totalAmount, clientSecret
         } else {
           ev.complete('success');
           
-          await apiRequest("POST", "/api/orders/complete", {
-            paymentIntentId: clientSecret.split('_secret_')[0],
-            paymentMethod: 'stripe',
-          });
-          
+          // Webhook will finalize the order, we just redirect
           await clearCart();
           toast({
-            title: 'Order Placed!',
-            description: 'Your order has been successfully placed.',
+            title: 'Payment Processing',
+            description: 'Confirming your order...',
           });
-          setLocation('/order-confirmation');
+          setLocation(`/order-confirmation?orderId=${orderId}`);
         }
       } catch (error: any) {
         ev.complete('fail');
@@ -80,7 +77,7 @@ export default function ApplePayButton({ shippingData, totalAmount, clientSecret
         });
       }
     });
-  }, [stripe, totalAmount, shippingData, clearCart, toast, setLocation, clientSecret]);
+  }, [stripe, totalAmount, shippingData, clearCart, toast, setLocation, clientSecret, orderId]);
 
   if (!paymentRequest) {
     return null;

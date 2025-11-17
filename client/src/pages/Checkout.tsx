@@ -74,6 +74,7 @@ function CheckoutForm({ shippingData, clientSecret, totalPrice, orderId }: { shi
         shippingData={shippingData} 
         totalAmount={totalPrice} 
         clientSecret={clientSecret}
+        orderId={orderId}
       />
       <form onSubmit={handleSubmit} className="space-y-6">
         <PaymentElement />
