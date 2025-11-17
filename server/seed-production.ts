@@ -225,7 +225,7 @@ export async function seedProductionIfEmpty() {
       let blogPostsInserted = 0;
       for (const post of blogPostsData) {
         try {
-          const { slug, title, excerpt, content, author, publishedDate, category, featuredImage } = post;
+          const { slug, title, excerpt, content, author, publishedDate, category, featuredImage, views } = post;
           await db.insert(blogPosts).values({
             slug,
             title,
@@ -234,7 +234,8 @@ export async function seedProductionIfEmpty() {
             author,
             publishedDate: new Date(publishedDate),
             category,
-            featuredImage
+            featuredImage,
+            views: views || 0
           } as any);
           blogPostsInserted++;
         } catch (err: any) {
