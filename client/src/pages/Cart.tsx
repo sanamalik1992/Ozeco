@@ -8,15 +8,17 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "wouter";
 import { Minus, Plus, Trash2, ShoppingBag, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { Product } from "@shared/schema";
+import type { ProductWithPricing, ProductVariant } from "@shared/schema";
 
 interface CartItemWithProduct {
   id: string;
   productId: string;
+  variantId?: string | null;
   quantity: number;
   sessionId: string;
   createdAt: string;
-  product: Product;
+  product: ProductWithPricing;
+  variant?: ProductVariant | null;
 }
 
 export default function Cart() {
@@ -76,7 +78,7 @@ export default function Cart() {
   });
 
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + parseFloat(item.product.price) * item.quantity,
+    (sum, item) => sum + parseFloat(item.variant?.price || item.product.price) * item.quantity,
     0
   );
 
@@ -226,10 +228,10 @@ export default function Cart() {
                         
                         <div className="text-right">
                           <p className="text-lg font-bold" data-testid={`text-price-${item.product.slug}`}>
-                            £{(parseFloat(item.product.price) * item.quantity).toFixed(2)}
+                            £{(parseFloat(item.variant?.price || item.product.price) * item.quantity).toFixed(2)}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            £{parseFloat(item.product.price).toFixed(2)} each
+                            £{parseFloat(item.variant?.price || item.product.price).toFixed(2)} each
                           </p>
                         </div>
                       </div>

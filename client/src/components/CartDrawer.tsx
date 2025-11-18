@@ -86,10 +86,10 @@ export default function CartDrawer() {
                     </div>
                     <div className="text-right">
                       <p className="font-semibold" data-testid={`text-item-total-${item.product.slug}`}>
-                        £{(parseFloat(item.product.price) * item.quantity).toFixed(2)}
+                        £{(parseFloat(item.variant?.price || item.product.price) * item.quantity).toFixed(2)}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        £{parseFloat(item.product.price).toFixed(2)} each
+                        £{parseFloat(item.variant?.price || item.product.price).toFixed(2)} each
                       </p>
                     </div>
                   </div>
