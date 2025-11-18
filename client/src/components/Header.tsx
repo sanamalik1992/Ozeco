@@ -5,7 +5,7 @@ import CartDrawer from "@/components/CartDrawer";
 import { Link, useLocation } from "wouter";
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { type Product } from "@shared/schema";
+import { type ProductWithPricing } from "@shared/schema";
 import { Card } from "@/components/ui/card";
 
 export default function Header() {
@@ -17,7 +17,7 @@ export default function Header() {
   const [, setLocation] = useLocation();
   const searchRef = useRef<HTMLDivElement>(null);
 
-  const { data: products = [] } = useQuery<Product[]>({
+  const { data: products = [] } = useQuery<ProductWithPricing[]>({
     queryKey: ["/api/products"],
   });
 
@@ -246,7 +246,7 @@ export default function Header() {
                               <p className="font-semibold text-sm">{product.name}</p>
                               <p className="text-xs text-muted-foreground">{product.brand}</p>
                             </div>
-                            <p className="font-bold text-primary">£{product.price}</p>
+                            <p className="font-bold text-primary">{product.displayPrice || `£${product.price}`}</p>
                           </button>
                         ))}
                         {filteredProducts.length === 5 && (
