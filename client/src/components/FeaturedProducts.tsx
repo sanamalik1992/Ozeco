@@ -4,12 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { type Product } from "@shared/schema";
+import { type ProductWithPricing } from "@shared/schema";
 import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
 
 export default function FeaturedProducts() {
-  const { data: allProducts = [], isLoading, isError } = useQuery<Product[]>({
+  const { data: allProducts = [], isLoading, isError } = useQuery<ProductWithPricing[]>({
     queryKey: ["/api/products"],
   });
   const { addItem } = useCart();
@@ -26,7 +26,7 @@ export default function FeaturedProducts() {
     })
     .slice(0, 4);
 
-  const handleAddToCart = async (product: Product) => {
+  const handleAddToCart = async (product: ProductWithPricing) => {
     // Check if product has variants - if so, redirect to product page
     try {
       const variantsResponse = await fetch(`/api/products/${product.id}/variants`);
@@ -121,6 +121,8 @@ export default function FeaturedProducts() {
               brand={product.brand}
               price={parseFloat(product.price)}
               originalPrice={product.originalPrice ? parseFloat(product.originalPrice) : null}
+              displayPrice={product.displayPrice ? parseFloat(product.displayPrice) : parseFloat(product.price)}
+              lowestVariantPrice={product.lowestVariantPrice ? parseFloat(product.lowestVariantPrice) : null}
               image={product.image}
               range={product.maxRange || ""}
               maxSpeed={product.topSpeed || ""}

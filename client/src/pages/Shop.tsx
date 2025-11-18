@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { type Product, type Review } from "@shared/schema";
+import { type ProductWithPricing, type Review } from "@shared/schema";
 import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
@@ -35,7 +35,7 @@ export default function Shop() {
     setSelectedCategory(categoryParam);
   }, [search]);
 
-  const handleAddToCart = async (product: Product, e: React.MouseEvent) => {
+  const handleAddToCart = async (product: ProductWithPricing, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -72,7 +72,7 @@ export default function Shop() {
     }
   };
 
-  const { data: products = [], isLoading, isError } = useQuery<Product[]>({
+  const { data: products = [], isLoading, isError } = useQuery<ProductWithPricing[]>({
     queryKey: ["/api/products"],
   });
 
@@ -298,7 +298,10 @@ export default function Shop() {
                       
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-2xl font-bold" data-testid={`text-price-${product.slug}`}>
-                          £{parseFloat(product.price).toFixed(2)}
+                          {product.lowestVariantPrice && parseFloat(product.lowestVariantPrice) < parseFloat(product.price) && (
+                            <span className="text-base font-normal text-muted-foreground">From </span>
+                          )}
+                          £{parseFloat(product.displayPrice || product.price).toFixed(2)}
                         </span>
                         {product.originalPrice && (
                           <span className="text-sm text-muted-foreground line-through">

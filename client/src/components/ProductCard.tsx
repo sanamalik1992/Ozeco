@@ -14,6 +14,8 @@ interface ProductCardProps {
   brand: string;
   price: number;
   originalPrice?: number | null;
+  displayPrice?: number; // The price to actually display (lowest variant price or base price)
+  lowestVariantPrice?: number | null;
   image: string;
   range: string;
   maxSpeed: string;
@@ -31,6 +33,8 @@ export default function ProductCard({
   brand,
   price,
   originalPrice,
+  displayPrice,
+  lowestVariantPrice,
   image,
   range,
   maxSpeed,
@@ -44,6 +48,10 @@ export default function ProductCard({
   const isPopular = id === "2"; // Eleglide M2 is popular
   const hasDiscount = originalPrice && originalPrice > price;
   const showStockUrgency = stockQuantity !== undefined && stockQuantity > 0 && stockQuantity < 10;
+  
+  // Use displayPrice if provided, otherwise fall back to price
+  const priceToShow = displayPrice !== undefined ? displayPrice : price;
+  const hasVariants = lowestVariantPrice !== null && lowestVariantPrice !== undefined;
 
   const handleViewDetails = () => {
     if (onViewDetails) {
@@ -105,14 +113,17 @@ export default function ProductCard({
             )}
           </div>
         )}
-        <p className="text-3xl font-bold text-primary mb-4" data-testid={`text-price-${id}`}>
-          £{price.toLocaleString()}
-          {hasDiscount && originalPrice && (
-            <span className="text-base text-muted-foreground line-through ml-2">
-              £{originalPrice.toLocaleString()}
-            </span>
-          )}
-        </p>
+        <div className="mb-4">
+          <p className="text-3xl font-bold text-primary" data-testid={`text-price-${id}`}>
+            {hasVariants && <span className="text-xl font-normal text-muted-foreground">From </span>}
+            £{priceToShow.toLocaleString()}
+            {hasDiscount && originalPrice && (
+              <span className="text-base text-muted-foreground line-through ml-2">
+                £{originalPrice.toLocaleString()}
+              </span>
+            )}
+          </p>
+        </div>
         <div className="flex gap-4 text-sm text-muted-foreground mb-4">
           <div data-testid={`text-range-${id}`}>
             <span className="font-medium text-foreground">Range:</span> {range}
