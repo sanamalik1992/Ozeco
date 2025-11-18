@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
 import { ShoppingCart, Check, Zap, Battery, Gauge, Weight, MapPin, Shield, AlertCircle, User, ShieldCheck, Lock, RotateCcw, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import type { Product, Review, ProductVariant } from "@shared/schema";
+import type { ProductWithPricing, Review, ProductVariant } from "@shared/schema";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:slug");
@@ -28,7 +28,7 @@ export default function ProductDetail() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
-  const { data: product, isLoading } = useQuery<Product>({
+  const { data: product, isLoading } = useQuery<ProductWithPricing>({
     queryKey: [`/api/products/slug/${productSlug}`],
     enabled: !!productSlug,
   });
@@ -291,7 +291,7 @@ export default function ProductDetail() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-3 flex-wrap">
                     <span className="text-4xl font-bold text-primary" data-testid="text-product-price">
-                      £{parseFloat(product.price).toFixed(2)}
+                      {product.displayPrice || `£${parseFloat(product.price).toFixed(2)}`}
                     </span>
                     {product.originalPrice && parseFloat(product.originalPrice) > parseFloat(product.price) && (
                       <>
