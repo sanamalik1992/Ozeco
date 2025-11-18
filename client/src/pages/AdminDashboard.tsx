@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { type Product, type NewsletterSubscriber, type ProductVariant } from "@shared/schema";
+import { type Product, type ProductWithPricing, type NewsletterSubscriber, type ProductVariant } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1129,7 +1129,9 @@ export default function AdminDashboard() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">£{product.price}</span>
+                          <span className="font-medium">
+                            {(product as ProductWithPricing).displayPrice || `£${product.price}`}
+                          </span>
                           <div className="flex items-center gap-1">
                             <Input
                               type="number"
