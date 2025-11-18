@@ -9,8 +9,11 @@ import Testimonials from "@/components/Testimonials";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { NewsletterPopup } from "@/components/NewsletterPopup";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function Home() {
+  useAnalytics();
+  
   return (
     <div className="min-h-screen">
       <Header />

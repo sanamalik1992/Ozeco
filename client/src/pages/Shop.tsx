@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { type ProductWithPricing, type Review } from "@shared/schema";
 import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
+import { useAnalytics } from "@/hooks/use-analytics";
 import BrandLogo from "@/components/BrandLogo";
 import StarRating from "@/components/StarRating";
 import FavoriteButton from "@/components/FavoriteButton";
@@ -16,6 +17,7 @@ import { ShoppingCart, Filter } from "lucide-react";
 import { Link, useSearch } from "wouter";
 
 export default function Shop() {
+  useAnalytics();
   const search = useSearch();
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");

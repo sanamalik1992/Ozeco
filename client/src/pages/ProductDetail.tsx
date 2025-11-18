@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
+import { useAnalytics } from "@/hooks/use-analytics";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BrandLogo from "@/components/BrandLogo";
@@ -32,6 +33,9 @@ export default function ProductDetail() {
     queryKey: [`/api/products/slug/${productSlug}`],
     enabled: !!productSlug,
   });
+
+  // Track product page view with product ID
+  useAnalytics(product?.id);
 
   const { data: variants = [] } = useQuery<ProductVariant[]>({
     queryKey: [`/api/products/${product?.id}/variants`],

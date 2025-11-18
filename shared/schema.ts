@@ -243,3 +243,37 @@ export const insertProductVariantSchema = createInsertSchema(productVariants).om
 
 export type InsertProductVariant = z.infer<typeof insertProductVariantSchema>;
 export type ProductVariant = typeof productVariants.$inferSelect;
+
+// Analytics tables
+export const visitorSessions = pgTable("visitor_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: text("session_id").notNull().unique(),
+  firstSeen: timestamp("first_seen").notNull().default(sql`now()`),
+  lastSeen: timestamp("last_seen").notNull().default(sql`now()`),
+  referrer: text("referrer"),
+  userAgent: text("user_agent"),
+  trafficSource: text("traffic_source"), // e.g., "Facebook", "Google", "Direct", etc.
+});
+
+export const insertVisitorSessionSchema = createInsertSchema(visitorSessions).omit({
+  id: true,
+});
+
+export type InsertVisitorSession = z.infer<typeof insertVisitorSessionSchema>;
+export type VisitorSession = typeof visitorSessions.$inferSelect;
+
+export const pageViews = pgTable("page_views", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: text("session_id").notNull(),
+  path: text("path").notNull(),
+  productId: varchar("product_id").references(() => products.id),
+  timestamp: timestamp("timestamp").notNull().default(sql`now()`),
+});
+
+export const insertPageViewSchema = createInsertSchema(pageViews).omit({
+  id: true,
+  timestamp: true,
+});
+
+export type InsertPageView = z.infer<typeof insertPageViewSchema>;
+export type PageView = typeof pageViews.$inferSelect;

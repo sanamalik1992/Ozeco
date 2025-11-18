@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit, ImageIcon } from "lucide-react";
+import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit, ImageIcon, BarChart3, Eye, Users, Activity } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -768,6 +768,166 @@ function ProductVariants({ productId, productName, onUpdateVariant, editingVaria
   );
 }
 
+function AnalyticsDashboard() {
+  const { data: stats, isLoading: statsLoading } = useQuery<{ liveVisitors: number; pageViewsToday: number }>({
+    queryKey: ["/api/analytics/stats"],
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  const { data: topProducts = [], isLoading: productsLoading } = useQuery<Array<{ product: ProductWithPricing; views: number }>>({
+    queryKey: ["/api/analytics/top-products"],
+    refetchInterval: 60000, // Refresh every minute
+  });
+
+  const { data: trafficSources = [], isLoading: sourcesLoading } = useQuery<Array<{ source: string; count: number }>>({
+    queryKey: ["/api/analytics/traffic-sources"],
+    refetchInterval: 60000,
+  });
+
+  const { data: recentActivity = [], isLoading: activityLoading } = useQuery<Array<any>>({
+    queryKey: ["/api/analytics/recent-activity"],
+    refetchInterval: 30000,
+  });
+
+  if (statsLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Live Visitors</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.liveVisitors || 0}</div>
+            <p className="text-xs text-muted-foreground">Active in last 5 minutes</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Page Views Today</CardTitle>
+            <Eye className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.pageViewsToday || 0}</div>
+            <p className="text-xs text-muted-foreground">Total views since midnight</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Top Products */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Top Viewed Products Today</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {productsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : topProducts.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-8 text-center">No product views yet today</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Brand</TableHead>
+                  <TableHead className="text-right">Views</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {topProducts.map((item) => (
+                  <TableRow key={item.product.id}>
+                    <TableCell className="font-medium">{item.product.name}</TableCell>
+                    <TableCell>{item.product.brand}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant="secondary">{item.views}</Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Traffic Sources */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Traffic Sources Today</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {sourcesLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : trafficSources.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-8 text-center">No traffic data yet today</p>
+          ) : (
+            <div className="space-y-4">
+              {trafficSources.map((source) => (
+                <div key={source.source} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Activity className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{source.source}</span>
+                  </div>
+                  <Badge>{source.count} visitors</Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Recent Activity */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {activityLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : recentActivity.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-8 text-center">No recent activity</p>
+          ) : (
+            <div className="space-y-3">
+              {recentActivity.slice(0, 10).map((activity, index) => (
+                <div key={index} className="flex items-start gap-3 text-sm border-b pb-3 last:border-0">
+                  <Eye className="h-4 w-4 text-muted-foreground mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-medium">
+                      {activity.product ? (
+                        <>Viewed: {activity.product.name}</>
+                      ) : (
+                        <>Page: {activity.path}</>
+                      )}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(activity.timestamp).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -1016,6 +1176,10 @@ export default function AdminDashboard() {
               <ShoppingBag className="mr-2 h-4 w-4" />
               Orders
             </TabsTrigger>
+            <TabsTrigger value="analytics" data-testid="tab-analytics">
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Analytics
+            </TabsTrigger>
             <TabsTrigger value="newsletter" data-testid="tab-newsletter">
               <Mail className="mr-2 h-4 w-4" />
               Newsletter
@@ -1255,6 +1419,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="orders">
             <AdminOrders />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <AnalyticsDashboard />
           </TabsContent>
 
           <TabsContent value="newsletter" className="space-y-6">

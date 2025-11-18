@@ -1683,6 +1683,127 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Analytics routes
+  app.post("/api/analytics/track", async (req, res) => {
+    try {
+      const { path, productId, referrer, userAgent } = req.body;
+      const sessionId = req.sessionID;
+
+      // Determine traffic source from referrer
+      let trafficSource = "Direct";
+      if (referrer) {
+        const lowerRef = referrer.toLowerCase();
+        if (lowerRef.includes("facebook.com") || lowerRef.includes("fb.com")) trafficSource = "Facebook";
+        else if (lowerRef.includes("instagram.com")) trafficSource = "Instagram";
+        else if (lowerRef.includes("google.com") || lowerRef.includes("google.co")) trafficSource = "Google";
+        else if (lowerRef.includes("twitter.com") || lowerRef.includes("x.com")) trafficSource = "Twitter";
+        else if (lowerRef.includes("linkedin.com")) trafficSource = "LinkedIn";
+        else if (lowerRef.includes("pinterest.com")) trafficSource = "Pinterest";
+        else if (lowerRef.includes("tiktok.com")) trafficSource = "TikTok";
+        else if (lowerRef.includes("youtube.com")) trafficSource = "YouTube";
+        else trafficSource = "Referral";
+      }
+
+      // Upsert visitor session
+      await storage.upsertVisitorSession({
+        sessionId,
+        firstSeen: new Date(),
+        lastSeen: new Date(),
+        referrer: referrer || null,
+        userAgent: userAgent || null,
+        trafficSource,
+      });
+
+      // Track page view
+      await storage.trackPageView({
+        sessionId,
+        path,
+        productId: productId || null,
+      });
+
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Analytics tracking error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/stats", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const [liveVisitors, pageViewsToday] = await Promise.all([
+        storage.getLiveVisitorsCount(),
+        storage.getTotalPageViewsToday(),
+      ]);
+
+      res.json({
+        liveVisitors,
+        pageViewsToday,
+      });
+    } catch (error: any) {
+      console.error("Analytics stats error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/top-products", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const limit = parseInt(req.query.limit as string) || 10;
+      const topProducts = await storage.getTopProductsViewed(limit);
+
+      res.json(topProducts);
+    } catch (error: any) {
+      console.error("Top products analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/traffic-sources", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const sources = await storage.getTrafficSources();
+
+      res.json(sources);
+    } catch (error: any) {
+      console.error("Traffic sources analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/recent-activity", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const limit = parseInt(req.query.limit as string) || 20;
+      const activity = await storage.getRecentActivity(limit);
+
+      res.json(activity);
+    } catch (error: any) {
+      console.error("Recent activity analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

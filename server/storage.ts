@@ -22,6 +22,10 @@ import {
   type InsertCustomerPhoto,
   type ProductVariant,
   type InsertProductVariant,
+  type VisitorSession,
+  type InsertVisitorSession,
+  type PageView,
+  type InsertPageView,
   users,
   products,
   cartItems,
@@ -33,6 +37,8 @@ import {
   favorites,
   customerPhotos,
   productVariants,
+  visitorSessions,
+  pageViews,
 } from "@shared/schema";
 import { db } from "@db";
 import { eq, and, desc, min, sql } from "drizzle-orm";
@@ -99,6 +105,15 @@ export interface IStorage {
   getCustomerPhotosByProduct(productId: string): Promise<CustomerPhoto[]>;
   createCustomerPhoto(photo: InsertCustomerPhoto): Promise<CustomerPhoto>;
   approveCustomerPhoto(id: string): Promise<CustomerPhoto | undefined>;
+  
+  // Analytics methods
+  trackPageView(pageView: InsertPageView): Promise<PageView>;
+  upsertVisitorSession(session: InsertVisitorSession): Promise<VisitorSession>;
+  getLiveVisitorsCount(): Promise<number>;
+  getTotalPageViewsToday(): Promise<number>;
+  getTopProductsViewed(limit?: number): Promise<{ product: ProductWithPricing; views: number }[]>;
+  getTrafficSources(): Promise<{ source: string; count: number }[]>;
+  getRecentActivity(limit?: number): Promise<(PageView & { product?: Product | null })[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -523,6 +538,120 @@ export class DbStorage implements IStorage {
       .where(eq(customerPhotos.id, id))
       .returning();
     return result[0];
+  }
+
+  // Analytics methods
+  async trackPageView(insertPageView: InsertPageView): Promise<PageView> {
+    const result = await db.insert(pageViews).values(insertPageView).returning();
+    return result[0];
+  }
+
+  async upsertVisitorSession(insertSession: InsertVisitorSession): Promise<VisitorSession> {
+    // Try to find existing session
+    const existing = await db
+      .select()
+      .from(visitorSessions)
+      .where(eq(visitorSessions.sessionId, insertSession.sessionId));
+
+    if (existing.length > 0) {
+      // Update last seen timestamp
+      const result = await db
+        .update(visitorSessions)
+        .set({ lastSeen: sql`now()` })
+        .where(eq(visitorSessions.sessionId, insertSession.sessionId))
+        .returning();
+      return result[0];
+    } else {
+      // Create new session
+      const result = await db.insert(visitorSessions).values(insertSession).returning();
+      return result[0];
+    }
+  }
+
+  async getLiveVisitorsCount(): Promise<number> {
+    // Count visitors active in last 5 minutes
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(visitorSessions)
+      .where(sql`last_seen > now() - interval '5 minutes'`);
+    
+    return Number(result[0]?.count || 0);
+  }
+
+  async getTotalPageViewsToday(): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(pageViews)
+      .where(sql`timestamp::date = current_date`);
+    
+    return Number(result[0]?.count || 0);
+  }
+
+  async getTopProductsViewed(limit: number = 10): Promise<{ product: ProductWithPricing; views: number }[]> {
+    // Get products viewed today with their view counts
+    const result = await db
+      .select({
+        productId: pageViews.productId,
+        views: sql<number>`count(*)`,
+      })
+      .from(pageViews)
+      .where(
+        and(
+          sql`timestamp::date = current_date`,
+          sql`product_id is not null`
+        )
+      )
+      .groupBy(pageViews.productId)
+      .orderBy(desc(sql`count(*)`))
+      .limit(limit);
+
+    // Fetch full product data for each result
+    const productsWithViews = await Promise.all(
+      result.map(async (row) => {
+        if (!row.productId) return null;
+        const product = await this.getProduct(row.productId);
+        if (!product) return null;
+        return {
+          product,
+          views: Number(row.views),
+        };
+      })
+    );
+
+    return productsWithViews.filter((item): item is { product: ProductWithPricing; views: number } => item !== null);
+  }
+
+  async getTrafficSources(): Promise<{ source: string; count: number }[]> {
+    // Get traffic source breakdown for sessions created today
+    const result = await db
+      .select({
+        source: visitorSessions.trafficSource,
+        count: sql<number>`count(*)`,
+      })
+      .from(visitorSessions)
+      .where(sql`first_seen::date = current_date`)
+      .groupBy(visitorSessions.trafficSource)
+      .orderBy(desc(sql`count(*)`));
+
+    return result.map(row => ({
+      source: row.source || 'Unknown',
+      count: Number(row.count),
+    }));
+  }
+
+  async getRecentActivity(limit: number = 20): Promise<(PageView & { product?: Product | null })[]> {
+    // Get recent page views with product information if available
+    const result = await db
+      .select()
+      .from(pageViews)
+      .leftJoin(products, eq(pageViews.productId, products.id))
+      .orderBy(desc(pageViews.timestamp))
+      .limit(limit);
+
+    return result.map((row: any) => ({
+      ...row.page_views,
+      product: row.products || null,
+    }));
   }
 }
 
