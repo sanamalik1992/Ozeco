@@ -261,62 +261,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log("Total amount (pence):", totalInPence);
 
-      // Wrap order creation and PaymentIntent in transaction for atomicity
-      const result = await db.transaction(async (tx) => {
-        // STEP 1: Create pending order BEFORE payment to prevent data loss
-        const [pendingOrder] = await tx.insert(orders).values({
-          sessionId,
-          totalAmount,
-          status: "pending",
-          fulfillmentStatus: "pending",
-          paymentMethod: "stripe",
-          customerEmail: shippingData.customerEmail,
-          customerName: shippingData.customerName,
-          shippingAddressLine1: shippingData.shippingAddressLine1,
-          shippingAddressLine2: shippingData.shippingAddressLine2 || null,
-          shippingCity: shippingData.shippingCity,
-          shippingPostalCode: shippingData.shippingPostalCode,
-          shippingCountry: shippingData.shippingCountry || "GB",
-          customerPhone: shippingData.customerPhone || null,
-        }).returning();
+      // STEP 1: Create pending order BEFORE payment to prevent data loss
+      const [pendingOrder] = await db.insert(orders).values({
+        sessionId,
+        totalAmount,
+        status: "pending",
+        fulfillmentStatus: "pending",
+        paymentMethod: "stripe",
+        customerEmail: shippingData.customerEmail,
+        customerName: shippingData.customerName,
+        shippingAddressLine1: shippingData.shippingAddressLine1,
+        shippingAddressLine2: shippingData.shippingAddressLine2 || null,
+        shippingCity: shippingData.shippingCity,
+        shippingPostalCode: shippingData.shippingPostalCode,
+        shippingCountry: shippingData.shippingCountry || "GB",
+        customerPhone: shippingData.customerPhone || null,
+      }).returning();
 
-        console.log("Pending order created:", pendingOrder.id);
+      console.log("Pending order created:", pendingOrder.id);
 
-        // STEP 2: Create order items linked to pending order
-        for (const item of cartItems) {
-          await tx.insert(orderItems).values({
-            orderId: pendingOrder.id,
-            productId: item.product.id,
-            quantity: item.quantity,
-            priceAtTime: item.product.price,
-          });
-        }
-
-        // STEP 3: Create PaymentIntent with orderId in metadata
-        const stripe = new Stripe(stripeSecretKey);
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: totalInPence,
-          currency: "gbp",
-          automatic_payment_methods: {
-            enabled: true,
-          },
-          metadata: {
-            orderId: pendingOrder.id,
-            sessionId,
-            itemCount: cartItems.length.toString(),
-            totalAmount: totalAmount, // Store for validation
-          },
+      // STEP 2: Create order items linked to pending order
+      for (const item of cartItems) {
+        await db.insert(orderItems).values({
+          orderId: pendingOrder.id,
+          productId: item.product.id,
+          quantity: item.quantity,
+          priceAtTime: item.product.price,
         });
+      }
 
-        // STEP 4: Update order with payment intent ID
-        await tx.update(orders)
-          .set({ stripePaymentIntentId: paymentIntent.id })
-          .where(eq(orders.id, pendingOrder.id));
-
-        console.log("Payment intent created:", paymentIntent.id);
-        
-        return { pendingOrder, paymentIntent };
+      // STEP 3: Create PaymentIntent with orderId in metadata
+      const stripe = new Stripe(stripeSecretKey);
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalInPence,
+        currency: "gbp",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        metadata: {
+          orderId: pendingOrder.id,
+          sessionId,
+          itemCount: cartItems.length.toString(),
+          totalAmount: totalAmount, // Store for validation
+        },
       });
+
+      // STEP 4: Update order with payment intent ID
+      await db.update(orders)
+        .set({ stripePaymentIntentId: paymentIntent.id })
+        .where(eq(orders.id, pendingOrder.id));
+
+      console.log("Payment intent created:", paymentIntent.id);
+      
+      const result = { pendingOrder, paymentIntent };
 
       res.json({
         clientSecret: result.paymentIntent.client_secret,
@@ -369,88 +366,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       try {
-        // Finalize the order in a transaction
-        await db.transaction(async (tx) => {
-          // Get the order
-          const orderResults = await tx.select().from(orders).where(eq(orders.id, orderId));
-          const order = orderResults[0];
+        // Get the order
+        const orderResults = await db.select().from(orders).where(eq(orders.id, orderId));
+        const order = orderResults[0];
 
-          if (!order) {
-            throw new Error(`Order ${orderId} not found`);
+        if (!order) {
+          throw new Error(`Order ${orderId} not found`);
+        }
+
+        // IDEMPOTENCY: Check if order is already completed
+        if (order.status === "paid" || order.status === "completed") {
+          console.log("Order already paid/completed, skipping (idempotent)");
+          return res.json({ received: true });
+        }
+
+        // VALIDATION: Verify Stripe amount matches order total
+        const expectedAmount = Math.round(parseFloat(order.totalAmount) * 100);
+        if (paymentIntent.amount !== expectedAmount) {
+          console.error(`Amount mismatch! Stripe: ${paymentIntent.amount}, Order: ${expectedAmount}`);
+          throw new Error("Payment amount mismatch - manual review required");
+        }
+
+        // Get order items
+        const items = await db.select({
+          id: orderItems.id,
+          productId: orderItems.productId,
+          quantity: orderItems.quantity,
+        }).from(orderItems).where(eq(orderItems.orderId, orderId));
+
+        // Decrement stock for each item
+        for (const item of items) {
+          const productResults = await db.select({
+            stockQuantity: products.stockQuantity,
+            inStock: products.inStock,
+          }).from(products).where(eq(products.id, item.productId));
+
+          const product = productResults[0];
+          if (product && product.inStock) {
+            const newQuantity = Math.max(0, (product.stockQuantity ?? 0) - item.quantity);
+            await db
+              .update(products)
+              .set({
+                stockQuantity: newQuantity,
+                inStock: newQuantity > 0,
+              })
+              .where(eq(products.id, item.productId));
           }
+        }
 
-          // IDEMPOTENCY: Check if order is already completed
-          if (order.status === "paid" || order.status === "completed") {
-            console.log("Order already paid/completed, skipping (idempotent)");
-            return;
-          }
+        // Update order status to paid
+        await db.update(orders)
+          .set({ 
+            status: "paid",
+            fulfillmentStatus: "pending",
+          })
+          .where(eq(orders.id, orderId));
 
-          // VALIDATION: Verify Stripe amount matches order total
-          const expectedAmount = Math.round(parseFloat(order.totalAmount) * 100);
-          if (paymentIntent.amount !== expectedAmount) {
-            console.error(`Amount mismatch! Stripe: ${paymentIntent.amount}, Order: ${expectedAmount}`);
-            throw new Error("Payment amount mismatch - manual review required");
-          }
+        console.log("Order finalized:", orderId);
 
-          // Get order items
-          const items = await tx.select({
-            id: orderItems.id,
-            productId: orderItems.productId,
-            quantity: orderItems.quantity,
-          }).from(orderItems).where(eq(orderItems.orderId, orderId));
+        // Clear the cart (if session still exists)
+        try {
+          await storage.clearCart(order.sessionId);
+        } catch (e) {
+          console.log("Cart already cleared or session expired");
+        }
 
-          // Decrement stock for each item
-          for (const item of items) {
-            const result = await tx.execute(sql`
-              SELECT stock_quantity, in_stock 
-              FROM products 
-              WHERE id = ${item.productId}
-              FOR UPDATE
-            `);
-
-            const product = result.rows[0] as { stock_quantity: number | null; in_stock: boolean } | undefined;
-            if (product && product.in_stock) {
-              const newQuantity = Math.max(0, (product.stock_quantity ?? 0) - item.quantity);
-              await tx
-                .update(products)
-                .set({
-                  stockQuantity: newQuantity,
-                  inStock: newQuantity > 0,
-                })
-                .where(eq(products.id, item.productId));
-            }
-          }
-
-          // Update order status to paid
-          await tx.update(orders)
-            .set({ 
-              status: "paid",
-              fulfillmentStatus: "pending",
-            })
-            .where(eq(orders.id, orderId));
-
-          console.log("Order finalized:", orderId);
-
-          // Clear the cart (if session still exists)
-          try {
-            await storage.clearCart(order.sessionId);
-          } catch (e) {
-            console.log("Cart already cleared or session expired");
-          }
-
-          // Send confirmation email
-          try {
-            const orderItemsWithDetails = await storage.getOrderItems(orderId);
-            await sendOrderConfirmationEmail({
-              ...order,
-              status: "paid",
-              items: orderItemsWithDetails,
-            });
-            console.log("Confirmation email sent for order:", orderId);
-          } catch (emailError) {
-            console.error("Failed to send confirmation email:", emailError);
-          }
-        });
+        // Send confirmation email
+        try {
+          const orderItemsWithDetails = await storage.getOrderItems(orderId);
+          await sendOrderConfirmationEmail({
+            ...order,
+            status: "paid",
+            items: orderItemsWithDetails,
+          });
+          console.log("Confirmation email sent for order:", orderId);
+        } catch (emailError) {
+          console.error("Failed to send confirmation email:", emailError);
+        }
 
         res.json({ received: true });
       } catch (error: any) {
@@ -765,71 +757,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }, 0);
       const totalAmount = (totalInPence / 100).toFixed(2);
 
-      // Complete order in a transaction with atomic stock decrements
-      const createdOrder = await db.transaction(async (tx) => {
-        // STEP 1: Validate and decrement stock for each cart item
-        for (const item of cartItems) {
-          // Lock the row and check stock (prevents concurrent overselling)
-          const result = await tx.execute(sql`
-            SELECT stock_quantity, in_stock 
-            FROM products 
-            WHERE id = ${item.product.id}
-            FOR UPDATE
-          `);
+      // STEP 1: Validate and decrement stock for each cart item
+      for (const item of cartItems) {
+        // Check stock availability
+        const productResults = await db.select({
+          stockQuantity: products.stockQuantity,
+          inStock: products.inStock,
+        }).from(products).where(eq(products.id, item.product.id));
 
-          const product = result.rows[0] as { stock_quantity: number | null; in_stock: boolean } | undefined;
-          if (!product || !product.in_stock || (product.stock_quantity ?? 0) < item.quantity) {
-            throw new Error(`Insufficient stock for ${item.product.name}. Please update your cart.`);
-          }
-
-          // Decrement stock (row is locked, safe from concurrent updates)
-          const newQuantity = (product.stock_quantity ?? 0) - item.quantity;
-          const updateResult = await tx
-            .update(products)
-            .set({
-              stockQuantity: newQuantity,
-              inStock: newQuantity > 0 ? product.in_stock : false
-            })
-            .where(eq(products.id, item.product.id))
-            .returning({ id: products.id });
-
-          // Verify the update succeeded
-          if (updateResult.length === 0) {
-            throw new Error(`Failed to update stock for ${item.product.name}. Product may have been deleted.`);
-          }
+        const product = productResults[0];
+        if (!product || !product.inStock || (product.stockQuantity ?? 0) < item.quantity) {
+          throw new Error(`Insufficient stock for ${item.product.name}. Please update your cart.`);
         }
 
-        // STEP 2: Create order
-        const [order] = await tx.insert(orders).values({
-          sessionId,
-          stripePaymentIntentId: req.body.stripePaymentIntentId || null,
-          paypalOrderId: req.body.paypalOrderId || null,
-          totalAmount,
-          status: "completed",
-          fulfillmentStatus: "pending",
-          paymentMethod: req.body.paymentMethod || "stripe",
-          customerEmail: shippingData.customerEmail,
-          customerName: shippingData.customerName,
-          shippingAddressLine1: shippingData.shippingAddressLine1,
-          shippingAddressLine2: shippingData.shippingAddressLine2 || null,
-          shippingCity: shippingData.shippingCity,
-          shippingPostalCode: shippingData.shippingPostalCode,
-          shippingCountry: shippingData.shippingCountry || "GB",
-          customerPhone: shippingData.customerPhone || null,
-        }).returning();
+        // Decrement stock
+        const newQuantity = (product.stockQuantity ?? 0) - item.quantity;
+        const updateResult = await db
+          .update(products)
+          .set({
+            stockQuantity: newQuantity,
+            inStock: newQuantity > 0 ? product.inStock : false
+          })
+          .where(eq(products.id, item.product.id))
+          .returning({ id: products.id });
 
-        // STEP 3: Create order items
-        for (const item of cartItems) {
-          await tx.insert(orderItems).values({
-            orderId: order.id,
-            productId: item.product.id,
-            quantity: item.quantity,
-            priceAtTime: item.product.price,
-          });
+        // Verify the update succeeded
+        if (updateResult.length === 0) {
+          throw new Error(`Failed to update stock for ${item.product.name}. Product may have been deleted.`);
         }
+      }
 
-        return order;
-      });
+      // STEP 2: Create order
+      const [createdOrder] = await db.insert(orders).values({
+        sessionId,
+        stripePaymentIntentId: req.body.stripePaymentIntentId || null,
+        paypalOrderId: req.body.paypalOrderId || null,
+        totalAmount,
+        status: "completed",
+        fulfillmentStatus: "pending",
+        paymentMethod: req.body.paymentMethod || "stripe",
+        customerEmail: shippingData.customerEmail,
+        customerName: shippingData.customerName,
+        shippingAddressLine1: shippingData.shippingAddressLine1,
+        shippingAddressLine2: shippingData.shippingAddressLine2 || null,
+        shippingCity: shippingData.shippingCity,
+        shippingPostalCode: shippingData.shippingPostalCode,
+        shippingCountry: shippingData.shippingCountry || "GB",
+        customerPhone: shippingData.customerPhone || null,
+      }).returning();
+
+      // STEP 3: Create order items
+      for (const item of cartItems) {
+        await db.insert(orderItems).values({
+          orderId: createdOrder.id,
+          productId: item.product.id,
+          quantity: item.quantity,
+          priceAtTime: item.product.price,
+        });
+      }
 
       // Clear the cart (only after successful transaction)
       await storage.clearCart(sessionId);
