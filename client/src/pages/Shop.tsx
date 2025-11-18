@@ -38,7 +38,25 @@ export default function Shop() {
   const handleAddToCart = async (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Check if product has variants - if so, redirect to product page
     try {
+      const variantsResponse = await fetch(`/api/products/${product.id}/variants`);
+      if (variantsResponse.ok) {
+        const variants = await variantsResponse.json();
+        if (variants.length > 0) {
+          // Product has variants - redirect to detail page
+          toast({
+            title: "Please select options",
+            description: "This product has options that you need to select first",
+            duration: 3000,
+          });
+          window.location.href = `/product/${product.slug}`;
+          return;
+        }
+      }
+      
+      // No variants - add directly to cart
       await addItem(product.id);
       toast({
         title: "Added to cart",
