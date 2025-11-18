@@ -72,12 +72,18 @@ export default function OrderConfirmation() {
         }
 
         // FALLBACK: Verify payment directly with Stripe
-        console.log("Calling payment verification endpoint");
-        const verifyResponse = await apiRequest("POST", `/api/orders/${orderId}/verify-payment`, {});
-        
-        if (verifyResponse.ok) {
+        console.log("Calling payment verification endpoint for order:", orderId);
+        try {
+          const verifyResponse = await apiRequest("POST", `/api/orders/${orderId}/verify-payment`, {});
+          
+          if (!verifyResponse.ok) {
+            const errorText = await verifyResponse.text();
+            console.error("Verification failed:", verifyResponse.status, errorText);
+            throw new Error(`Verification failed: ${errorText}`);
+          }
+
           const verifiedOrder = await verifyResponse.json();
-          console.log("Payment verified, order status:", verifiedOrder.status);
+          console.log("Payment verified successfully, order status:", verifiedOrder.status);
           setOrder(verifiedOrder);
           await clearCart();
           setIsProcessing(false);
@@ -88,8 +94,9 @@ export default function OrderConfirmation() {
               description: "Your payment has been verified and your order is being processed.",
             });
           }
-        } else {
-          throw new Error("Payment verification failed");
+        } catch (verifyError: any) {
+          console.error("Verification error:", verifyError);
+          throw new Error(`Payment verification failed: ${verifyError.message}`);
         }
 
       } catch (error: any) {
