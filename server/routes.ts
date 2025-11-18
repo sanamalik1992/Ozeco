@@ -739,6 +739,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No updates provided" });
       }
 
+      // If stockQuantity is being updated, automatically set inStock status
+      if (updates.stockQuantity !== undefined) {
+        const stockQty = parseInt(updates.stockQuantity);
+        updates.inStock = stockQty > 0;
+        console.log(`📦 Variant ${id} stock updated to ${stockQty}, inStock set to ${updates.inStock}`);
+      }
+
       const variant = await storage.updateProductVariant(id, updates);
       
       if (!variant) {
