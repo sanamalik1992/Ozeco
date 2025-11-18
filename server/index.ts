@@ -28,6 +28,16 @@ declare module 'http' {
     rawBody: unknown
   }
 }
+
+// CRITICAL: Stripe webhook MUST receive raw body for signature verification
+// Mount webhook route BEFORE express.json() middleware
+app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res, next) => {
+  // Store the raw body for Stripe signature verification
+  req.rawBody = req.body;
+  // Let the actual handler in routes.ts process the webhook
+  next();
+});
+
 app.use(express.json({
   verify: (req, _res, buf) => {
     req.rawBody = buf;
