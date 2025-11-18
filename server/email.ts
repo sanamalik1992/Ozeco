@@ -96,22 +96,36 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
   `;
 
     // Send to customer
-    await resendClient.emails.send({
-      from: fromEmail,
-      to: order.customerEmail,
-      subject: `Order Confirmation - Ozeco`,
-      html: emailHtml,
-    });
+    console.log(`Attempting to send customer email to: ${order.customerEmail}`);
+    try {
+      const customerEmailResult = await resendClient.emails.send({
+        from: fromEmail,
+        to: order.customerEmail,
+        subject: `Order Confirmation - Ozeco`,
+        html: emailHtml,
+      });
+      console.log(`✅ Customer email sent successfully:`, customerEmailResult);
+    } catch (customerError: any) {
+      console.error(`❌ Failed to send customer email to ${order.customerEmail}:`, customerError);
+      throw customerError; // Re-throw to ensure we know about failures
+    }
 
     // Send to support
-    await resendClient.emails.send({
-      from: fromEmail,
-      to: SUPPORT_EMAIL,
-      subject: `New Order: ${order.customerName} - £${parseFloat(order.totalAmount).toFixed(2)}`,
-      html: emailHtml,
-    });
+    console.log(`Attempting to send support email to: ${SUPPORT_EMAIL}`);
+    try {
+      const supportEmailResult = await resendClient.emails.send({
+        from: fromEmail,
+        to: SUPPORT_EMAIL,
+        subject: `New Order: ${order.customerName} - £${parseFloat(order.totalAmount).toFixed(2)}`,
+        html: emailHtml,
+      });
+      console.log(`✅ Support email sent successfully:`, supportEmailResult);
+    } catch (supportError: any) {
+      console.error(`❌ Failed to send support email:`, supportError);
+      throw supportError; // Re-throw to ensure we know about failures
+    }
 
-    console.log(`Order confirmation emails sent for order ${order.id}`);
+    console.log(`✅ ALL order confirmation emails sent successfully for order ${order.id}`);
   } catch (error) {
     console.error('Failed to send order confirmation email:', error);
     // Don't throw - allow order to complete even if email fails
