@@ -2,6 +2,7 @@ import {
   type User, 
   type InsertUser,
   type Product,
+  type ProductWithPricing,
   type InsertProduct,
   type CartItem,
   type InsertCartItem,
@@ -34,7 +35,7 @@ import {
   productVariants,
 } from "@shared/schema";
 import { db } from "@db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, min } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -43,10 +44,10 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   
   // Product methods
-  getAllProducts(): Promise<Product[]>;
-  getProduct(id: string): Promise<Product | undefined>;
-  getProductBySlug(slug: string): Promise<Product | undefined>;
-  getProductsByBrand(brand: string): Promise<Product[]>;
+  getAllProducts(): Promise<ProductWithPricing[]>;
+  getProduct(id: string): Promise<ProductWithPricing | undefined>;
+  getProductBySlug(slug: string): Promise<ProductWithPricing | undefined>;
+  getProductsByBrand(brand: string): Promise<ProductWithPricing[]>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: string, updates: Partial<InsertProduct>): Promise<Product | undefined>;
   getProductVariants(productId: string): Promise<ProductVariant[]>;
@@ -55,7 +56,7 @@ export interface IStorage {
   deleteProductVariant(id: string): Promise<boolean>;
   
   // Cart methods
-  getCartItems(sessionId: string): Promise<(CartItem & { product: Product })[]>;
+  getCartItems(sessionId: string): Promise<(CartItem & { product: ProductWithPricing })[]>;
   addToCart(item: InsertCartItem): Promise<CartItem>;
   updateCartItemQuantity(id: string, quantity: number, sessionId: string): Promise<CartItem | undefined>;
   removeFromCart(id: string, sessionId: string): Promise<boolean>;
@@ -70,7 +71,7 @@ export interface IStorage {
   createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
   getAllOrders(): Promise<Order[]>;
   getOrder(id: string): Promise<Order | undefined>;
-  getOrderItems(orderId: string): Promise<(OrderItem & { product: Product })[]>;
+  getOrderItems(orderId: string): Promise<(OrderItem & { product: ProductWithPricing })[]>;
   updateOrderFulfillment(id: string, fulfillmentStatus: string): Promise<Order | undefined>;
   updateOrderTracking(id: string, trackingNumber: string | null): Promise<Order | undefined>;
   
@@ -88,7 +89,7 @@ export interface IStorage {
   incrementReferralUses(code: string): Promise<ReferralCode | undefined>;
   
   // Favorite methods
-  getFavorites(sessionId: string): Promise<(Favorite & { product: Product })[]>;
+  getFavorites(sessionId: string): Promise<(Favorite & { product: ProductWithPricing })[]>;
   addFavorite(favorite: InsertFavorite): Promise<Favorite>;
   removeFavorite(productId: string, sessionId: string): Promise<boolean>;
   isFavorite(productId: string, sessionId: string): Promise<boolean>;
@@ -101,6 +102,44 @@ export interface IStorage {
 }
 
 export class DbStorage implements IStorage {
+  // Helper method to enrich a product with pricing data from variants
+  private async enrichProductWithPricing(product: Product): Promise<ProductWithPricing> {
+    const variants = await db
+      .select()
+      .from(productVariants)
+      .where(eq(productVariants.productId, product.id));
+    
+    let lowestVariantPrice: string | null = null;
+    
+    if (variants.length > 0) {
+      // Find the lowest price among variants
+      const prices = variants
+        .map(v => v.price)
+        .filter((price): price is string => price !== null)
+        .map(price => parseFloat(price));
+      
+      if (prices.length > 0) {
+        lowestVariantPrice = Math.min(...prices).toFixed(2);
+      }
+    }
+    
+    // Display price is the lowest variant price if available, otherwise the base price
+    const displayPrice = lowestVariantPrice 
+      ? (parseFloat(lowestVariantPrice) < parseFloat(product.price) ? lowestVariantPrice : product.price)
+      : product.price;
+    
+    return {
+      ...product,
+      lowestVariantPrice,
+      displayPrice,
+    };
+  }
+
+  // Helper method to enrich multiple products
+  private async enrichProductsWithPricing(products: Product[]): Promise<ProductWithPricing[]> {
+    return Promise.all(products.map(p => this.enrichProductWithPricing(p)));
+  }
+
   // User methods
   async getUser(id: string): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id));
@@ -118,22 +157,26 @@ export class DbStorage implements IStorage {
   }
 
   // Product methods
-  async getAllProducts(): Promise<Product[]> {
-    return await db.select().from(products);
+  async getAllProducts(): Promise<ProductWithPricing[]> {
+    const allProducts = await db.select().from(products);
+    return this.enrichProductsWithPricing(allProducts);
   }
 
-  async getProduct(id: string): Promise<Product | undefined> {
+  async getProduct(id: string): Promise<ProductWithPricing | undefined> {
     const result = await db.select().from(products).where(eq(products.id, id));
-    return result[0];
+    if (!result[0]) return undefined;
+    return this.enrichProductWithPricing(result[0]);
   }
 
-  async getProductBySlug(slug: string): Promise<Product | undefined> {
+  async getProductBySlug(slug: string): Promise<ProductWithPricing | undefined> {
     const result = await db.select().from(products).where(eq(products.slug, slug));
-    return result[0];
+    if (!result[0]) return undefined;
+    return this.enrichProductWithPricing(result[0]);
   }
 
-  async getProductsByBrand(brand: string): Promise<Product[]> {
-    return await db.select().from(products).where(eq(products.brand, brand));
+  async getProductsByBrand(brand: string): Promise<ProductWithPricing[]> {
+    const brandProducts = await db.select().from(products).where(eq(products.brand, brand));
+    return this.enrichProductsWithPricing(brandProducts);
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
@@ -173,17 +216,22 @@ export class DbStorage implements IStorage {
   }
 
   // Cart methods
-  async getCartItems(sessionId: string): Promise<(CartItem & { product: Product })[]> {
+  async getCartItems(sessionId: string): Promise<(CartItem & { product: ProductWithPricing })[]> {
     const result = await db
       .select()
       .from(cartItems)
       .leftJoin(products, eq(cartItems.productId, products.id))
       .where(eq(cartItems.sessionId, sessionId));
     
-    return result.map((row: any) => ({
-      ...row.cart_items,
-      product: row.products!,
+    const items = await Promise.all(result.map(async (row: any) => {
+      const enrichedProduct = await this.enrichProductWithPricing(row.products!);
+      return {
+        ...row.cart_items,
+        product: enrichedProduct,
+      };
     }));
+    
+    return items;
   }
 
   async addToCart(item: InsertCartItem): Promise<CartItem> {
@@ -270,17 +318,22 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async getOrderItems(orderId: string): Promise<(OrderItem & { product: Product })[]> {
+  async getOrderItems(orderId: string): Promise<(OrderItem & { product: ProductWithPricing })[]> {
     const result = await db
       .select()
       .from(orderItems)
       .leftJoin(products, eq(orderItems.productId, products.id))
       .where(eq(orderItems.orderId, orderId));
     
-    return result.map((row: any) => ({
-      ...row.order_items,
-      product: row.products!,
+    const items = await Promise.all(result.map(async (row: any) => {
+      const enrichedProduct = await this.enrichProductWithPricing(row.products!);
+      return {
+        ...row.order_items,
+        product: enrichedProduct,
+      };
     }));
+    
+    return items;
   }
 
   async updateOrderFulfillment(id: string, fulfillmentStatus: string): Promise<Order | undefined> {
@@ -357,7 +410,7 @@ export class DbStorage implements IStorage {
   }
 
   // Favorite methods
-  async getFavorites(sessionId: string): Promise<(Favorite & { product: Product })[]> {
+  async getFavorites(sessionId: string): Promise<(Favorite & { product: ProductWithPricing })[]> {
     const result = await db
       .select()
       .from(favorites)
@@ -365,10 +418,15 @@ export class DbStorage implements IStorage {
       .where(eq(favorites.sessionId, sessionId))
       .orderBy(desc(favorites.createdAt));
     
-    return result.map((row: any) => ({
-      ...row.favorites,
-      product: row.products!,
+    const items = await Promise.all(result.map(async (row: any) => {
+      const enrichedProduct = await this.enrichProductWithPricing(row.products!);
+      return {
+        ...row.favorites,
+        product: enrichedProduct,
+      };
     }));
+    
+    return items;
   }
 
   async addFavorite(insertFavorite: InsertFavorite): Promise<Favorite> {

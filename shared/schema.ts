@@ -51,6 +51,12 @@ export const insertProductSchema = createInsertSchema(products).omit({
 export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type Product = typeof products.$inferSelect;
 
+// Extended type for products with pricing information from variants
+export type ProductWithPricing = Product & {
+  lowestVariantPrice?: string | null;
+  displayPrice: string; // The price to display (lowest variant price if available, otherwise base price)
+};
+
 export const cartItems = pgTable("cart_items", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   productId: varchar("product_id").notNull().references(() => products.id),
