@@ -96,7 +96,8 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
   `;
 
     // Send to customer
-    console.log(`Attempting to send customer email to: ${order.customerEmail}`);
+    console.log(`🔵 Attempting to send customer email to: ${order.customerEmail}`);
+    console.log(`🔵 Using FROM email: ${fromEmail}`);
     try {
       const customerEmailResult = await resendClient.emails.send({
         from: fromEmail,
@@ -104,14 +105,21 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
         subject: `Order Confirmation - Ozeco`,
         html: emailHtml,
       });
-      console.log(`✅ Customer email sent successfully:`, customerEmailResult);
+      if (customerEmailResult.error) {
+        console.error(`❌ CRITICAL: Resend API error for customer email:`, JSON.stringify(customerEmailResult.error, null, 2));
+      } else {
+        console.log(`✅ Customer email sent successfully! Email ID:`, customerEmailResult.data?.id);
+      }
     } catch (customerError: any) {
-      console.error(`❌ Failed to send customer email to ${order.customerEmail}:`, customerError);
-      throw customerError; // Re-throw to ensure we know about failures
+      console.error(`❌ CRITICAL: Failed to send customer email to ${order.customerEmail}`);
+      console.error(`❌ Error details:`, JSON.stringify(customerError, null, 2));
+      console.error(`❌ Error message:`, customerError.message);
+      console.error(`❌ Error stack:`, customerError.stack);
+      // Don't throw - continue to send support email
     }
 
     // Send to support
-    console.log(`Attempting to send support email to: ${SUPPORT_EMAIL}`);
+    console.log(`🔵 Attempting to send support email to: ${SUPPORT_EMAIL}`);
     try {
       const supportEmailResult = await resendClient.emails.send({
         from: fromEmail,
@@ -119,15 +127,22 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
         subject: `New Order: ${order.customerName} - £${parseFloat(order.totalAmount).toFixed(2)}`,
         html: emailHtml,
       });
-      console.log(`✅ Support email sent successfully:`, supportEmailResult);
+      if (supportEmailResult.error) {
+        console.error(`❌ CRITICAL: Resend API error for support email:`, JSON.stringify(supportEmailResult.error, null, 2));
+      } else {
+        console.log(`✅ Support email sent successfully! Email ID:`, supportEmailResult.data?.id);
+      }
     } catch (supportError: any) {
-      console.error(`❌ Failed to send support email:`, supportError);
-      throw supportError; // Re-throw to ensure we know about failures
+      console.error(`❌ CRITICAL: Failed to send support email`);
+      console.error(`❌ Error details:`, JSON.stringify(supportError, null, 2));
+      console.error(`❌ Error message:`, supportError.message);
+      // Don't throw - allow order to complete
     }
 
-    console.log(`✅ ALL order confirmation emails sent successfully for order ${order.id}`);
-  } catch (error) {
-    console.error('Failed to send order confirmation email:', error);
+    console.log(`✅ Email sending process completed for order ${order.id}`);
+  } catch (error: any) {
+    console.error('❌ OUTER CATCH: Email sending failed:', error);
+    console.error('❌ Error details:', JSON.stringify(error, null, 2));
     // Don't throw - allow order to complete even if email fails
   }
 }
