@@ -1,36 +1,17 @@
-import { Resend } from 'resend';
 import type { Order, OrderItem, Product } from '@shared/schema';
+import { getUncachableResendClient } from './resend';
 
-// Lazy initialization of Resend client
-let resend: Resend | null = null;
-
-function getResendClient(): Resend | null {
-  if (!process.env.RESEND_API_KEY) {
-    return null;
-  }
-  if (!resend) {
-    resend = new Resend(process.env.RESEND_API_KEY);
-  }
-  return resend;
-}
-
-// Use environment variable for FROM email or default to onboarding@resend.dev for testing
-// In production, you MUST verify your domain or email in Resend dashboard
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'support@ozeco.co.uk';
+const SUPPORT_EMAIL = 'support@ozeco.co.uk';
 
 interface OrderEmailData extends Order {
   items: Array<OrderItem & { product: Product }>;
 }
 
 export async function sendOrderConfirmationEmail(order: OrderEmailData) {
-  const resendClient = getResendClient();
-  if (!resendClient) {
-    console.log('RESEND_API_KEY not configured, skipping order confirmation email');
-    return;
-  }
-
-  console.log(`Sending order confirmation email for order ${order.id} to ${order.customerEmail}`);
+  try {
+    const { client: resendClient, fromEmail } = await getUncachableResendClient();
+    
+    console.log(`Sending order confirmation email for order ${order.id} to ${order.customerEmail}`);
 
   const itemsHtml = order.items
     .map(
@@ -114,10 +95,9 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
 </html>
   `;
 
-  try {
     // Send to customer
     await resendClient.emails.send({
-      from: FROM_EMAIL,
+      from: fromEmail,
       to: order.customerEmail,
       subject: `Order Confirmation - Ozeco`,
       html: emailHtml,
@@ -125,7 +105,7 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
 
     // Send to support
     await resendClient.emails.send({
-      from: FROM_EMAIL,
+      from: fromEmail,
       to: SUPPORT_EMAIL,
       subject: `New Order: ${order.customerName} - £${parseFloat(order.totalAmount).toFixed(2)}`,
       html: emailHtml,
@@ -134,7 +114,7 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
     console.log(`Order confirmation emails sent for order ${order.id}`);
   } catch (error) {
     console.error('Failed to send order confirmation email:', error);
-    throw error;
+    // Don't throw - allow order to complete even if email fails
   }
 }
 
@@ -142,13 +122,10 @@ export async function sendShippingConfirmationEmail(
   order: OrderEmailData,
   trackingNumber: string
 ) {
-  const resendClient = getResendClient();
-  if (!resendClient) {
-    console.log('RESEND_API_KEY not configured, skipping shipping confirmation email');
-    return;
-  }
-
-  console.log(`Sending shipping confirmation email for order ${order.id} to ${order.customerEmail}`);
+  try {
+    const { client: resendClient, fromEmail } = await getUncachableResendClient();
+    
+    console.log(`Sending shipping confirmation email for order ${order.id} to ${order.customerEmail}`);
 
   const itemsHtml = order.items
     .map(
@@ -226,9 +203,8 @@ export async function sendShippingConfirmationEmail(
 </html>
   `;
 
-  try {
     await resendClient.emails.send({
-      from: FROM_EMAIL,
+      from: fromEmail,
       to: order.customerEmail,
       subject: `Your Ozeco Order Has Shipped - Tracking: ${trackingNumber}`,
       html: emailHtml,
@@ -237,6 +213,6 @@ export async function sendShippingConfirmationEmail(
     console.log(`Shipping confirmation email sent for order ${order.id}`);
   } catch (error) {
     console.error('Failed to send shipping confirmation email:', error);
-    throw error;
+    // Don't throw - allow order to complete even if email fails
   }
 }
