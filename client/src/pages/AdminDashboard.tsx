@@ -252,7 +252,7 @@ function SyncProductVariantsButton() {
       });
       setConfirmOpen(false);
     },
-    onError: (error: Error) {
+    onError: (error: Error) => {
       toast({
         title: "Variant sync failed",
         description: error.message,
