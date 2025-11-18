@@ -231,6 +231,95 @@ function FixProductImagesButton() {
   );
 }
 
+function SyncProductVariantsButton() {
+  const { toast } = useToast();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const syncVariantsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/admin/sync-variants", {});
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to sync product variants");
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries();
+      toast({
+        title: "Product variants synced",
+        description: data.message || `Created ${data.created} variants, skipped ${data.skipped} existing.`,
+      });
+      setConfirmOpen(false);
+    },
+    onError: (error: Error) {
+      toast({
+        title: "Variant sync failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <>
+      <Button
+        variant="outline"
+        onClick={() => setConfirmOpen(true)}
+        data-testid="button-sync-variants"
+        className="border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+      >
+        <Package className="h-4 w-4 mr-2" />
+        Sync Product Variants
+      </Button>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sync Product Variants?</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>This will automatically add all product variants (colours, wheel sizes, battery options) to your products.</p>
+              <p className="font-semibold">This includes:</p>
+              <ul className="list-disc pl-6 space-y-1 text-sm">
+                <li>ENGWE T14 (4 colors)</li>
+                <li>ENGWE Engine Pro 2.0 (3 colors)</li>
+                <li>ENGWE Engine X (3 colors)</li>
+                <li>ENGWE EP-2 Boost (3 colors)</li>
+                <li>ENGWE L20 (2 colors)</li>
+                <li>Eleglide M1 Plus (2 wheel sizes)</li>
+                <li>Eleglide M2 (2 wheel sizes)</li>
+                <li>Duotts C29 (2 battery options)</li>
+                <li>Touroll U1 (2 wheel sizes)</li>
+                <li>Fiido D3 Pro (2 colors)</li>
+              </ul>
+              <p className="text-muted-foreground mt-2">Total: 24 variants across 10 products</p>
+              <p className="mt-2">Variants that already exist will be skipped. Continue?</p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-sync-variants">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => syncVariantsMutation.mutate()}
+              disabled={syncVariantsMutation.isPending}
+              className="bg-green-600 text-white hover:bg-green-700"
+              data-testid="button-confirm-sync-variants"
+            >
+              {syncVariantsMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Syncing...
+                </>
+              ) : (
+                "Sync Variants"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
 function ManageVariantsDialog({ productId, productName }: ManageVariantsDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -1247,9 +1336,10 @@ export default function AdminDashboard() {
                     <li><strong className="text-primary">Products, orders, and variants are NOT affected</strong></li>
                   </ul>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   <ProductionResetButton />
                   <FixProductImagesButton />
+                  <SyncProductVariantsButton />
                 </div>
               </CardContent>
             </Card>
