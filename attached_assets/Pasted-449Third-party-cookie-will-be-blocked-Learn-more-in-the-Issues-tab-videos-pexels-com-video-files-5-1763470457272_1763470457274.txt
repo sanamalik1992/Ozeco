@@ -1,0 +1,73 @@
+449Third-party cookie will be blocked. Learn more in the Issues tab.
+videos.pexels.com/video-files/5752729/5752729-uhd_2560_1440_25fps.mp4:1 
+        
+        
+       Failed to load resource: the server responded with a status of 403 ()
+index-DPay9yQl.js:397 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-DPay9yQl.js:397
+index-DPay9yQl.js:406 Fetching payment configuration...
+index-DPay9yQl.js:406 Payment config received: Object
+index-DPay9yQl.js:406 Creating payment intent...
+index-DPay9yQl.js:406 Payment intent created successfully, orderId: 3f96856e-9b4b-43de-9f92-8280369958c1
+9Error with Permissions-Policy header: Unrecognized feature: 'ch-ua-form-factors'.
+6Each dictionary in the list "icons" should contain a non-empty UTF8 string field "sizes".
+checkout:1 Each dictionary in the list "icons" should contain a non-empty UTF8 string field "sizes".
+checkout:1 Each dictionary in the list "icons" should contain a non-empty UTF8 string field "sizes".
+checkout:1 Each dictionary in the list "icons" should contain a non-empty UTF8 string field "sizes".
+checkout:1 Each dictionary in the list "icons" should contain a non-empty UTF8 string field "sizes".
+checkout:1 Each dictionary in the list "icons" should contain a non-empty UTF8 string field "sizes".
+checkout:1 Each dictionary in the list "icons" should contain a non-empty UTF8 string field "sizes".
+6Each dictionary in the list "icons" should contain a non-empty UTF8 string field "type".
+shared-1233fc6b9e8a5…853438723310f6.js:1 Uncaught (in promise) FetchError: Error fetching https://r.stripe.com/b: Failed to fetch
+    at shared-1233fc6b9e8a5b1235853438723310f6.js:1:227134
+index-DPay9yQl.js:406 Attempting to confirm payment...
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/payment_intents/pi_3SUo6KHHDiQu7j3y0UW0ubCF/confirm:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+index-DPay9yQl.js:406 Stripe payment error: Object
+d @ index-DPay9yQl.js:406
+index-DPay9yQl.js:406 Unsupported prop change: options.paymentRequest is not a mutable property.
+(anonymous) @ index-DPay9yQl.js:406
+index-DPay9yQl.js:397 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-DPay9yQl.js:397

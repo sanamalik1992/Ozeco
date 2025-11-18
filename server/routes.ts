@@ -202,8 +202,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get payment configuration (for runtime configuration)
   app.get("/api/config/stripe-key", async (req, res) => {
-    // Use runtime environment variable (not build-time VITE_ prefix)
-    const stripePublicKey = process.env.STRIPE_PUBLISHABLE_KEY;
+    // FIX: Use the correct environment variable name
+    const stripePublicKey = process.env.VITE_STRIPE_PUBLIC_KEY;
     res.json({ 
       publishableKey: stripePublicKey || null 
     });
@@ -211,7 +211,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/config/payment-methods", async (req, res) => {
     res.json({
-      stripe: Boolean(process.env.STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_SECRET_KEY),
+      stripe: Boolean(process.env.VITE_STRIPE_PUBLIC_KEY && process.env.STRIPE_SECRET_KEY),
       paypal: isPayPalConfigured
     });
   });
