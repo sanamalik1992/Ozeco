@@ -35,7 +35,7 @@ import {
   productVariants,
 } from "@shared/schema";
 import { db } from "@db";
-import { eq, and, desc, min } from "drizzle-orm";
+import { eq, and, desc, min, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -56,7 +56,7 @@ export interface IStorage {
   deleteProductVariant(id: string): Promise<boolean>;
   
   // Cart methods
-  getCartItems(sessionId: string): Promise<(CartItem & { product: ProductWithPricing })[]>;
+  getCartItems(sessionId: string): Promise<(CartItem & { product: ProductWithPricing; variant?: ProductVariant | null })[]>;
   addToCart(item: InsertCartItem): Promise<CartItem>;
   updateCartItemQuantity(id: string, quantity: number, sessionId: string): Promise<CartItem | undefined>;
   removeFromCart(id: string, sessionId: string): Promise<boolean>;
@@ -216,11 +216,12 @@ export class DbStorage implements IStorage {
   }
 
   // Cart methods
-  async getCartItems(sessionId: string): Promise<(CartItem & { product: ProductWithPricing })[]> {
+  async getCartItems(sessionId: string): Promise<(CartItem & { product: ProductWithPricing; variant?: ProductVariant | null })[]> {
     const result = await db
       .select()
       .from(cartItems)
       .leftJoin(products, eq(cartItems.productId, products.id))
+      .leftJoin(productVariants, eq(cartItems.variantId, productVariants.id))
       .where(eq(cartItems.sessionId, sessionId));
     
     const items = await Promise.all(result.map(async (row: any) => {
@@ -228,6 +229,7 @@ export class DbStorage implements IStorage {
       return {
         ...row.cart_items,
         product: enrichedProduct,
+        variant: row.product_variants || null,
       };
     }));
     
@@ -235,16 +237,23 @@ export class DbStorage implements IStorage {
   }
 
   async addToCart(item: InsertCartItem): Promise<CartItem> {
-    // Check if item already exists in cart
+    // Check if item already exists in cart (same product + same variant or both without variant)
+    const conditions = [
+      eq(cartItems.productId, item.productId),
+      eq(cartItems.sessionId, item.sessionId)
+    ];
+    
+    // Match variant: both null or both the same value
+    if (item.variantId) {
+      conditions.push(eq(cartItems.variantId, item.variantId));
+    } else {
+      conditions.push(sql`${cartItems.variantId} IS NULL`);
+    }
+    
     const existing = await db
       .select()
       .from(cartItems)
-      .where(
-        and(
-          eq(cartItems.productId, item.productId),
-          eq(cartItems.sessionId, item.sessionId)
-        )
-      );
+      .where(and(...conditions));
 
     if (existing.length > 0) {
       // Update quantity

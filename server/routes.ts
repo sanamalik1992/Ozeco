@@ -120,6 +120,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sessionId,
       });
       
+      // SECURITY: If variantId is provided, validate that it belongs to the product
+      if (validated.variantId) {
+        const variants = await storage.getProductVariants(validated.productId);
+        const variantExists = variants.some(v => v.id === validated.variantId);
+        if (!variantExists) {
+          return res.status(400).json({ error: "Invalid variant for this product" });
+        }
+      }
+      
       // SECURITY: Enforce quantity limits on incoming quantity
       const quantity = validated.quantity ?? 1;
       if (quantity < 1 || quantity > 99) {
@@ -128,7 +137,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // SECURITY: Check if adding this quantity to existing cart item would exceed limit
       const existingCartItems = await storage.getCartItems(sessionId);
-      const existingItem = existingCartItems.find(item => item.productId === validated.productId);
+      const existingItem = existingCartItems.find(item => 
+        item.productId === validated.productId && 
+        (item.variantId === validated.variantId || (!item.variantId && !validated.variantId))
+      );
       if (existingItem) {
         const newTotal = existingItem.quantity + quantity;
         if (newTotal > 99) {
@@ -282,11 +294,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // STEP 2: Create order items linked to pending order
       for (const item of cartItems) {
+        // Use variant price if variant selected, otherwise use product price
+        const price = item.variant?.price || item.product.price;
         await db.insert(orderItems).values({
           orderId: pendingOrder.id,
           productId: item.product.id,
           quantity: item.quantity,
-          priceAtTime: item.product.price,
+          priceAtTime: price,
         });
       }
 
@@ -1076,11 +1090,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // STEP 3: Create order items
       for (const item of cartItems) {
+        // Use variant price if variant selected, otherwise use product price
+        const price = item.variant?.price || item.product.price;
         await db.insert(orderItems).values({
           orderId: createdOrder.id,
           productId: item.product.id,
           quantity: item.quantity,
-          priceAtTime: item.product.price,
+          priceAtTime: price,
         });
       }
 

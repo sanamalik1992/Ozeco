@@ -60,6 +60,7 @@ export type ProductWithPricing = Product & {
 export const cartItems = pgTable("cart_items", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   productId: varchar("product_id").notNull().references(() => products.id),
+  variantId: varchar("variant_id").references(() => productVariants.id),
   quantity: integer("quantity").notNull().default(1),
   sessionId: text("session_id").notNull(),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),

@@ -76,11 +76,24 @@ export default function ProductDetail() {
 
   const handleAddToCart = async () => {
     if (product) {
+      // If product has variants, require variant selection
+      if (variants.length > 0 && !selectedVariant) {
+        toast({
+          title: "Please select an option",
+          description: "Select a color, size, or battery option before adding to cart",
+          variant: "destructive",
+          duration: 3000,
+        });
+        return;
+      }
+      
       try {
-        await addItem(product.id);
+        await addItem(product.id, 1, selectedVariant?.id);
         toast({
           title: "Added to cart",
-          description: `${product.name}`,
+          description: selectedVariant 
+            ? `${product.name} (${selectedVariant.value})` 
+            : product.name,
           duration: 2000,
         });
       } catch (error) {
