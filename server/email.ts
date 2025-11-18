@@ -154,7 +154,9 @@ export async function sendShippingConfirmationEmail(
   try {
     const { client: resendClient, fromEmail } = await getUncachableResendClient();
     
-    console.log(`Sending shipping confirmation email for order ${order.id} to ${order.customerEmail}`);
+    console.log(`📦 Sending shipping confirmation email for order ${order.id}`);
+    console.log(`📦 Customer email: ${order.customerEmail}`);
+    console.log(`📦 Tracking number: ${trackingNumber}`);
 
   const itemsHtml = order.items
     .map(
@@ -232,16 +234,25 @@ export async function sendShippingConfirmationEmail(
 </html>
   `;
 
-    await resendClient.emails.send({
+    console.log(`🔵 Attempting to send shipping notification to: ${order.customerEmail}`);
+    console.log(`🔵 Using FROM email: ${fromEmail}`);
+    
+    const emailResult = await resendClient.emails.send({
       from: fromEmail,
       to: order.customerEmail,
       subject: `Your Ozeco Order Has Shipped - Tracking: ${trackingNumber}`,
       html: emailHtml,
     });
 
-    console.log(`Shipping confirmation email sent for order ${order.id}`);
-  } catch (error) {
-    console.error('Failed to send shipping confirmation email:', error);
-    // Don't throw - allow order to complete even if email fails
+    if (emailResult.error) {
+      console.error(`❌ CRITICAL: Resend API error for shipping email:`, JSON.stringify(emailResult.error, null, 2));
+    } else {
+      console.log(`✅ Shipping confirmation email sent successfully! Email ID:`, emailResult.data?.id);
+      console.log(`✅ Tracking number ${trackingNumber} sent to ${order.customerEmail}`);
+    }
+  } catch (error: any) {
+    console.error('❌ Failed to send shipping confirmation email:', error);
+    console.error('❌ Error details:', JSON.stringify(error, null, 2));
+    // Don't throw - allow order update to complete even if email fails
   }
 }
