@@ -121,8 +121,10 @@ export default function Checkout() {
   );
 
   // Calculate total using integer cents to avoid floating-point errors
+  // Use variant price if available, otherwise use product price
   const totalInPence = items.reduce((sum, item) => {
-    const priceInPence = Math.round(parseFloat(item.product.price) * 100);
+    const price = item.variant?.price || item.product.price;
+    const priceInPence = Math.round(parseFloat(price) * 100);
     return sum + (priceInPence * item.quantity);
   }, 0);
   const totalPrice = totalInPence / 100;
@@ -316,7 +318,7 @@ export default function Checkout() {
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-sm leading-tight">{item.product.name}</h4>
                         <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
-                        <p className="text-sm font-medium">£{(parseFloat(item.product.price) * item.quantity).toFixed(2)}</p>
+                        <p className="text-sm font-medium">£{(parseFloat(item.variant?.price || item.product.price) * item.quantity).toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
