@@ -31,6 +31,7 @@ export default function FeaturedProducts() {
     toast({
       title: "Added to cart",
       description: `${product.name}`,
+      duration: 2000,
     });
   };
 

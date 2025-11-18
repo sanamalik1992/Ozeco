@@ -26,6 +26,7 @@ export default function Wishlist() {
       toast({
         title: "Added to cart",
         description: `${product.name}`,
+        duration: 2000,
       });
     } catch (error) {
       toast({
