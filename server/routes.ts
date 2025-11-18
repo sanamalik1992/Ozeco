@@ -387,7 +387,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
           throw new Error("Payment amount mismatch - manual review required");
         }
 
-        // Get order items
+        // ATOMIC UPDATE: Only update if order is still pending (prevents race with verification endpoint)
+        console.log("Attempting to finalize order via webhook:", orderId);
+        const updateResult = await db.update(orders)
+          .set({ 
+            status: "paid",
+            fulfillmentStatus: "pending",
+          })
+          .where(and(
+            eq(orders.id, orderId),
+            eq(orders.status, "pending")  // Only update if still pending
+          ))
+          .returning({ id: orders.id });
+
+        // If update didn't affect any rows, order was already completed by verification endpoint
+        if (updateResult.length === 0) {
+          console.log("Order already completed by verification endpoint, skipping fulfillment (webhook)");
+          return res.json({ received: true });
+        }
+
+        // Get order items for stock decrement
         const items = await db.select({
           id: orderItems.id,
           productId: orderItems.productId,
@@ -414,15 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
-        // Update order status to paid
-        await db.update(orders)
-          .set({ 
-            status: "paid",
-            fulfillmentStatus: "pending",
-          })
-          .where(eq(orders.id, orderId));
-
-        console.log("Order finalized:", orderId);
+        console.log("Order finalized via webhook:", orderId);
 
         // Clear the cart (if session still exists)
         try {
@@ -836,6 +847,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ ...order, items });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Verify payment and complete order (fallback when webhook doesn't fire)
+  app.post("/api/orders/:id/verify-payment", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const order = await storage.getOrder(id);
+      
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      // IDEMPOTENCY: If order already paid, return it
+      if (order.status === "paid" || order.status === "completed") {
+        console.log("Order already paid/completed:", id);
+        const items = await storage.getOrderItems(id);
+        return res.json({ ...order, items });
+      }
+
+      // Check if order has a Stripe payment intent
+      if (!order.stripePaymentIntentId) {
+        return res.status(400).json({ error: "No payment intent found for this order" });
+      }
+
+      const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+      if (!stripeSecretKey) {
+        return res.status(500).json({ error: "Stripe not configured" });
+      }
+
+      const stripe = new Stripe(stripeSecretKey);
+      
+      console.log("Verifying payment intent:", order.stripePaymentIntentId);
+      
+      // Retrieve payment intent from Stripe
+      const paymentIntent = await stripe.paymentIntents.retrieve(order.stripePaymentIntentId);
+      
+      console.log("Payment intent status:", paymentIntent.status);
+
+      // If payment not succeeded, return current order status
+      if (paymentIntent.status !== "succeeded") {
+        const items = await storage.getOrderItems(id);
+        return res.json({ 
+          ...order, 
+          items, 
+          paymentStatus: paymentIntent.status 
+        });
+      }
+
+      // VALIDATION: Verify amount matches
+      const expectedAmount = Math.round(parseFloat(order.totalAmount) * 100);
+      if (paymentIntent.amount !== expectedAmount) {
+        console.error(`Amount mismatch! Stripe: ${paymentIntent.amount}, Order: ${expectedAmount}`);
+        return res.status(400).json({ error: "Payment amount mismatch" });
+      }
+
+      console.log("Payment verified, completing order:", id);
+
+      // ATOMIC UPDATE: Only update if order is still pending (prevents race with webhook)
+      const updateResult = await db.update(orders)
+        .set({ 
+          status: "paid",
+          fulfillmentStatus: "pending",
+        })
+        .where(and(
+          eq(orders.id, id),
+          eq(orders.status, "pending")  // Only update if still pending
+        ))
+        .returning({ id: orders.id });
+
+      // If update didn't affect any rows, order was already completed by webhook
+      if (updateResult.length === 0) {
+        console.log("Order already completed by webhook, skipping fulfillment");
+        const items = await storage.getOrderItems(id);
+        return res.json({ 
+          ...order, 
+          status: "paid", 
+          fulfillmentStatus: "pending",
+          items 
+        });
+      }
+
+      // Get order items for stock decrement
+      const items = await db.select({
+        id: orderItems.id,
+        productId: orderItems.productId,
+        quantity: orderItems.quantity,
+      }).from(orderItems).where(eq(orderItems.orderId, id));
+
+      // Decrement stock for each item
+      for (const item of items) {
+        const productResults = await db.select({
+          stockQuantity: products.stockQuantity,
+          inStock: products.inStock,
+        }).from(products).where(eq(products.id, item.productId));
+
+        const product = productResults[0];
+        if (product && product.inStock) {
+          const newQuantity = Math.max(0, (product.stockQuantity ?? 0) - item.quantity);
+          await db
+            .update(products)
+            .set({
+              stockQuantity: newQuantity,
+              inStock: newQuantity > 0,
+            })
+            .where(eq(products.id, item.productId));
+        }
+      }
+
+      console.log("Order finalized via verification:", id);
+
+      // Clear the cart (if session still exists)
+      try {
+        await storage.clearCart(order.sessionId);
+      } catch (e) {
+        console.log("Cart already cleared or session expired");
+      }
+
+      // Send confirmation email
+      try {
+        const orderItemsWithDetails = await storage.getOrderItems(id);
+        await sendOrderConfirmationEmail({
+          ...order,
+          status: "paid",
+          items: orderItemsWithDetails,
+        });
+        console.log("Confirmation email sent for order:", id);
+      } catch (emailError) {
+        console.error("Failed to send confirmation email:", emailError);
+      }
+
+      // Return updated order
+      const updatedItems = await storage.getOrderItems(id);
+      res.json({ 
+        ...order, 
+        status: "paid", 
+        fulfillmentStatus: "pending",
+        items: updatedItems 
+      });
+
+    } catch (error: any) {
+      console.error("Payment verification error:", error);
+      res.status(500).json({ error: error.message || "Payment verification failed" });
     }
   });
 

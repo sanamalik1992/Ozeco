@@ -33,7 +33,7 @@ export default function OrderConfirmation() {
 
         // Poll for order status (webhook may still be processing)
         let attempts = 0;
-        const maxAttempts = 10;
+        const maxAttempts = 5; // Reduced attempts before fallback
         
         while (attempts < maxAttempts) {
           const response = await fetch(`/api/orders/${orderId}`);
@@ -49,24 +49,48 @@ export default function OrderConfirmation() {
 
           const orderData = await response.json();
           
+          // If order is paid, we're done
+          if (orderData.status === 'paid' || orderData.status === 'completed') {
+            console.log("Order completed successfully");
+            setOrder(orderData);
+            await clearCart();
+            setIsProcessing(false);
+            return;
+          }
+
           // If order is still pending, wait and try again
-          if (orderData.status === 'pending' && attempts < maxAttempts - 1) {
+          if (attempts < maxAttempts - 1) {
             console.log("Order still pending, waiting for webhook...");
             await new Promise(resolve => setTimeout(resolve, 1000));
             attempts++;
             continue;
           }
 
-          setOrder(orderData);
-          await clearCart();
-          setIsProcessing(false);
-          return;
+          // If we get here, webhook hasn't fired - use fallback verification
+          console.log("Webhook timeout, attempting payment verification fallback");
+          break;
         }
 
-        // If we get here, order is still pending after max attempts
-        setOrder({ status: 'pending', id: orderId });
-        await clearCart();
-        setIsProcessing(false);
+        // FALLBACK: Verify payment directly with Stripe
+        console.log("Calling payment verification endpoint");
+        const verifyResponse = await apiRequest("POST", `/api/orders/${orderId}/verify-payment`, {});
+        
+        if (verifyResponse.ok) {
+          const verifiedOrder = await verifyResponse.json();
+          console.log("Payment verified, order status:", verifiedOrder.status);
+          setOrder(verifiedOrder);
+          await clearCart();
+          setIsProcessing(false);
+          
+          if (verifiedOrder.status === 'paid' || verifiedOrder.status === 'completed') {
+            toast({
+              title: "Order Confirmed",
+              description: "Your payment has been verified and your order is being processed.",
+            });
+          }
+        } else {
+          throw new Error("Payment verification failed");
+        }
 
       } catch (error: any) {
         console.error("Order fetch error:", error);
