@@ -1,0 +1,75 @@
+videos.pexels.com/video-files/5752729/5752729-uhd_2560_1440_25fps.mp4:1 
+        
+        
+       Failed to load resource: the server responded with a status of 403 ()
+327Third-party cookie will be blocked. Learn more in the Issues tab.
+index-AfzXJwvV.js:397 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-AfzXJwvV.js:397
+index-AfzXJwvV.js:406 Fetching payment configuration...
+index-AfzXJwvV.js:406 Payment config received: Object
+index-AfzXJwvV.js:406 Creating payment intent...
+index-AfzXJwvV.js:406 Payment intent created successfully, orderId: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+6Error with Permissions-Policy header: Unrecognized feature: 'ch-ua-form-factors'.
+6Each dictionary in the list "icons" should contain a non-empty UTF8 string field "sizes".
+6Each dictionary in the list "icons" should contain a non-empty UTF8 string field "type".
+index-AfzXJwvV.js:406 Unsupported prop change: options.paymentRequest is not a mutable property.
+(anonymous) @ index-AfzXJwvV.js:406
+WN @ index-AfzXJwvV.js:406
+(anonymous) @ index-AfzXJwvV.js:406
+Fu @ index-AfzXJwvV.js:40
+ya @ index-AfzXJwvV.js:40
+(anonymous) @ index-AfzXJwvV.js:40
+k @ index-AfzXJwvV.js:25
+I @ index-AfzXJwvV.js:25
+3index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+12index-AfzXJwvV.js:406 Order still pending, waiting for webhook...
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+2index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Order still pending, waiting for webhook...
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Order still pending, waiting for webhook...
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+22index-AfzXJwvV.js:406 Order still pending, waiting for webhook...
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+2index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Order still pending, waiting for webhook...
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Order still pending, waiting for webhook...
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Webhook timeout, attempting payment verification fallback
+index-AfzXJwvV.js:406 Calling payment verification endpoint for order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Order still pending, waiting for webhook...
+index-AfzXJwvV.js:406 Payment verified successfully, order status: pending
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+index-AfzXJwvV.js:406 Order still pending, waiting for webhook...
+index-AfzXJwvV.js:406 Fetching order: 15597f0c-8157-4fd8-97c5-4ca1d40b537f
+2index-AfzXJwvV.js:406 Order still pending, waiting for webhook...

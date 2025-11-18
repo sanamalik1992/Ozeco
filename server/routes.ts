@@ -266,7 +266,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Calculate total using integer pence to avoid floating-point errors
       const totalInPence = cartItems.reduce((sum, item) => {
-        const priceInPence = Math.round(parseFloat(item.product.price) * 100);
+        // Use variant price if variant selected, otherwise use product price
+        const price = item.variant?.price ?? item.product.price;
+        const priceInPence = Math.round(parseFloat(price) * 100);
         return sum + (priceInPence * item.quantity);
       }, 0);
       const totalAmount = (totalInPence / 100).toFixed(2);
@@ -1034,7 +1036,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const totalInPence = cartItems.reduce((sum, item) => {
-        const priceInPence = Math.round(parseFloat(item.product.price) * 100);
+        // Use variant price if variant selected, otherwise use product price
+        const price = item.variant?.price ?? item.product.price;
+        const priceInPence = Math.round(parseFloat(price) * 100);
         return sum + (priceInPence * item.quantity);
       }, 0);
       const totalAmount = (totalInPence / 100).toFixed(2);
