@@ -1691,8 +1691,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Exclude admin sessions from analytics tracking
       const isAdmin = req.session && (req.session as any).isAdmin === true;
+      console.log("📊 Analytics track - Path:", path, "Session ID:", sessionId, "isAdmin:", isAdmin, "Session exists:", !!req.session);
+      
       if (isAdmin) {
-        console.log("Analytics tracking skipped - admin session");
+        console.log("✅ Analytics tracking skipped - admin session");
         return res.json({ success: true, excluded: true });
       }
 
