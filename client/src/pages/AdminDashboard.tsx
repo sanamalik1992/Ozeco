@@ -792,6 +792,21 @@ function AnalyticsDashboard() {
     refetchInterval: 30000,
   });
 
+  const { data: locations = [], isLoading: locationsLoading } = useQuery<Array<{ country: string; count: number }>>({
+    queryKey: ["/api/analytics/locations"],
+    refetchInterval: 60000,
+  });
+
+  const { data: cartData } = useQuery<{ count: number }>({
+    queryKey: ["/api/analytics/cart-additions"],
+    refetchInterval: 60000,
+  });
+
+  const { data: checkoutData } = useQuery<{ count: number }>({
+    queryKey: ["/api/analytics/checkouts"],
+    refetchInterval: 60000,
+  });
+
   // Debug logging
   console.log("Analytics Dashboard - Stats:", stats);
   console.log("Analytics Dashboard - Loading:", statsLoading);
@@ -872,7 +887,7 @@ function AnalyticsDashboard() {
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Live Visitors</CardTitle>
@@ -892,6 +907,28 @@ function AnalyticsDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{stats?.pageViewsToday || 0}</div>
             <p className="text-xs text-muted-foreground">Total views since midnight</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Cart Additions Today</CardTitle>
+            <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{cartData?.count || 0}</div>
+            <p className="text-xs text-muted-foreground">Products added to cart</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Checkouts Today</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{checkoutData?.count || 0}</div>
+            <p className="text-xs text-muted-foreground">Successful orders</p>
           </CardContent>
         </Card>
       </div>
@@ -933,33 +970,62 @@ function AnalyticsDashboard() {
         </CardContent>
       </Card>
 
-      {/* Traffic Sources */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Traffic Sources Today</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {sourcesLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            </div>
-          ) : trafficSources.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-8 text-center">No traffic data yet today</p>
-          ) : (
-            <div className="space-y-4">
-              {trafficSources.map((source) => (
-                <div key={source.source} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Activity className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{source.source}</span>
+      {/* Traffic Sources and Visitor Locations */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Traffic Sources Today</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {sourcesLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : trafficSources.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No traffic data yet today</p>
+            ) : (
+              <div className="space-y-4">
+                {trafficSources.map((source) => (
+                  <div key={source.source} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Activity className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{source.source}</span>
+                    </div>
+                    <Badge>{source.count} visitors</Badge>
                   </div>
-                  <Badge>{source.count} visitors</Badge>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Visitor Locations Today</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {locationsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : locations.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No location data yet today</p>
+            ) : (
+              <div className="space-y-4">
+                {locations.map((location) => (
+                  <div key={location.country} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Activity className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{location.country}</span>
+                    </div>
+                    <Badge>{location.count} visitors</Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Recent Activity */}
       <Card>
