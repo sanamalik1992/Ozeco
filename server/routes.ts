@@ -1689,6 +1689,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { path, productId, referrer, userAgent } = req.body;
       const sessionId = req.sessionID;
 
+      // Exclude admin sessions from analytics tracking
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (isAdmin) {
+        console.log("Analytics tracking skipped - admin session");
+        return res.json({ success: true, excluded: true });
+      }
+
       // Determine traffic source from referrer
       let trafficSource = "Direct";
       if (referrer) {
