@@ -769,7 +769,7 @@ function ProductVariants({ productId, productName, onUpdateVariant, editingVaria
 }
 
 function AnalyticsDashboard() {
-  const { data: stats, isLoading: statsLoading } = useQuery<{ liveVisitors: number; pageViewsToday: number }>({
+  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery<{ liveVisitors: number; pageViewsToday: number }>({
     queryKey: ["/api/analytics/stats"],
     refetchInterval: 30000, // Refresh every 30 seconds
   });
@@ -789,10 +789,26 @@ function AnalyticsDashboard() {
     refetchInterval: 30000,
   });
 
+  // Debug logging
+  console.log("Analytics Dashboard - Stats:", stats);
+  console.log("Analytics Dashboard - Loading:", statsLoading);
+  console.log("Analytics Dashboard - Error:", statsError);
+
   if (statsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (statsError) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <p className="text-destructive font-medium">Failed to load analytics</p>
+          <p className="text-sm text-muted-foreground mt-2">{(statsError as Error).message}</p>
+        </div>
       </div>
     );
   }
