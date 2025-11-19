@@ -26,6 +26,8 @@ import {
   type InsertVisitorSession,
   type PageView,
   type InsertPageView,
+  type AnalyticsEvent,
+  type InsertAnalyticsEvent,
   users,
   products,
   cartItems,
@@ -39,6 +41,7 @@ import {
   productVariants,
   visitorSessions,
   pageViews,
+  analyticsEvents,
 } from "@shared/schema";
 import { db } from "@db";
 import { eq, and, desc, min, sql } from "drizzle-orm";
@@ -114,6 +117,10 @@ export interface IStorage {
   getTopProductsViewed(limit?: number): Promise<{ product: ProductWithPricing; views: number }[]>;
   getTrafficSources(): Promise<{ source: string; count: number }[]>;
   getRecentActivity(limit?: number): Promise<(PageView & { product?: Product | null })[]>;
+  getVisitorLocations(): Promise<{ country: string; count: number }[]>;
+  trackAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent>;
+  getCartAdditionsToday(): Promise<number>;
+  getSuccessfulCheckoutsToday(): Promise<number>;
 }
 
 export class DbStorage implements IStorage {
@@ -657,6 +664,62 @@ export class DbStorage implements IStorage {
       ...row.page_views,
       product: row.products || null,
     }));
+  }
+
+  async getVisitorLocations(): Promise<{ country: string; count: number }[]> {
+    // Get geographic breakdown of visitors today
+    const result = await db
+      .select({
+        country: visitorSessions.country,
+        count: sql<number>`count(*)`,
+      })
+      .from(visitorSessions)
+      .where(
+        and(
+          sql`first_seen::date = current_date`,
+          sql`country is not null`
+        )
+      )
+      .groupBy(visitorSessions.country)
+      .orderBy(desc(sql`count(*)`));
+
+    return result.map(row => ({
+      country: row.country || 'Unknown',
+      count: Number(row.count),
+    }));
+  }
+
+  async trackAnalyticsEvent(insertEvent: InsertAnalyticsEvent): Promise<AnalyticsEvent> {
+    const result = await db.insert(analyticsEvents).values(insertEvent).returning();
+    return result[0];
+  }
+
+  async getCartAdditionsToday(): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(analyticsEvents)
+      .where(
+        and(
+          eq(analyticsEvents.eventType, 'add_to_cart'),
+          sql`timestamp::date = current_date`
+        )
+      );
+    
+    return Number(result[0]?.count || 0);
+  }
+
+  async getSuccessfulCheckoutsToday(): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(analyticsEvents)
+      .where(
+        and(
+          eq(analyticsEvents.eventType, 'checkout_success'),
+          sql`timestamp::date = current_date`
+        )
+      );
+    
+    return Number(result[0]?.count || 0);
   }
 }
 

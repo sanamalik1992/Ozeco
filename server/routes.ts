@@ -1749,7 +1749,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Get client IP and geolocation
       const ipAddress = getClientIP(req);
-      let location = { country: null, city: null };
+      let location: { country: string | null; city: string | null } = { country: null, city: null };
       if (ipAddress) {
         location = await getLocationFromIP(ipAddress);
       }
@@ -1871,6 +1871,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(activity);
     } catch (error: any) {
       console.error("Recent activity analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/locations", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const locations = await storage.getVisitorLocations();
+      res.json(locations);
+    } catch (error: any) {
+      console.error("Visitor locations analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/cart-additions", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const count = await storage.getCartAdditionsToday();
+      res.json({ count });
+    } catch (error: any) {
+      console.error("Cart additions analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/checkouts", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const count = await storage.getSuccessfulCheckoutsToday();
+      res.json({ count });
+    } catch (error: any) {
+      console.error("Successful checkouts analytics error:", error);
       res.status(500).json({ error: error.message });
     }
   });
