@@ -64,6 +64,7 @@ The platform is built with a modern web stack designed for performance and scala
 - **Wishlist/Favorites**: Session-based favorites system with heart icon buttons throughout the site. Dedicated wishlist page shows saved products with quick add-to-cart functionality.
 - **Customer Photo Gallery**: User-generated content gallery showcasing customer photos with their Electric bikes. Photos are moderated (approved flag) and linked to specific products. Encourages social proof and engagement.
 - **Blog System**: Full-featured blog with posts, categories, featured images with error handling and fallback placeholders, and view tracking. Blog images are stored in `public/blog/` directory and served from `/blog/` path.
+- **Analytics System**: Comprehensive Shopify-style analytics dashboard in admin panel tracking live visitors (sessions active within 5 minutes), daily page views, top-performing products, traffic sources (Facebook, Google, Instagram, Twitter, Direct, Referral), and recent visitor activity. Automatic traffic source detection from referrer headers. Admin sessions excluded from tracking to prevent owner's browsing from inflating statistics. Auto-refresh intervals: stats every 30s, products/sources every 60s. Path-based tracking for product pages prevents double-counting. Fallback timeout (1000ms) ensures slow-loading product pages are still tracked.
 
 ### System Design Choices
 - **API Routes**: Standard RESTful API for products, cart management, and reviews.
@@ -76,6 +77,8 @@ The platform is built with a modern web stack designed for performance and scala
     - `newsletter_subscribers`: Stores subscriber emails, discount codes, and subscription timestamps.
     - `favorites`: Session-based wishlist/favorites system linking session IDs to product IDs.
     - `customer_photos`: User-generated content gallery with product ID references, customer names, image URLs, captions, and approval status.
+    - `visitor_sessions`: Tracks unique visitor sessions with session_id (PK), first_seen, last_seen, referrer, user_agent, and traffic_source fields for analytics.
+    - `page_views`: Records individual page views with session_id (FK to visitor_sessions), path, product_id (nullable), and viewed_at timestamp.
 
 ## External Dependencies
 - **Database**: PostgreSQL (via Neon)
