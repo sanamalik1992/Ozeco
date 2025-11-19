@@ -1731,8 +1731,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/analytics/stats", async (req, res) => {
     try {
       // Check if user is admin
+      console.log("Analytics stats - Session:", req.session);
+      console.log("Analytics stats - isAdmin:", (req.session as any)?.isAdmin);
       const isAdmin = req.session && (req.session as any).isAdmin === true;
       if (!isAdmin) {
+        console.log("Analytics stats - Access denied, isAdmin:", isAdmin);
         return res.status(403).json({ error: "Unauthorized" });
       }
 
