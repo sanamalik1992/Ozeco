@@ -493,6 +493,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (req.session) {
           (req.session as any).isAdmin = true;
         }
+        
+        // Set a SIGNED persistent cookie to mark this browser as admin
+        // This ensures analytics exclusion works across all pages and prevents spoofing
+        res.cookie('ozeco_admin', 'authenticated', {
+          signed: true, // Use signed cookie to prevent tampering
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days (shorter for security)
+          sameSite: 'lax',
+        });
+        
         res.json({ success: true });
       } else {
         res.status(401).json({ error: "Invalid password" });
@@ -507,6 +518,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.session) {
         (req.session as any).isAdmin = false;
       }
+      
+      // Clear the admin cookie so analytics tracking resumes
+      res.clearCookie('ozeco_admin', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      });
+      
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -1689,15 +1708,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { path, productId, referrer, userAgent } = req.body;
       const sessionId = req.sessionID;
 
-      // Exclude admin sessions from analytics tracking
-      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      // Check multiple ways to identify admin users
+      const isAdminSession = req.session && (req.session as any).isAdmin === true;
+      const hasAdminCookie = req.signedCookies && req.signedCookies.ozeco_admin === 'authenticated';
       const isAdminPath = path && path.startsWith('/admin');
       
-      console.log("📊 Analytics track - Path:", path, "Session ID:", sessionId, "isAdmin:", isAdmin, "isAdminPath:", isAdminPath, "Session exists:", !!req.session);
+      console.log("📊 Analytics track - Path:", path, "Session ID:", sessionId, "isAdminSession:", isAdminSession, "hasAdminCookie:", hasAdminCookie, "isAdminPath:", isAdminPath);
       
-      // Skip tracking if user is admin OR viewing admin pages
-      if (isAdmin || isAdminPath) {
-        console.log("✅ Analytics tracking skipped - admin:", isAdmin, "admin path:", isAdminPath);
+      // Skip tracking if user is admin (session OR signed cookie) OR viewing admin pages
+      if (isAdminSession || hasAdminCookie || isAdminPath) {
+        console.log("✅ Analytics tracking skipped - session:", isAdminSession, "cookie:", hasAdminCookie, "path:", isAdminPath);
         return res.json({ success: true, excluded: true });
       }
 

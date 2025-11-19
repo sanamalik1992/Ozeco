@@ -1,5 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
+import cookieParser from "cookie-parser";
 import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -9,6 +10,9 @@ const app = express();
 
 // Trust proxy for Replit deployment (needed for secure cookies behind HTTPS proxy)
 app.set('trust proxy', 1);
+
+// Cookie parser middleware with secret for signed cookies (must be before session)
+app.use(cookieParser(process.env.SESSION_SECRET || 'ozeco-secret-key-change-in-production'));
 
 // Session configuration - secure: 'auto' works for both HTTP (dev) and HTTPS (prod)
 app.use(session({
