@@ -532,6 +532,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Set admin exclusion cookie directly (simplified approach)
+  app.post("/api/admin/set-exclusion", async (req, res) => {
+    try {
+      // Check if user is admin (already logged into dashboard)
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      // Set the signed admin exclusion cookie
+      res.cookie('ozeco_admin', 'authenticated', {
+        signed: true,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+        sameSite: 'lax',
+      });
+
+      console.log("✅ Admin exclusion cookie set");
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.get("/api/admin/check", async (req, res) => {
     try {
       const isAdmin = req.session && (req.session as any).isAdmin === true;

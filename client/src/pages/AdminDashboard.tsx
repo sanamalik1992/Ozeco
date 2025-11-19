@@ -769,6 +769,9 @@ function ProductVariants({ productId, productName, onUpdateVariant, editingVaria
 }
 
 function AnalyticsDashboard() {
+  const { toast } = useToast();
+  const [isExcluded, setIsExcluded] = useState(false);
+
   const { data: stats, isLoading: statsLoading, error: statsError } = useQuery<{ liveVisitors: number; pageViewsToday: number }>({
     queryKey: ["/api/analytics/stats"],
     refetchInterval: 30000, // Refresh every 30 seconds
@@ -794,6 +797,28 @@ function AnalyticsDashboard() {
   console.log("Analytics Dashboard - Loading:", statsLoading);
   console.log("Analytics Dashboard - Error:", statsError);
 
+  const excludeMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/admin/set-exclusion", {});
+      if (!response.ok) throw new Error("Failed to set exclusion");
+      return response.json();
+    },
+    onSuccess: () => {
+      setIsExcluded(true);
+      toast({
+        title: "Success!",
+        description: "Your visits will no longer be counted in analytics.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to exclude your visits. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   if (statsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -815,6 +840,37 @@ function AnalyticsDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Exclude Your Visits Button */}
+      <Card className="bg-primary/5 border-primary/20">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold mb-1">Exclude Your Visits from Analytics</h3>
+              <p className="text-sm text-muted-foreground">
+                Click this button to stop counting your own browsing in the analytics. This setting will last for 30 days.
+              </p>
+            </div>
+            <Button
+              onClick={() => excludeMutation.mutate()}
+              disabled={excludeMutation.isPending || isExcluded}
+              variant={isExcluded ? "outline" : "default"}
+              data-testid="button-exclude-visits"
+            >
+              {excludeMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Excluding...
+                </>
+              ) : isExcluded ? (
+                "✓ Excluded"
+              ) : (
+                "Exclude My Visits"
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
