@@ -152,6 +152,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const item = await storage.addToCart(validated);
+      
+      // Track cart addition analytics event (fire-and-forget, isolated from commerce flow)
+      try {
+        void storage.trackAnalyticsEvent('add_to_cart', sessionId, validated.productId).catch((error) => {
+          console.error('Failed to track cart addition analytics (async):', error);
+        });
+      } catch (error) {
+        console.error('Failed to track cart addition analytics (sync):', error);
+      }
+      
       res.status(201).json(item);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -1151,6 +1161,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Clear the cart (only after successful transaction)
       await storage.clearCart(sessionId);
+
+      // Track successful checkout analytics event (fire-and-forget, isolated from commerce flow)
+      try {
+        void storage.trackAnalyticsEvent('checkout_complete', sessionId).catch((error) => {
+          console.error('Failed to track checkout analytics (async):', error);
+        });
+      } catch (error) {
+        console.error('Failed to track checkout analytics (sync):', error);
+      }
 
       // Clear shipping data from session
       delete (req.session as any).shippingData;
