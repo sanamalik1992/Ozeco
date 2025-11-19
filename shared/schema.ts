@@ -253,6 +253,9 @@ export const visitorSessions = pgTable("visitor_sessions", {
   referrer: text("referrer"),
   userAgent: text("user_agent"),
   trafficSource: text("traffic_source"), // e.g., "Facebook", "Google", "Direct", etc.
+  ipAddress: text("ip_address"),
+  country: text("country"),
+  city: text("city"),
 });
 
 export const insertVisitorSessionSchema = createInsertSchema(visitorSessions).omit({
@@ -277,3 +280,20 @@ export const insertPageViewSchema = createInsertSchema(pageViews).omit({
 
 export type InsertPageView = z.infer<typeof insertPageViewSchema>;
 export type PageView = typeof pageViews.$inferSelect;
+
+export const analyticsEvents = pgTable("analytics_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: text("session_id").notNull(),
+  eventType: text("event_type").notNull(), // "add_to_cart" or "checkout_success"
+  productId: varchar("product_id").references(() => products.id),
+  orderId: varchar("order_id").references(() => orders.id),
+  timestamp: timestamp("timestamp").notNull().default(sql`now()`),
+});
+
+export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents).omit({
+  id: true,
+  timestamp: true,
+});
+
+export type InsertAnalyticsEvent = z.infer<typeof insertAnalyticsEventSchema>;
+export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
