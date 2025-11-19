@@ -8,6 +8,7 @@ import Stripe from "stripe";
 import { createPaypalOrder, capturePaypalOrder, loadPaypalDefault, isPayPalConfigured } from "./paypal";
 import { sendOrderConfirmationEmail, sendShippingConfirmationEmail } from "./email";
 import { getUncachableResendClient } from "./resend";
+import { getClientIP, getLocationFromIP } from "./geolocation";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
@@ -1746,6 +1747,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json({ success: true, excluded: true });
       }
 
+      // Get client IP and geolocation
+      const ipAddress = getClientIP(req);
+      let location = { country: null, city: null };
+      if (ipAddress) {
+        location = await getLocationFromIP(ipAddress);
+      }
+
       // Determine traffic source from referrer
       let trafficSource = "Direct";
       if (referrer) {
@@ -1761,7 +1769,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         else trafficSource = "Referral";
       }
 
-      // Upsert visitor session
+      // Upsert visitor session with location data
       await storage.upsertVisitorSession({
         sessionId,
         firstSeen: new Date(),
@@ -1769,6 +1777,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         referrer: referrer || null,
         userAgent: userAgent || null,
         trafficSource,
+        ipAddress: ipAddress || null,
+        country: location.country,
+        city: location.city,
       });
 
       // Track page view

@@ -554,10 +554,15 @@ export class DbStorage implements IStorage {
       .where(eq(visitorSessions.sessionId, insertSession.sessionId));
 
     if (existing.length > 0) {
-      // Update last seen timestamp
+      // Update last seen timestamp (and location if newly provided)
+      const updateData: any = { lastSeen: sql`now()` };
+      if (insertSession.country) updateData.country = insertSession.country;
+      if (insertSession.city) updateData.city = insertSession.city;
+      if (insertSession.ipAddress) updateData.ipAddress = insertSession.ipAddress;
+      
       const result = await db
         .update(visitorSessions)
-        .set({ lastSeen: sql`now()` })
+        .set(updateData)
         .where(eq(visitorSessions.sessionId, insertSession.sessionId))
         .returning();
       return result[0];
