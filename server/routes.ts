@@ -2028,7 +2028,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'mpn'
       ]);
 
-      const baseUrl = process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://ozeco.co.uk';
+      const baseUrl = 'https://www.ozeco.co.uk';
 
       // Helper to safely format and validate price - throws on invalid data
       const formatPrice = (price: string | number | null | undefined, productName: string): string => {
