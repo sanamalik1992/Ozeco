@@ -771,6 +771,35 @@ function ProductVariants({ productId, productName, onUpdateVariant, editingVaria
 function AnalyticsDashboard() {
   const { toast } = useToast();
   const [isExcluded, setIsExcluded] = useState(false);
+  const [dateFilter, setDateFilter] = useState<'today' | 'yesterday' | 'last7' | 'last30' | 'all'>('today');
+
+  // Calculate date ranges based on filter
+  const getDateRange = () => {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const yesterday = new Date(now.setDate(now.getDate() - 1)).toISOString().split('T')[0];
+    
+    switch (dateFilter) {
+      case 'today':
+        return { startDate: today, endDate: today };
+      case 'yesterday':
+        return { startDate: yesterday, endDate: yesterday };
+      case 'last7':
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        return { startDate: sevenDaysAgo.toISOString().split('T')[0], endDate: today };
+      case 'last30':
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        return { startDate: thirtyDaysAgo.toISOString().split('T')[0], endDate: today };
+      case 'all':
+        return { startDate: undefined, endDate: undefined };
+      default:
+        return { startDate: today, endDate: today };
+    }
+  };
+
+  const { startDate, endDate } = getDateRange();
 
   const { data: stats, isLoading: statsLoading, error: statsError } = useQuery<{ liveVisitors: number; pageViewsToday: number }>({
     queryKey: ["/api/analytics/stats"],
@@ -805,6 +834,16 @@ function AnalyticsDashboard() {
   const { data: checkoutData } = useQuery<{ count: number }>({
     queryKey: ["/api/analytics/checkouts"],
     refetchInterval: 60000,
+  });
+
+  const { data: pageViewsOverTime = [], isLoading: pageViewsLoading } = useQuery<Array<{ date: string; views: number }>>({
+    queryKey: ["/api/analytics/page-views-over-time", { startDate, endDate }],
+    enabled: !!startDate || dateFilter === 'all',
+  });
+
+  const { data: productViewsOverTime = [], isLoading: productViewsLoading } = useQuery<Array<{ date: string; views: number }>>({
+    queryKey: ["/api/analytics/product-views-over-time", { startDate, endDate }],
+    enabled: !!startDate || dateFilter === 'all',
   });
 
   // Debug logging
@@ -1060,6 +1099,132 @@ function AnalyticsDashboard() {
               ))}
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Views Over Time */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <CardTitle>Views Over Time</CardTitle>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                size="sm"
+                variant={dateFilter === 'today' ? 'default' : 'outline'}
+                onClick={() => setDateFilter('today')}
+                data-testid="button-filter-today"
+              >
+                Today
+              </Button>
+              <Button
+                size="sm"
+                variant={dateFilter === 'yesterday' ? 'default' : 'outline'}
+                onClick={() => setDateFilter('yesterday')}
+                data-testid="button-filter-yesterday"
+              >
+                Yesterday
+              </Button>
+              <Button
+                size="sm"
+                variant={dateFilter === 'last7' ? 'default' : 'outline'}
+                onClick={() => setDateFilter('last7')}
+                data-testid="button-filter-last7"
+              >
+                Last 7 Days
+              </Button>
+              <Button
+                size="sm"
+                variant={dateFilter === 'last30' ? 'default' : 'outline'}
+                onClick={() => setDateFilter('last30')}
+                data-testid="button-filter-last30"
+              >
+                Last 30 Days
+              </Button>
+              <Button
+                size="sm"
+                variant={dateFilter === 'all' ? 'default' : 'outline'}
+                onClick={() => setDateFilter('all')}
+                data-testid="button-filter-all"
+              >
+                All Time
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Page Views */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <Eye className="h-4 w-4" />
+                Page Views
+              </h3>
+              {pageViewsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : pageViewsOverTime.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">No page views in this period</p>
+              ) : (
+                <div className="border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Views</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pageViewsOverTime.map((row) => (
+                        <TableRow key={row.date}>
+                          <TableCell>{new Date(row.date).toLocaleDateString('en-GB')}</TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">{row.views}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+
+            {/* Product Views */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Product Views
+              </h3>
+              {productViewsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : productViewsOverTime.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">No product views in this period</p>
+              ) : (
+                <div className="border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Views</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {productViewsOverTime.map((row) => (
+                        <TableRow key={row.date}>
+                          <TableCell>{new Date(row.date).toLocaleDateString('en-GB')}</TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">{row.views}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
