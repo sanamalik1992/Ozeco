@@ -2029,7 +2029,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ]);
 
       const baseUrl = 'https://www.ozeco.co.uk';
-      const fallbackImage = 'https://www.ozeco.co.uk/placeholder.jpg';
+      // Use a generic product image from your site as fallback
+      const fallbackImage = 'https://www.ozeco.co.uk/cdn/shop/files/hyw8o05i.png?v=1747601600&width=533';
 
       // Helper to safely format and validate price - throws on invalid data
       const formatPrice = (price: string | number | null | undefined, productName: string): string => {
@@ -2067,10 +2068,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return decoded.substring(0, maxLength).trim();
       };
 
-      // Helper to ensure image URL is valid
+      // Helper to ensure image URL is valid and accessible
       const sanitizeImageUrl = (url: string | null | undefined): string => {
         if (!url || url.trim() === '') return fallbackImage;
-        return url.trim();
+        const trimmedUrl = url.trim();
+        // Ensure it's a valid absolute URL
+        if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
+          return fallbackImage;
+        }
+        return trimmedUrl;
       };
 
       for (const product of allProducts) {
