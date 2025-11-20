@@ -1988,6 +1988,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Google Merchant Centre export
+  app.post("/api/admin/export-to-merchant-centre", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const { spreadsheetId } = req.body;
+      if (!spreadsheetId) {
+        return res.status(400).json({ error: "Spreadsheet ID is required" });
+      }
+
+      // Get Google Sheets client
+      const { getUncachableGoogleSheetClient } = await import("./google-sheets");
+      const sheets = await getUncachableGoogleSheetClient();
+
+      // Fetch all products with variants
+      const allProducts = await storage.getAllProducts();
+      
+      // Build merchant feed rows
+      const merchantFeedRows: string[][] = [];
+      
+      // Header row (Google Merchant Centre required fields)
+      merchantFeedRows.push([
+        'id',
+        'title',
+        'description',
+        'link',
+        'image_link',
+        'price',
+        'availability',
+        'condition',
+        'brand',
+        'google_product_category',
+        'product_type',
+        'mpn'
+      ]);
+
+      const baseUrl = process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://ozeco.co.uk';
+
+      for (const product of allProducts) {
+        // Get variants for this product
+        const variants = await storage.getProductVariants(product.id);
+
+        if (variants.length > 0) {
+          // Create a row for each variant
+          for (const variant of variants) {
+            const variantId = `${product.id}_${variant.id}`;
+            const variantTitle = `${product.name} - ${variant.value}`;
+            const variantPrice = `${variant.price} GBP`;
+            const availability = variant.inStock ? 'in stock' : 'out of stock';
+
+            merchantFeedRows.push([
+              variantId,
+              variantTitle,
+              product.description || '',
+              `${baseUrl}/product/${product.slug}`,
+              variant.image || product.images[0] || '',
+              variantPrice,
+              availability,
+              'new',
+              product.brand,
+              'Vehicles & Parts > Vehicles > Motor Vehicles > Motor Bikes',
+              `Electric bikes > ${product.category}`,
+              product.id
+            ]);
+          }
+        } else {
+          // No variants - create single row for the product
+          const productId = product.id;
+          const productPrice = `${product.price} GBP`;
+          const availability = product.inStock ? 'in stock' : 'out of stock';
+
+          merchantFeedRows.push([
+            productId,
+            product.name,
+            product.description || '',
+            `${baseUrl}/product/${product.slug}`,
+            product.images[0] || '',
+            productPrice,
+            availability,
+            'new',
+            product.brand,
+            'Vehicles & Parts > Vehicles > Motor Vehicles > Motor Bikes',
+            `Electric bikes > ${product.category}`,
+            product.id
+          ]);
+        }
+      }
+
+      // Clear existing data and write new data to sheet
+      await sheets.spreadsheets.values.clear({
+        spreadsheetId,
+        range: 'A1:Z',
+      });
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: 'A1',
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: merchantFeedRows,
+        },
+      });
+
+      res.json({ 
+        success: true, 
+        message: `Exported ${merchantFeedRows.length - 1} products to Google Merchant Centre feed`,
+        rows: merchantFeedRows.length - 1
+      });
+    } catch (error: any) {
+      console.error("Export to Merchant Centre error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
