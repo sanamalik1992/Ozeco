@@ -773,25 +773,34 @@ function AnalyticsDashboard() {
   const [isExcluded, setIsExcluded] = useState(false);
   const [dateFilter, setDateFilter] = useState<'today' | 'yesterday' | 'last7' | 'last30' | 'all'>('today');
 
-  // Calculate date ranges based on filter
+  // Calculate date ranges based on filter (returns yyyy-mm-dd strings, server handles timezone)
   const getDateRange = () => {
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    
     const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    const yesterday = new Date(now.setDate(now.getDate() - 1)).toISOString().split('T')[0];
+    const today = formatDate(now);
     
     switch (dateFilter) {
       case 'today':
         return { startDate: today, endDate: today };
       case 'yesterday':
-        return { startDate: yesterday, endDate: yesterday };
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = formatDate(yesterday);
+        return { startDate: yesterdayStr, endDate: yesterdayStr };
       case 'last7':
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        return { startDate: sevenDaysAgo.toISOString().split('T')[0], endDate: today };
+        return { startDate: formatDate(sevenDaysAgo), endDate: today };
       case 'last30':
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        return { startDate: thirtyDaysAgo.toISOString().split('T')[0], endDate: today };
+        return { startDate: formatDate(thirtyDaysAgo), endDate: today };
       case 'all':
         return { startDate: undefined, endDate: undefined };
       default:
