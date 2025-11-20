@@ -2047,9 +2047,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const variants = await storage.getProductVariants(product.id);
 
         if (variants.length > 0) {
-          // Create a row for each variant with unique IDs
+          // Create a row for each variant with unique IDs (Google max 50 chars)
           for (const variant of variants) {
-            const variantId = `${product.id}-${variant.id}`;
+            // Use format: P{productId}V{variantId} - shorter and cleaner
+            const variantId = `P${product.id}V${variant.id}`;
             const variantTitle = `${product.name} - ${variant.value}`;
             // Use variant price if set, otherwise fall back to product price (nullish coalescing)
             const priceToUse = variant.price ?? product.price;
@@ -2073,12 +2074,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ]);
           }
         } else {
-          // No variants - create single row for the product
+          // No variants - create single row for the product (Google max 50 chars)
+          const productId = `P${product.id}`;
           const productPrice = `${formatPrice(product.price, product.name)} GBP`;
           const availability = product.inStock ? 'in stock' : 'out of stock';
 
           merchantFeedRows.push([
-            product.id,
+            productId,
             product.name,
             product.description || '',
             `${baseUrl}/product/${product.slug}`,
@@ -2089,7 +2091,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             product.brand,
             'Vehicles & Parts > Vehicles > Motor Vehicles > Motor Bikes',
             `Electric bikes > ${product.category}`,
-            product.id
+            productId
           ]);
         }
       }
