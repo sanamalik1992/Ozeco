@@ -48,7 +48,7 @@ export default function ReturnsPolicy() {
                 Once we receive your returned bike and verify its condition:
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li>We'll process your refund within 3-5 business days</li>
+                <li>We'll process your refund within 5 business days</li>
                 <li>Refunds are issued to your original payment method</li>
                 <li>You'll receive an email confirmation when your refund is processed</li>
                 <li>Bank processing times may vary (typically 5-10 business days)</li>
