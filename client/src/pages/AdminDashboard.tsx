@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit, ImageIcon, BarChart3, Eye, Users, Activity } from "lucide-react";
+import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit, ImageIcon, BarChart3, Eye, Users, Activity, FileSpreadsheet } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -72,6 +72,100 @@ type VariantFormValues = z.infer<typeof variantFormSchema>;
 interface ManageVariantsDialogProps {
   productId: string;
   productName: string;
+}
+
+function ExportToMerchantCentreButton() {
+  const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
+  const [spreadsheetId, setSpreadsheetId] = useState("1FyGvqJ3YUc8gh9m3gNxhsFIRAsZPcRTiYfrzyVf8O8k");
+
+  const exportMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/admin/export-to-merchant-centre", { spreadsheetId });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to export products");
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Export successful",
+        description: `${data.rows} products exported to Google Merchant Centre feed`,
+      });
+      setIsOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Export failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <>
+      <Button
+        variant="default"
+        onClick={() => setIsOpen(true)}
+        data-testid="button-export-merchant-centre"
+        className="bg-primary"
+      >
+        <FileSpreadsheet className="h-4 w-4 mr-2" />
+        Export to Google Merchant Centre
+      </Button>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Export to Google Merchant Centre</DialogTitle>
+            <DialogDescription>
+              This will export all products (including variants) to your Google Sheet in the correct format for Google Merchant Centre.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="spreadsheet-id">Google Spreadsheet ID</Label>
+              <Input
+                id="spreadsheet-id"
+                value={spreadsheetId}
+                onChange={(e) => setSpreadsheetId(e.target.value)}
+                placeholder="Enter spreadsheet ID"
+                data-testid="input-spreadsheet-id"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Find this in your Google Sheet URL: docs.google.com/spreadsheets/d/<strong>SPREADSHEET_ID</strong>/edit
+              </p>
+            </div>
+            <div className="bg-muted p-3 rounded-md text-sm">
+              <p className="font-semibold mb-2">Export includes:</p>
+              <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                <li>All products with their variants</li>
+                <li>Product titles, descriptions, and images</li>
+                <li>Pricing in GBP</li>
+                <li>Stock availability status</li>
+                <li>Brand and category information</li>
+              </ul>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setIsOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => exportMutation.mutate()} 
+                disabled={exportMutation.isPending || !spreadsheetId}
+                data-testid="button-confirm-export"
+              >
+                {exportMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                Export Products
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
 
 function ProductionResetButton() {
@@ -1796,6 +1890,32 @@ export default function AdminDashboard() {
                     </TableBody>
                   </Table>
                 )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-primary/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileSpreadsheet className="h-5 w-5" />
+                  Google Merchant Centre
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Export your product catalogue to Google Sheets in the format required for Google Merchant Centre.
+                </p>
+                <div className="bg-muted p-4 rounded-md space-y-2">
+                  <p className="text-sm font-semibold">What gets exported:</p>
+                  <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                    <li>All products including variants (colors, sizes, battery options)</li>
+                    <li>Product IDs, titles, descriptions, and links</li>
+                    <li>Image URLs and pricing in GBP</li>
+                    <li>Stock availability (in stock / out of stock)</li>
+                    <li>Brand names and Google product categories</li>
+                    <li>Formatted ready for Google Merchant Centre upload</li>
+                  </ul>
+                </div>
+                <ExportToMerchantCentreButton />
               </CardContent>
             </Card>
 

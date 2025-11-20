@@ -2040,7 +2040,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const variantId = `${product.id}_${variant.id}`;
             const variantTitle = `${product.name} - ${variant.value}`;
             const variantPrice = `${variant.price} GBP`;
-            const availability = variant.inStock ? 'in stock' : 'out of stock';
+            const availability = variant.stockQuantity > 0 ? 'in stock' : 'out of stock';
 
             merchantFeedRows.push([
               variantId,
