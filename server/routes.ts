@@ -2030,41 +2030,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const baseUrl = process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://ozeco.co.uk';
 
+      // Helper to safely format and validate price - throws on invalid data
+      const formatPrice = (price: string | number | null | undefined, productName: string): string => {
+        if (price === null || price === undefined || price === '') {
+          throw new Error(`Missing price for product: ${productName}`);
+        }
+        const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+        if (isNaN(numericPrice) || numericPrice < 0) {
+          throw new Error(`Invalid price (${price}) for product: ${productName}`);
+        }
+        return numericPrice.toFixed(2);
+      };
+
       for (const product of allProducts) {
         // Get variants for this product
         const variants = await storage.getProductVariants(product.id);
 
         if (variants.length > 0) {
-          // Create a row for each variant
+          // Create a row for each variant with unique IDs
           for (const variant of variants) {
-            const variantId = `${product.id}_${variant.id}`;
+            const variantId = `${product.id}-${variant.id}`;
             const variantTitle = `${product.name} - ${variant.value}`;
-            const variantPrice = `${variant.price} GBP`;
+            // Use variant price if set, otherwise fall back to product price (nullish coalescing)
+            const priceToUse = variant.price ?? product.price;
+            const variantPrice = `${formatPrice(priceToUse, variantTitle)} GBP`;
             const availability = variant.stockQuantity > 0 ? 'in stock' : 'out of stock';
+            const variantImage = variant.image || product.images[0] || '';
 
             merchantFeedRows.push([
               variantId,
               variantTitle,
               product.description || '',
               `${baseUrl}/product/${product.slug}`,
-              variant.image || product.images[0] || '',
+              variantImage,
               variantPrice,
               availability,
               'new',
               product.brand,
               'Vehicles & Parts > Vehicles > Motor Vehicles > Motor Bikes',
               `Electric bikes > ${product.category}`,
-              product.id
+              variantId
             ]);
           }
         } else {
           // No variants - create single row for the product
-          const productId = product.id;
-          const productPrice = `${product.price} GBP`;
+          const productPrice = `${formatPrice(product.price, product.name)} GBP`;
           const availability = product.inStock ? 'in stock' : 'out of stock';
 
           merchantFeedRows.push([
-            productId,
+            product.id,
             product.name,
             product.description || '',
             `${baseUrl}/product/${product.slug}`,
@@ -2080,29 +2094,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Clear existing data and write new data to sheet
-      await sheets.spreadsheets.values.clear({
-        spreadsheetId,
-        range: 'A1:Z',
-      });
+      // Clear existing data and write new data to sheet with proper error handling
+      try {
+        await sheets.spreadsheets.values.clear({
+          spreadsheetId,
+          range: 'A1:Z',
+        });
 
-      await sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range: 'A1',
-        valueInputOption: 'RAW',
-        requestBody: {
-          values: merchantFeedRows,
-        },
-      });
+        await sheets.spreadsheets.values.update({
+          spreadsheetId,
+          range: 'A1',
+          valueInputOption: 'RAW',
+          requestBody: {
+            values: merchantFeedRows,
+          },
+        });
 
-      res.json({ 
-        success: true, 
-        message: `Exported ${merchantFeedRows.length - 1} products to Google Merchant Centre feed`,
-        rows: merchantFeedRows.length - 1
-      });
+        res.json({ 
+          success: true, 
+          message: `Exported ${merchantFeedRows.length - 1} products to Google Merchant Centre feed`,
+          rows: merchantFeedRows.length - 1
+        });
+      } catch (sheetsError: any) {
+        console.error("Google Sheets API error:", sheetsError);
+        return res.status(500).json({ 
+          error: `Failed to write to Google Sheets: ${sheetsError.message || 'Unknown error'}` 
+        });
+      }
     } catch (error: any) {
       console.error("Export to Merchant Centre error:", error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message || 'Failed to export products' });
     }
   });
 
