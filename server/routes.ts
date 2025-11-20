@@ -2072,10 +2072,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sanitizeImageUrl = (url: string | null | undefined): string => {
         if (!url || url.trim() === '') return fallbackImage;
         const trimmedUrl = url.trim();
+        
+        // Convert relative paths to absolute URLs
+        if (trimmedUrl.startsWith('/')) {
+          return `${baseUrl}${trimmedUrl}`;
+        }
+        
         // Ensure it's a valid absolute URL
         if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
           return fallbackImage;
         }
+        
         return trimmedUrl;
       };
 
