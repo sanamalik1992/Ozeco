@@ -2123,7 +2123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error: any) {
       console.error("Export to Merchant Centre error:", error);
-      res.status(500).json({ error: error.message || 'Failed to export products' });
+      return res.status(500).json({ error: error.message || 'Failed to export products' });
     }
   });
 
