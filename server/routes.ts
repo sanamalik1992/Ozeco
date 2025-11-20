@@ -2029,6 +2029,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ]);
 
       const baseUrl = 'https://www.ozeco.co.uk';
+      const fallbackImage = 'https://www.ozeco.co.uk/placeholder.jpg';
 
       // Helper to safely format and validate price - throws on invalid data
       const formatPrice = (price: string | number | null | undefined, productName: string): string => {
@@ -2042,57 +2043,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return numericPrice.toFixed(2);
       };
 
+      // Helper to sanitize and validate ID (max 50 chars, alphanumeric + dashes/underscores only)
+      const sanitizeId = (id: string | number): string => {
+        const sanitized = String(id).replace(/[^a-zA-Z0-9_-]/g, '').substring(0, 50);
+        if (!sanitized) throw new Error(`Invalid ID after sanitization: ${id}`);
+        return sanitized;
+      };
+
+      // Helper to strip HTML and truncate text to specified length
+      const sanitizeText = (text: string | null | undefined, maxLength: number): string => {
+        if (!text) return '';
+        // Remove HTML tags
+        const stripped = text.replace(/<[^>]*>/g, '');
+        // Decode HTML entities
+        const decoded = stripped
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'");
+        // Truncate to max length
+        return decoded.substring(0, maxLength).trim();
+      };
+
+      // Helper to ensure image URL is valid
+      const sanitizeImageUrl = (url: string | null | undefined): string => {
+        if (!url || url.trim() === '') return fallbackImage;
+        return url.trim();
+      };
+
       for (const product of allProducts) {
+        // Validate required fields
+        if (!product.brand) {
+          console.warn(`Skipping product ${product.id} - missing brand`);
+          continue;
+        }
+        if (!product.category) {
+          console.warn(`Skipping product ${product.id} - missing category`);
+          continue;
+        }
+
         // Get variants for this product
         const variants = await storage.getProductVariants(product.id);
 
         if (variants.length > 0) {
-          // Create a row for each variant with unique IDs (Google max 50 chars)
+          // Create a row for each variant with unique IDs
           for (const variant of variants) {
-            // Use format: P{productId}V{variantId} - shorter and cleaner
-            const variantId = `P${product.id}V${variant.id}`;
-            const variantTitle = `${product.name} - ${variant.value}`;
-            // Use variant price if set, otherwise fall back to product price (nullish coalescing)
-            const priceToUse = variant.price ?? product.price;
-            const variantPrice = `${formatPrice(priceToUse, variantTitle)} GBP`;
-            const availability = variant.stockQuantity > 0 ? 'in stock' : 'out of stock';
-            const variantImage = variant.image || product.images[0] || '';
+            try {
+              // Sanitize IDs (Google max 50 chars, alphanumeric only)
+              const variantId = sanitizeId(`P${product.id}V${variant.id}`);
+              // Sanitize title (Google max 150 chars)
+              const variantTitle = sanitizeText(`${product.name} - ${variant.value}`, 150);
+              // Sanitize description (Google max 5000 chars, strip HTML)
+              const description = sanitizeText(product.description, 5000);
+              // Use variant price if set, otherwise fall back to product price
+              const priceToUse = variant.price ?? product.price;
+              const variantPrice = `${formatPrice(priceToUse, variantTitle)} GBP`;
+              const availability = variant.stockQuantity > 0 ? 'in stock' : 'out of stock';
+              // Ensure image URL is valid
+              const variantImage = sanitizeImageUrl(variant.image || product.images[0]);
+
+              merchantFeedRows.push([
+                variantId,
+                variantTitle,
+                description,
+                `${baseUrl}/product/${product.slug}`,
+                variantImage,
+                variantPrice,
+                availability,
+                'new',
+                product.brand,
+                'Vehicles & Parts > Vehicles > Motor Vehicles > Motor Bikes',
+                `Electric bikes > ${product.category}`,
+                variantId
+              ]);
+            } catch (error: any) {
+              console.error(`Error processing variant ${variant.id} for product ${product.id}:`, error.message);
+              // Continue with next variant
+            }
+          }
+        } else {
+          // No variants - create single row for the product
+          try {
+            // Sanitize IDs (Google max 50 chars, alphanumeric only)
+            const productId = sanitizeId(`P${product.id}`);
+            // Sanitize title (Google max 150 chars)
+            const title = sanitizeText(product.name, 150);
+            // Sanitize description (Google max 5000 chars, strip HTML)
+            const description = sanitizeText(product.description, 5000);
+            const productPrice = `${formatPrice(product.price, product.name)} GBP`;
+            const availability = product.inStock ? 'in stock' : 'out of stock';
+            // Ensure image URL is valid
+            const image = sanitizeImageUrl(product.images[0]);
 
             merchantFeedRows.push([
-              variantId,
-              variantTitle,
-              product.description || '',
+              productId,
+              title,
+              description,
               `${baseUrl}/product/${product.slug}`,
-              variantImage,
-              variantPrice,
+              image,
+              productPrice,
               availability,
               'new',
               product.brand,
               'Vehicles & Parts > Vehicles > Motor Vehicles > Motor Bikes',
               `Electric bikes > ${product.category}`,
-              variantId
+              productId
             ]);
+          } catch (error: any) {
+            console.error(`Error processing product ${product.id}:`, error.message);
+            // Continue with next product
           }
-        } else {
-          // No variants - create single row for the product (Google max 50 chars)
-          const productId = `P${product.id}`;
-          const productPrice = `${formatPrice(product.price, product.name)} GBP`;
-          const availability = product.inStock ? 'in stock' : 'out of stock';
-
-          merchantFeedRows.push([
-            productId,
-            product.name,
-            product.description || '',
-            `${baseUrl}/product/${product.slug}`,
-            product.images[0] || '',
-            productPrice,
-            availability,
-            'new',
-            product.brand,
-            'Vehicles & Parts > Vehicles > Motor Vehicles > Motor Bikes',
-            `Electric bikes > ${product.category}`,
-            productId
-          ]);
         }
       }
 
