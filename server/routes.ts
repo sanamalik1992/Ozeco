@@ -2071,11 +2071,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Helper to ensure image URL is valid and accessible
       const sanitizeImageUrl = (url: string | null | undefined): string => {
         if (!url || url.trim() === '') return fallbackImage;
-        const trimmedUrl = url.trim();
+        let trimmedUrl = url.trim();
         
         // Convert relative paths to absolute URLs
         if (trimmedUrl.startsWith('/')) {
-          return `${baseUrl}${trimmedUrl}`;
+          trimmedUrl = `${baseUrl}${trimmedUrl}`;
         }
         
         // Ensure it's a valid absolute URL
@@ -2083,7 +2083,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return fallbackImage;
         }
         
-        return trimmedUrl;
+        // Remove query parameters that might cause encoding issues with Google
+        // Keep only the base URL without ?v=... or &width=... parameters
+        try {
+          const urlObj = new URL(trimmedUrl);
+          // Keep only the base URL without query parameters
+          return `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
+        } catch (e) {
+          console.error('Invalid URL:', trimmedUrl);
+          return fallbackImage;
+        }
       };
 
       for (const product of allProducts) {
