@@ -64,7 +64,16 @@ The platform is built with a modern web stack designed for performance and scala
 - **Wishlist/Favorites**: Session-based favorites system with heart icon buttons throughout the site. Dedicated wishlist page shows saved products with quick add-to-cart functionality.
 - **Customer Photo Gallery**: User-generated content gallery showcasing customer photos with their Electric bikes. Photos are moderated (approved flag) and linked to specific products. Encourages social proof and engagement.
 - **Blog System**: Full-featured blog with posts, categories, featured images with error handling and fallback placeholders, and view tracking. Blog images are stored in `public/blog/` directory and served from `/blog/` path.
-- **Analytics System**: Comprehensive Shopify-style analytics dashboard in admin panel tracking live visitors (sessions active within 5 minutes), daily page views, top-performing products, traffic sources (Facebook, Google, Instagram, Twitter, Direct, Referral), and recent visitor activity. Automatic traffic source detection from referrer headers. Admin sessions excluded from tracking to prevent owner's browsing from inflating statistics. Auto-refresh intervals: stats every 30s, products/sources every 60s. Path-based tracking for product pages prevents double-counting. Fallback timeout (1000ms) ensures slow-loading product pages are still tracked.
+- **Analytics System**: Comprehensive Shopify-style analytics dashboard in admin panel tracking:
+  - **Live Metrics**: Live visitors (sessions active within 5 minutes), daily page views, cart additions today, successful checkouts today
+  - **Top Products**: Top-performing products by views with auto-refresh every 60s
+  - **Traffic Sources**: Geographic breakdown showing visitor countries and traffic sources (Facebook, Google, Instagram, Twitter, Direct, Referral) with auto-refresh every 60s
+  - **Views Over Time**: Advanced date filtering for page views and product views with presets (Today, Yesterday, Last 7 Days, Last 30 Days, All Time). Displays daily breakdown in side-by-side tables for comprehensive trend analysis
+  - **Recent Activity**: Real-time visitor activity feed showing recent page and product views
+  - **Admin Exclusion**: One-click "Exclude My Visits" button to prevent owner's browsing from inflating statistics
+  - **Event Tracking**: Cart additions and checkout completions tracked via analytics_events table with fire-and-forget pattern to prevent commerce flow disruption
+  - **Geolocation**: Automatic IP-based country/city detection using ipapi.co for visitor location analytics
+  - **Auto-refresh**: Stats every 30s, products/sources/locations every 60s. Path-based tracking for product pages prevents double-counting. Fallback timeout (1000ms) ensures slow-loading product pages are still tracked.
 
 ### System Design Choices
 - **API Routes**: Standard RESTful API for products, cart management, and reviews.
