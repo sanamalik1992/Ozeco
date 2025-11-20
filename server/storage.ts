@@ -121,6 +121,8 @@ export interface IStorage {
   trackAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent>;
   getCartAdditionsToday(): Promise<number>;
   getSuccessfulCheckoutsToday(): Promise<number>;
+  getPageViewsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; views: number }[]>;
+  getProductViewsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; views: number }[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -720,6 +722,58 @@ export class DbStorage implements IStorage {
       );
     
     return Number(result[0]?.count || 0);
+  }
+
+  async getPageViewsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; views: number }[]> {
+    // Build where clause based on provided dates
+    const conditions = [];
+    if (startDate) {
+      conditions.push(sql`viewed_at::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`viewed_at::date <= ${endDate}::date`);
+    }
+
+    const result = await db
+      .select({
+        date: sql<string>`viewed_at::date`,
+        views: sql<number>`count(*)`,
+      })
+      .from(pageViews)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .groupBy(sql`viewed_at::date`)
+      .orderBy(sql`viewed_at::date DESC`);
+
+    return result.map(row => ({
+      date: row.date,
+      views: Number(row.views),
+    }));
+  }
+
+  async getProductViewsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; views: number }[]> {
+    // Build where clause based on provided dates
+    const conditions = [sql`product_id IS NOT NULL`];
+    if (startDate) {
+      conditions.push(sql`viewed_at::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`viewed_at::date <= ${endDate}::date`);
+    }
+
+    const result = await db
+      .select({
+        date: sql<string>`viewed_at::date`,
+        views: sql<number>`count(*)`,
+      })
+      .from(pageViews)
+      .where(and(...conditions))
+      .groupBy(sql`viewed_at::date`)
+      .orderBy(sql`viewed_at::date DESC`);
+
+    return result.map(row => ({
+      date: row.date,
+      views: Number(row.views),
+    }));
   }
 }
 
