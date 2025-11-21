@@ -271,10 +271,6 @@ export default function ProductDetail() {
                     {product.category}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-2 mb-4 text-primary" data-testid="dealer-badge">
-                  <ShieldCheck className="h-5 w-5" />
-                  <span className="text-sm font-semibold">Authorised UK Dealer</span>
-                </div>
                 <h1 className="text-3xl md:text-4xl font-display font-bold mb-4" data-testid="text-product-name">
                   {product.name}
                 </h1>

@@ -138,10 +138,6 @@ export default function ProductCard({
             <span className="font-semibold">Only {stockQuantity} left in stock!</span>
           </div>
         )}
-        <div className="mb-3 flex items-center gap-2 text-sm text-primary" data-testid={`dealer-badge-${id}`}>
-          <ShieldCheck className="h-4 w-4" />
-          <span className="font-medium">Authorised UK Dealer</span>
-        </div>
         <div className="flex gap-2 mb-2">
           <Button
             variant="default"
