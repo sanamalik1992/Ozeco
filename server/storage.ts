@@ -80,7 +80,7 @@ export interface IStorage {
   createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
   getAllOrders(): Promise<Order[]>;
   getOrder(id: string): Promise<Order | undefined>;
-  getOrderItems(orderId: string): Promise<(OrderItem & { product: ProductWithPricing })[]>;
+  getOrderItems(orderId: string): Promise<(OrderItem & { product: ProductWithPricing; variant?: ProductVariant | null })[]>;
   updateOrderFulfillment(id: string, fulfillmentStatus: string): Promise<Order | undefined>;
   updateOrderTracking(id: string, trackingNumber: string | null): Promise<Order | undefined>;
   
@@ -356,11 +356,12 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async getOrderItems(orderId: string): Promise<(OrderItem & { product: ProductWithPricing })[]> {
+  async getOrderItems(orderId: string): Promise<(OrderItem & { product: ProductWithPricing; variant?: ProductVariant | null })[]> {
     const result = await db
       .select()
       .from(orderItems)
       .leftJoin(products, eq(orderItems.productId, products.id))
+      .leftJoin(productVariants, eq(orderItems.variantId, productVariants.id))
       .where(eq(orderItems.orderId, orderId));
     
     const items = await Promise.all(result.map(async (row: any) => {
@@ -368,6 +369,7 @@ export class DbStorage implements IStorage {
       return {
         ...row.order_items,
         product: enrichedProduct,
+        variant: row.product_variants || null,
       };
     }));
     

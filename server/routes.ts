@@ -352,6 +352,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await db.insert(orderItems).values({
           orderId: pendingOrder.id,
           productId: item.product.id,
+          variantId: item.variant?.id || null,
           quantity: item.quantity,
           priceAtTime: price,
         });
@@ -1194,6 +1195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await db.insert(orderItems).values({
           orderId: createdOrder.id,
           productId: item.product.id,
+          variantId: item.variant?.id || null,
           quantity: item.quantity,
           priceAtTime: price,
         });

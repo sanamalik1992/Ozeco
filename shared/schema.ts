@@ -121,6 +121,7 @@ export const orderItems = pgTable("order_items", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   orderId: varchar("order_id").notNull().references(() => orders.id),
   productId: varchar("product_id").notNull().references(() => products.id),
+  variantId: varchar("variant_id").references(() => productVariants.id),
   quantity: integer("quantity").notNull(),
   priceAtTime: decimal("price_at_time", { precision: 10, scale: 2 }).notNull(),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),

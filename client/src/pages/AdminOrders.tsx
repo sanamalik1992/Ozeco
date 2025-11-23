@@ -25,6 +25,10 @@ interface OrderWithDetails extends Order {
       name: string;
       image: string;
     };
+    variant?: {
+      name: string;
+      value: string;
+    } | null;
     quantity: number;
     priceAtTime: string;
   }>;
@@ -344,6 +348,11 @@ export default function AdminOrders() {
                         />
                         <div className="flex-1">
                           <p className="font-medium">{item.product.name}</p>
+                          {item.variant && (
+                            <p className="text-sm text-primary font-medium mt-1">
+                              {item.variant.name}: {item.variant.value}
+                            </p>
+                          )}
                           <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                         </div>
                         <p className="font-semibold">£{(parseFloat(item.priceAtTime) * item.quantity).toFixed(2)}</p>
