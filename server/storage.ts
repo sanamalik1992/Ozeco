@@ -44,7 +44,7 @@ import {
   analyticsEvents,
 } from "@shared/schema";
 import { db } from "@db";
-import { eq, and, desc, min, sql } from "drizzle-orm";
+import { eq, and, desc, min, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -343,7 +343,12 @@ export class DbStorage implements IStorage {
   }
 
   async getAllOrders(): Promise<Order[]> {
-    return await db.select().from(orders).orderBy(desc(orders.createdAt));
+    // Only return successfully paid/completed orders (exclude pending/failed)
+    return await db
+      .select()
+      .from(orders)
+      .where(inArray(orders.status, ['paid', 'completed']))
+      .orderBy(desc(orders.createdAt));
   }
 
   async getOrder(id: string): Promise<Order | undefined> {
