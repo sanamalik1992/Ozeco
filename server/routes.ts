@@ -1382,6 +1382,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Validate discount code
+  app.post("/api/validate-discount", async (req, res) => {
+    try {
+      const { code } = req.body;
+      
+      if (!code || typeof code !== 'string') {
+        return res.status(400).json({ error: "Invalid discount code" });
+      }
+
+      // Check if code exists in newsletter subscribers
+      const result = await db.select()
+        .from(newsletterSubscribers)
+        .where(eq(newsletterSubscribers.discountCode, code))
+        .limit(1);
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: "Invalid discount code" });
+      }
+
+      // Return discount amount (£10 for newsletter codes)
+      res.json({
+        valid: true,
+        discountAmount: 10.00,
+        code: code
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Contact form route
   app.post("/api/contact", async (req, res) => {
     try {
