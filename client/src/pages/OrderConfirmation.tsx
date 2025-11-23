@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { Link } from "wouter";
 export default function OrderConfirmation() {
   const { clearCart } = useCart();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [order, setOrder] = useState<any | null>(null);
@@ -49,26 +51,28 @@ export default function OrderConfirmation() {
 
           const orderData = await response.json();
           
-          // If order is paid, we're done
-          if (orderData.status === 'paid' || orderData.status === 'completed') {
-            console.log("Order completed successfully");
-            setOrder(orderData);
-            await clearCart();
-            setIsProcessing(false);
-            return;
-          }
-
-          // If order is still pending, wait and try again
-          if (attempts < maxAttempts - 1) {
+          // SECURITY: Redirect to payment failed page if payment not completed
+          if (orderData.status !== 'paid' && orderData.status !== 'completed') {
+            // If we've tried multiple times and still pending, check if it's really pending or failed
+            if (attempts >= maxAttempts - 1) {
+              console.log("Payment not completed after multiple attempts, redirecting to payment-failed");
+              setLocation('/payment-failed');
+              return;
+            }
+            
+            // Still pending, wait and try again
             console.log("Order still pending, waiting for webhook...");
             await new Promise(resolve => setTimeout(resolve, 1000));
             attempts++;
             continue;
           }
 
-          // If we get here, webhook hasn't fired - use fallback verification
-          console.log("Webhook timeout, attempting payment verification fallback");
-          break;
+          // Payment successful
+          console.log("Order completed successfully");
+          setOrder(orderData);
+          await clearCart();
+          setIsProcessing(false);
+          return;
         }
 
         // FALLBACK: Verify payment directly with Stripe
@@ -84,16 +88,22 @@ export default function OrderConfirmation() {
 
           const verifiedOrder = await verifyResponse.json();
           console.log("Payment verified successfully, order status:", verifiedOrder.status);
+          
+          // SECURITY: Check if payment actually succeeded after verification
+          if (verifiedOrder.status !== 'paid' && verifiedOrder.status !== 'completed') {
+            console.log("Payment verification failed, redirecting to payment-failed");
+            setLocation('/payment-failed');
+            return;
+          }
+          
           setOrder(verifiedOrder);
           await clearCart();
           setIsProcessing(false);
           
-          if (verifiedOrder.status === 'paid' || verifiedOrder.status === 'completed') {
-            toast({
-              title: "Order Confirmed",
-              description: "Your payment has been verified and your order is being processed.",
-            });
-          }
+          toast({
+            title: "Order Confirmed",
+            description: "Your payment has been verified and your order is being processed.",
+          });
         } catch (verifyError: any) {
           console.error("Verification error:", verifyError);
           throw new Error(`Payment verification failed: ${verifyError.message}`);

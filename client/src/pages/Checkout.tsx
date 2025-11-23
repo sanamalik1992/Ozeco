@@ -276,23 +276,35 @@ export default function Checkout() {
 
   const handlePayPalSuccess = async (orderID: string) => {
     try {
-      await apiRequest("POST", "/api/orders/complete", {
+      const response = await apiRequest("POST", "/api/orders/complete", {
         paypalOrderId: orderID,
         paymentMethod: 'paypal',
       });
       
+      if (!response.ok) {
+        console.error("PayPal order completion failed");
+        setLocation("/payment-failed");
+        return;
+      }
+      
+      const data = await response.json();
       await clearCart();
+      
       toast({
         title: "Order Complete!",
         description: "Your order has been placed successfully",
       });
-      setLocation("/order-confirmation");
-    } catch (error) {
+      
+      // Redirect to order confirmation with orderId
+      setLocation(`/order-confirmation?orderId=${data.orderId}`);
+    } catch (error: any) {
+      console.error("PayPal error:", error);
       toast({
-        title: "Error",
-        description: "Failed to complete order",
+        title: "Payment Failed",
+        description: error.message || "Failed to complete order",
         variant: "destructive",
       });
+      setLocation("/payment-failed");
     }
   };
 

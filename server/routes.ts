@@ -1229,7 +1229,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Failed to send order confirmation email:', emailError);
       }
 
-      res.json({ success: true });
+      res.json({ success: true, orderId: createdOrder.id });
     } catch (error: any) {
       console.error("Order completion error:", error);
       
