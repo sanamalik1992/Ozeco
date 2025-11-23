@@ -36,9 +36,11 @@ export default function AdminOrders() {
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
   const [editingTracking, setEditingTracking] = useState<{ [key: string]: string }>({});
 
-  // Fetch orders
+  // Fetch orders with fresh data (no caching for admin)
   const { data: orders = [], isLoading: ordersLoading, refetch } = useQuery<Order[]>({
     queryKey: ["/api/admin/orders"],
+    staleTime: 0, // Always fetch fresh data
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
   });
 
   // Update fulfillment status mutation
