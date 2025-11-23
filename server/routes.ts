@@ -279,21 +279,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Cart is empty" });
       }
 
+      // Get discount information from request body
+      const { discountCode, discountAmount } = req.body;
+
       // Calculate total using integer pence to avoid floating-point errors
-      const totalInPence = cartItems.reduce((sum, item) => {
+      const subtotalInPence = cartItems.reduce((sum, item) => {
         // Use variant price if variant selected, otherwise use product price
         const price = item.variant?.price ?? item.product.price;
         const priceInPence = Math.round(parseFloat(price) * 100);
         return sum + (priceInPence * item.quantity);
       }, 0);
+      const subtotal = (subtotalInPence / 100).toFixed(2);
+      
+      // Apply discount if provided
+      const discount = discountAmount ? parseFloat(discountAmount.toString()) : 0;
+      const totalInPence = Math.max(subtotalInPence - Math.round(discount * 100), 0);
       const totalAmount = (totalInPence / 100).toFixed(2);
       
+      console.log("Subtotal (pence):", subtotalInPence);
+      console.log("Discount:", discount);
       console.log("Total amount (pence):", totalInPence);
 
       // STEP 1: Create pending order BEFORE payment to prevent data loss
       const [pendingOrder] = await db.insert(orders).values({
         sessionId,
         totalAmount,
+        subtotalAmount: subtotal,
+        discountCode: discountCode || null,
+        discountAmount: discount > 0 ? discount.toFixed(2) : null,
         status: "pending",
         fulfillmentStatus: "pending",
         paymentMethod: "stripe",

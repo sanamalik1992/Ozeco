@@ -12,7 +12,8 @@ import ApplePayButton from "@/components/ApplePayButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, CreditCard, ArrowLeft, Check, Lock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, CreditCard, ArrowLeft, Check, Lock, Tag, X } from "lucide-react";
 import PayPalButton from "@/components/PayPalButton";
 import { SiPaypal, SiShopify, SiVisa, SiMastercard, SiAmericanexpress } from "react-icons/si";
 import TrustBadges from "@/components/TrustBadges";
@@ -114,6 +115,9 @@ export default function Checkout() {
     stripe: boolean;
     paypal: boolean;
   } | null>(null);
+  const [discountCode, setDiscountCode] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; amount: number } | null>(null);
+  const [isValidatingCode, setIsValidatingCode] = useState(false);
 
   const stripePromise = useMemo(() => 
     stripePublicKey ? loadStripe(stripePublicKey) : null,
@@ -127,7 +131,68 @@ export default function Checkout() {
     const priceInPence = Math.round(parseFloat(price) * 100);
     return sum + (priceInPence * item.quantity);
   }, 0);
-  const totalPrice = totalInPence / 100;
+  const subtotal = totalInPence / 100;
+  const discount = appliedDiscount?.amount || 0;
+  const totalPrice = Math.max(subtotal - discount, 0);
+
+  // Validate and apply discount code
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a discount code",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsValidatingCode(true);
+    try {
+      const response = await apiRequest("POST", "/api/validate-discount", {
+        code: discountCode.trim().toUpperCase(),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        toast({
+          title: "Invalid Code",
+          description: error.error || "This discount code is not valid",
+          variant: "destructive",
+        });
+        setIsValidatingCode(false);
+        return;
+      }
+
+      const data = await response.json();
+      setAppliedDiscount({
+        code: data.code,
+        amount: data.discountAmount,
+      });
+      
+      toast({
+        title: "Discount Applied!",
+        description: `£${data.discountAmount.toFixed(2)} discount applied to your order`,
+      });
+      setIsValidatingCode(false);
+    } catch (error: any) {
+      console.error("Error validating discount code:", error);
+      toast({
+        title: "Error",
+        description: "Failed to validate discount code",
+        variant: "destructive",
+      });
+      setIsValidatingCode(false);
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCode("");
+    toast({
+      title: "Discount Removed",
+      description: "The discount code has been removed from your order",
+    });
+  };
 
   // Fetch payment configuration from backend on mount
   useEffect(() => {
@@ -180,7 +245,10 @@ export default function Checkout() {
       // Create PaymentIntent for Stripe if selected
       if (paymentMethod === 'stripe' && stripePublicKey) {
         console.log("Creating payment intent...");
-        apiRequest("POST", "/api/create-payment-intent", {})
+        apiRequest("POST", "/api/create-payment-intent", {
+          discountCode: appliedDiscount?.code,
+          discountAmount: appliedDiscount?.amount,
+        })
           .then((res) => res.json())
           .then((data) => {
             console.log("Payment intent created successfully, orderId:", data.orderId);
@@ -325,11 +393,78 @@ export default function Checkout() {
                   
                   <Separator />
                   
+                  {/* Promo Code Section */}
+                  {!appliedDiscount ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-medium">
+                        <Tag className="h-4 w-4 text-primary" />
+                        <span>Have a promo code?</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Enter code"
+                          value={discountCode}
+                          onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleApplyDiscount();
+                            }
+                          }}
+                          disabled={isValidatingCode}
+                          data-testid="input-promo-code"
+                          className="uppercase"
+                        />
+                        <Button
+                          onClick={handleApplyDiscount}
+                          disabled={isValidatingCode || !discountCode.trim()}
+                          size="default"
+                          data-testid="button-apply-code"
+                        >
+                          {isValidatingCode ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            "Apply"
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-primary/10 p-3 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Tag className="h-4 w-4 text-primary" />
+                          <div>
+                            <p className="text-sm font-semibold">{appliedDiscount.code}</p>
+                            <p className="text-xs text-muted-foreground">Discount applied</p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleRemoveDiscount}
+                          data-testid="button-remove-code"
+                          className="h-8 w-8"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <Separator />
+                  
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>£{totalPrice.toFixed(2)}</span>
+                      <span>£{subtotal.toFixed(2)}</span>
                     </div>
+                    {appliedDiscount && (
+                      <div className="flex justify-between text-sm text-primary">
+                        <span>Discount ({appliedDiscount.code})</span>
+                        <span>-£{discount.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Delivery</span>
                       <span className="text-primary font-semibold">FREE</span>
