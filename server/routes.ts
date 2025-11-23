@@ -279,10 +279,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Cart is empty" });
       }
 
-      // Get discount information from request body
-      const { discountCode, discountAmount } = req.body;
+      // Get discount code from request body (NEVER trust client-provided amounts!)
+      const { discountCode } = req.body;
 
-      // Calculate total using integer pence to avoid floating-point errors
+      // Calculate subtotal using integer pence to avoid floating-point errors
       const subtotalInPence = cartItems.reduce((sum, item) => {
         // Use variant price if variant selected, otherwise use product price
         const price = item.variant?.price ?? item.product.price;
@@ -291,21 +291,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }, 0);
       const subtotal = (subtotalInPence / 100).toFixed(2);
       
-      // Apply discount if provided
-      const discount = discountAmount ? parseFloat(discountAmount.toString()) : 0;
+      // SECURITY: Validate and compute discount amount SERVER-SIDE
+      let discount = 0;
+      let validatedDiscountCode: string | null = null;
+      
+      if (discountCode) {
+        // Validate the discount code against newsletter_subscribers table
+        const [subscriber] = await db
+          .select()
+          .from(newsletterSubscribers)
+          .where(eq(newsletterSubscribers.discountCode, discountCode.trim().toUpperCase()))
+          .limit(1);
+        
+        if (subscriber) {
+          // Valid code found - apply £10 discount (server-controlled amount)
+          discount = 10.00;
+          validatedDiscountCode = subscriber.discountCode;
+          console.log("Valid discount code applied:", validatedDiscountCode, "Amount:", discount);
+        } else {
+          console.log("Invalid discount code attempted:", discountCode);
+          // Note: We don't fail the payment here, just ignore invalid codes
+        }
+      }
+      
+      // Calculate final total with server-validated discount
       const totalInPence = Math.max(subtotalInPence - Math.round(discount * 100), 0);
       const totalAmount = (totalInPence / 100).toFixed(2);
       
       console.log("Subtotal (pence):", subtotalInPence);
-      console.log("Discount:", discount);
+      console.log("Server-validated discount:", discount);
       console.log("Total amount (pence):", totalInPence);
 
       // STEP 1: Create pending order BEFORE payment to prevent data loss
+      // Use ONLY server-validated discount values
       const [pendingOrder] = await db.insert(orders).values({
         sessionId,
         totalAmount,
         subtotalAmount: subtotal,
-        discountCode: discountCode || null,
+        discountCode: validatedDiscountCode, // Only store validated codes
         discountAmount: discount > 0 ? discount.toFixed(2) : null,
         status: "pending",
         fulfillmentStatus: "pending",

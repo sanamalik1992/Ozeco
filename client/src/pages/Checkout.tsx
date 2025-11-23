@@ -245,9 +245,9 @@ export default function Checkout() {
       // Create PaymentIntent for Stripe if selected
       if (paymentMethod === 'stripe' && stripePublicKey) {
         console.log("Creating payment intent...");
+        // SECURITY: Only send discount CODE, server validates and computes amount
         apiRequest("POST", "/api/create-payment-intent", {
-          discountCode: appliedDiscount?.code,
-          discountAmount: appliedDiscount?.amount,
+          discountCode: appliedDiscount?.code || null,
         })
           .then((res) => res.json())
           .then((data) => {
