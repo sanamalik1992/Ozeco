@@ -717,6 +717,35 @@ export class DbStorage implements IStorage {
     return Number(result[0]?.count || 0);
   }
 
+  async getCartAdditionsDetailed(): Promise<{ productId: string; productName: string; productImage: string; timestamp: Date; sessionId: string }[]> {
+    const result = await db
+      .select({
+        productId: analyticsEvents.productId,
+        productName: products.name,
+        productImage: products.image,
+        timestamp: analyticsEvents.timestamp,
+        sessionId: analyticsEvents.sessionId,
+      })
+      .from(analyticsEvents)
+      .leftJoin(products, eq(analyticsEvents.productId, products.id))
+      .where(
+        and(
+          eq(analyticsEvents.eventType, 'add_to_cart'),
+          sql`timestamp::date = current_date`
+        )
+      )
+      .orderBy(desc(analyticsEvents.timestamp))
+      .limit(50);
+    
+    return result.map(row => ({
+      productId: row.productId || '',
+      productName: row.productName || 'Unknown Product',
+      productImage: row.productImage || '',
+      timestamp: row.timestamp,
+      sessionId: row.sessionId,
+    }));
+  }
+
   async getSuccessfulCheckoutsToday(): Promise<number> {
     const result = await db
       .select({ count: sql<number>`count(*)` })

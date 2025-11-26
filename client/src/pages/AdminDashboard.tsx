@@ -934,6 +934,11 @@ function AnalyticsDashboard() {
     refetchInterval: 60000,
   });
 
+  const { data: cartAdditionsDetailed } = useQuery<{ additions: Array<{ productId: string; productName: string; productImage: string; timestamp: string; sessionId: string }> }>({
+    queryKey: ["/api/analytics/cart-additions-detailed"],
+    refetchInterval: 30000,
+  });
+
   const { data: checkoutData } = useQuery<{ count: number }>({
     queryKey: ["/api/analytics/checkouts"],
     refetchInterval: 60000,
@@ -1075,42 +1080,82 @@ function AnalyticsDashboard() {
         </Card>
       </div>
 
-      {/* Top Products */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top Viewed Products Today</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {productsLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            </div>
-          ) : topProducts.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-8 text-center">No product views yet today</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead className="text-right">Views</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {topProducts.map((item) => (
-                  <TableRow key={item.product.id}>
-                    <TableCell className="font-medium">{item.product.name}</TableCell>
-                    <TableCell>{item.product.brand}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge variant="secondary">{item.views}</Badge>
-                    </TableCell>
+      {/* Top Products and Cart Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Viewed Products Today</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {productsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : topProducts.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No product views yet today</p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Brand</TableHead>
+                    <TableHead className="text-right">Views</TableHead>
                   </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topProducts.map((item) => (
+                    <TableRow key={item.product.id}>
+                      <TableCell className="font-medium">{item.product.name}</TableCell>
+                      <TableCell>{item.product.brand}</TableCell>
+                      <TableCell className="text-right">
+                        <Badge variant="secondary">{item.views}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Cart Activity Today */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-primary" />
+              Cart Activity Today
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!cartAdditionsDetailed?.additions || cartAdditionsDetailed.additions.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No cart activity yet today</p>
+            ) : (
+              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                {cartAdditionsDetailed.additions.map((addition, index) => (
+                  <div key={`${addition.productId}-${index}`} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                    <img
+                      src={addition.productImage}
+                      alt={addition.productName}
+                      className="w-12 h-12 object-cover rounded bg-muted"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{addition.productName}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(addition.timestamp).toLocaleTimeString('en-GB', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="text-xs">Added to cart</Badge>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Traffic Sources and Visitor Locations */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

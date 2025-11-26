@@ -2002,6 +2002,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Detailed cart additions with product info
+  app.get("/api/analytics/cart-additions-detailed", async (req, res) => {
+    try {
+      // Check if user is admin
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const additions = await storage.getCartAdditionsDetailed();
+      res.json({ additions });
+    } catch (error: any) {
+      console.error("Detailed cart additions analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.get("/api/analytics/checkouts", async (req, res) => {
     try {
       // Check if user is admin
