@@ -296,21 +296,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let validatedDiscountCode: string | null = null;
       
       if (discountCode) {
-        // Validate the discount code against newsletter_subscribers table
-        const [subscriber] = await db
-          .select()
-          .from(newsletterSubscribers)
-          .where(eq(newsletterSubscribers.discountCode, discountCode.trim().toUpperCase()))
-          .limit(1);
+        const codeUpper = discountCode.trim().toUpperCase();
         
-        if (subscriber) {
-          // Valid code found - apply £10 discount (server-controlled amount)
-          discount = 10.00;
-          validatedDiscountCode = subscriber.discountCode;
-          console.log("Valid discount code applied:", validatedDiscountCode, "Amount:", discount);
+        // Check for Black Friday promo code first (£20 off, expires 6th Dec 2025)
+        if (codeUpper === 'BLACKFRIDAY20') {
+          const expiryDate = new Date('2025-12-06T23:59:59Z');
+          if (new Date() <= expiryDate) {
+            discount = 20.00;
+            validatedDiscountCode = 'BLACKFRIDAY20';
+            console.log("Black Friday promo code applied: £20 discount");
+          } else {
+            console.log("Black Friday promo code expired");
+          }
         } else {
-          console.log("Invalid discount code attempted:", discountCode);
-          // Note: We don't fail the payment here, just ignore invalid codes
+          // Validate the discount code against newsletter_subscribers table
+          const [subscriber] = await db
+            .select()
+            .from(newsletterSubscribers)
+            .where(eq(newsletterSubscribers.discountCode, codeUpper))
+            .limit(1);
+          
+          if (subscriber) {
+            // Valid code found - apply £10 discount (server-controlled amount)
+            discount = 10.00;
+            validatedDiscountCode = subscriber.discountCode;
+            console.log("Valid discount code applied:", validatedDiscountCode, "Amount:", discount);
+          } else {
+            console.log("Invalid discount code attempted:", discountCode);
+            // Note: We don't fail the payment here, just ignore invalid codes
+          }
         }
       }
       
@@ -1131,12 +1145,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Cart is empty. Your payment was processed - please contact support with your payment confirmation." });
       }
 
-      const totalInPence = cartItems.reduce((sum, item) => {
+      // Get discount code from request body
+      const { discountCode } = req.body;
+
+      const subtotalInPence = cartItems.reduce((sum, item) => {
         // Use variant price if variant selected, otherwise use product price
         const price = item.variant?.price ?? item.product.price;
         const priceInPence = Math.round(parseFloat(price) * 100);
         return sum + (priceInPence * item.quantity);
       }, 0);
+      const subtotalAmount = (subtotalInPence / 100).toFixed(2);
+
+      // SECURITY: Validate and compute discount amount SERVER-SIDE
+      let discount = 0;
+      let validatedDiscountCode: string | null = null;
+      
+      if (discountCode) {
+        const codeUpper = discountCode.trim().toUpperCase();
+        
+        // Check for Black Friday promo code first (£20 off, expires 6th Dec 2025)
+        if (codeUpper === 'BLACKFRIDAY20') {
+          const expiryDate = new Date('2025-12-06T23:59:59Z');
+          if (new Date() <= expiryDate) {
+            discount = 20.00;
+            validatedDiscountCode = 'BLACKFRIDAY20';
+            console.log("Black Friday promo code applied (PayPal): £20 discount");
+          } else {
+            console.log("Black Friday promo code expired");
+          }
+        } else {
+          // Validate the discount code against newsletter_subscribers table
+          const [subscriber] = await db
+            .select()
+            .from(newsletterSubscribers)
+            .where(eq(newsletterSubscribers.discountCode, codeUpper))
+            .limit(1);
+          
+          if (subscriber) {
+            discount = 10.00;
+            validatedDiscountCode = subscriber.discountCode;
+            console.log("Valid discount code applied (PayPal):", validatedDiscountCode, "Amount:", discount);
+          }
+        }
+      }
+
+      // Calculate final total with server-validated discount
+      const totalInPence = Math.max(subtotalInPence - Math.round(discount * 100), 0);
       const totalAmount = (totalInPence / 100).toFixed(2);
 
       // STEP 1: Validate and decrement stock for each cart item
@@ -1175,6 +1229,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stripePaymentIntentId: req.body.stripePaymentIntentId || null,
         paypalOrderId: req.body.paypalOrderId || null,
         totalAmount,
+        subtotalAmount: subtotalAmount,
+        discountCode: validatedDiscountCode,
+        discountAmount: discount > 0 ? discount.toFixed(2) : null,
         status: "completed",
         fulfillmentStatus: "pending",
         paymentMethod: req.body.paymentMethod || "stripe",
@@ -1429,10 +1486,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid discount code" });
       }
 
+      const codeUpper = code.trim().toUpperCase();
+
+      // Check for Black Friday promo code first (£20 off, expires 6th Dec 2025)
+      if (codeUpper === 'BLACKFRIDAY20') {
+        const expiryDate = new Date('2025-12-06T23:59:59Z');
+        if (new Date() <= expiryDate) {
+          return res.json({
+            valid: true,
+            discountAmount: 20.00,
+            code: 'BLACKFRIDAY20',
+            message: 'Black Friday discount applied!'
+          });
+        } else {
+          return res.status(404).json({ error: "This promo code has expired" });
+        }
+      }
+
       // Check if code exists in newsletter subscribers
       const result = await db.select()
         .from(newsletterSubscribers)
-        .where(eq(newsletterSubscribers.discountCode, code))
+        .where(eq(newsletterSubscribers.discountCode, codeUpper))
         .limit(1);
 
       if (result.length === 0) {
@@ -1443,7 +1517,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         valid: true,
         discountAmount: 10.00,
-        code: code
+        code: codeUpper
       });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
