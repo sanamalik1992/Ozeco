@@ -71,6 +71,17 @@ export default function OrderConfirmation() {
           console.log("Order completed successfully");
           setOrder(orderData);
           await clearCart();
+          
+          // Fire Google Ads conversion event
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'ads_conversion_Purchase_1', {
+              transaction_id: orderData.id,
+              value: parseFloat(orderData.totalAmount),
+              currency: 'GBP'
+            });
+            console.log("Google Ads conversion event fired for order:", orderData.id);
+          }
+          
           setIsProcessing(false);
           return;
         }
@@ -98,6 +109,17 @@ export default function OrderConfirmation() {
           
           setOrder(verifiedOrder);
           await clearCart();
+          
+          // Fire Google Ads conversion event
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'ads_conversion_Purchase_1', {
+              transaction_id: verifiedOrder.id,
+              value: parseFloat(verifiedOrder.totalAmount),
+              currency: 'GBP'
+            });
+            console.log("Google Ads conversion event fired for verified order:", verifiedOrder.id);
+          }
+          
           setIsProcessing(false);
           
           toast({
