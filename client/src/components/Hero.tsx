@@ -48,7 +48,7 @@ export default function Hero() {
         <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
           <Link href="/shop">
             <Button size="lg" variant="default" className="bg-primary hover:bg-primary border-primary-border text-lg px-8 py-6" data-testid="button-shop-now">
-              Shop Cyber Monday Deals
+              Shop Sale E-Bikes
             </Button>
           </Link>
           <Link href="/shop">
