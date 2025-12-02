@@ -1003,6 +1003,37 @@ function AnalyticsDashboard() {
     enabled: !!startDate || dateFilter === 'all',
   });
 
+  // Shopify-style detailed analytics queries
+  const { data: detailedProductViews = [], isLoading: detailedViewsLoading } = useQuery<Array<{ date: string; productId: string; productName: string; productImage: string; brand: string; views: number }>>({
+    queryKey: ["/api/analytics/detailed-product-views", startDate, endDate],
+    queryFn: async () => {
+      const res = await fetch(buildAnalyticsUrl("/api/analytics/detailed-product-views"), { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch detailed product views");
+      return res.json();
+    },
+    enabled: !!startDate || dateFilter === 'all',
+  });
+
+  const { data: detailedCartAdditions = [], isLoading: detailedCartLoading } = useQuery<Array<{ date: string; productId: string; productName: string; productImage: string; brand: string; count: number }>>({
+    queryKey: ["/api/analytics/detailed-cart-additions", startDate, endDate],
+    queryFn: async () => {
+      const res = await fetch(buildAnalyticsUrl("/api/analytics/detailed-cart-additions"), { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch detailed cart additions");
+      return res.json();
+    },
+    enabled: !!startDate || dateFilter === 'all',
+  });
+
+  const { data: detailedPurchases = [], isLoading: detailedPurchasesLoading } = useQuery<Array<{ date: string; productId: string; productName: string; productImage: string; brand: string; quantity: number; revenue: number }>>({
+    queryKey: ["/api/analytics/detailed-purchases", startDate, endDate],
+    queryFn: async () => {
+      const res = await fetch(buildAnalyticsUrl("/api/analytics/detailed-purchases"), { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch detailed purchases");
+      return res.json();
+    },
+    enabled: !!startDate || dateFilter === 'all',
+  });
+
   // Debug logging
   console.log("Analytics Dashboard - Stats:", stats);
   console.log("Analytics Dashboard - Loading:", statsLoading);
@@ -1532,6 +1563,185 @@ function AnalyticsDashboard() {
                 </Table>
               </div>
             )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Shopify-Style Detailed Product Activity */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            Detailed Product Activity (Shopify-Style)
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            View which products were viewed, added to cart, and purchased on each day
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Detailed Product Views */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <Eye className="h-4 w-4 text-blue-500" />
+                Product Views by Day
+              </h3>
+              {detailedViewsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : detailedProductViews.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">No product views in this period</p>
+              ) : (
+                <div className="border rounded-md max-h-[500px] overflow-y-auto">
+                  <Table>
+                    <TableHeader className="sticky top-0 bg-background">
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Product</TableHead>
+                        <TableHead className="text-right">Views</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {detailedProductViews.map((row, index) => (
+                        <TableRow key={`${row.date}-${row.productId}-${index}`}>
+                          <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                            {new Date(row.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <img 
+                                src={row.productImage} 
+                                alt={row.productName}
+                                className="w-8 h-8 object-contain rounded bg-muted"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                              />
+                              <div className="min-w-0">
+                                <p className="font-medium text-sm truncate max-w-[120px]">{row.productName}</p>
+                                <p className="text-xs text-muted-foreground">{row.brand}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">{row.views}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+
+            {/* Detailed Cart Additions */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4 text-orange-500" />
+                Cart Additions by Day
+              </h3>
+              {detailedCartLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : detailedCartAdditions.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">No cart additions in this period</p>
+              ) : (
+                <div className="border rounded-md max-h-[500px] overflow-y-auto">
+                  <Table>
+                    <TableHeader className="sticky top-0 bg-background">
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Product</TableHead>
+                        <TableHead className="text-right">Added</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {detailedCartAdditions.map((row, index) => (
+                        <TableRow key={`${row.date}-${row.productId}-${index}`}>
+                          <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                            {new Date(row.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <img 
+                                src={row.productImage} 
+                                alt={row.productName}
+                                className="w-8 h-8 object-contain rounded bg-muted"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                              />
+                              <div className="min-w-0">
+                                <p className="font-medium text-sm truncate max-w-[120px]">{row.productName}</p>
+                                <p className="text-xs text-muted-foreground">{row.brand}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Badge className="bg-orange-500 text-white">{row.count}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+
+            {/* Detailed Purchases */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-green-500" />
+                Purchases by Day
+              </h3>
+              {detailedPurchasesLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : detailedPurchases.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">No purchases in this period</p>
+              ) : (
+                <div className="border rounded-md max-h-[500px] overflow-y-auto">
+                  <Table>
+                    <TableHeader className="sticky top-0 bg-background">
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Product</TableHead>
+                        <TableHead className="text-right">Qty</TableHead>
+                        <TableHead className="text-right">Revenue</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {detailedPurchases.map((row, index) => (
+                        <TableRow key={`${row.date}-${row.productId}-${index}`}>
+                          <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                            {new Date(row.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <img 
+                                src={row.productImage} 
+                                alt={row.productName}
+                                className="w-8 h-8 object-contain rounded bg-muted"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                              />
+                              <div className="min-w-0">
+                                <p className="font-medium text-sm truncate max-w-[120px]">{row.productName}</p>
+                                <p className="text-xs text-muted-foreground">{row.brand}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">{row.quantity}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Badge className="bg-green-500 text-white">£{row.revenue.toFixed(2)}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

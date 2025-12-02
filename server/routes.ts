@@ -2204,6 +2204,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Shopify-style detailed product views by date and product
+  app.get("/api/analytics/detailed-product-views", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const startDate = req.query.startDate as string | undefined;
+      const endDate = req.query.endDate as string | undefined;
+
+      const data = await storage.getDetailedProductViews(startDate, endDate);
+      res.json(data);
+    } catch (error: any) {
+      console.error("Detailed product views analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Shopify-style detailed cart additions by date and product
+  app.get("/api/analytics/detailed-cart-additions", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const startDate = req.query.startDate as string | undefined;
+      const endDate = req.query.endDate as string | undefined;
+
+      const data = await storage.getDetailedCartAdditions(startDate, endDate);
+      res.json(data);
+    } catch (error: any) {
+      console.error("Detailed cart additions analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Shopify-style detailed purchases by date and product
+  app.get("/api/analytics/detailed-purchases", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const startDate = req.query.startDate as string | undefined;
+      const endDate = req.query.endDate as string | undefined;
+
+      const data = await storage.getDetailedPurchases(startDate, endDate);
+      res.json(data);
+    } catch (error: any) {
+      console.error("Detailed purchases analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Google Merchant Centre export
   app.post("/api/admin/export-to-merchant-centre", async (req, res) => {
     try {

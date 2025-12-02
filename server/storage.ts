@@ -126,6 +126,11 @@ export interface IStorage {
   getCartAdditionsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; count: number }[]>;
   getCheckoutsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; count: number }[]>;
   getProductViewsByProductAndDateRange(startDate?: string, endDate?: string): Promise<{ productId: string; productName: string; views: number }[]>;
+  
+  // Enhanced Shopify-style analytics - product-level breakdowns with dates
+  getDetailedProductViews(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; views: number }[]>;
+  getDetailedCartAdditions(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; count: number }[]>;
+  getDetailedPurchases(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; quantity: number; revenue: number }[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -904,6 +909,117 @@ export class DbStorage implements IStorage {
       productId: row.productId || '',
       productName: row.productName || 'Unknown Product',
       views: Number(row.views),
+    }));
+  }
+
+  // Enhanced Shopify-style analytics - product views by date and product
+  async getDetailedProductViews(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; views: number }[]> {
+    const conditions = [sql`${pageViews.productId} IS NOT NULL`];
+    if (startDate) {
+      conditions.push(sql`${pageViews.timestamp}::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`${pageViews.timestamp}::date <= ${endDate}::date`);
+    }
+
+    const result = await db
+      .select({
+        date: sql<string>`${pageViews.timestamp}::date`,
+        productId: pageViews.productId,
+        productName: products.name,
+        productImage: products.image,
+        brand: products.brand,
+        views: sql<number>`count(*)`,
+      })
+      .from(pageViews)
+      .leftJoin(products, eq(pageViews.productId, products.id))
+      .where(and(...conditions))
+      .groupBy(sql`${pageViews.timestamp}::date`, pageViews.productId, products.name, products.image, products.brand)
+      .orderBy(sql`${pageViews.timestamp}::date DESC`, sql`count(*) DESC`);
+
+    return result.map(row => ({
+      date: row.date,
+      productId: row.productId || '',
+      productName: row.productName || 'Unknown Product',
+      productImage: row.productImage || '',
+      brand: row.brand || '',
+      views: Number(row.views),
+    }));
+  }
+
+  // Enhanced Shopify-style analytics - cart additions by date and product
+  async getDetailedCartAdditions(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; count: number }[]> {
+    const conditions = [
+      eq(analyticsEvents.eventType, 'add_to_cart'),
+      sql`${analyticsEvents.productId} IS NOT NULL`
+    ];
+    if (startDate) {
+      conditions.push(sql`${analyticsEvents.timestamp}::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`${analyticsEvents.timestamp}::date <= ${endDate}::date`);
+    }
+
+    const result = await db
+      .select({
+        date: sql<string>`${analyticsEvents.timestamp}::date`,
+        productId: analyticsEvents.productId,
+        productName: products.name,
+        productImage: products.image,
+        brand: products.brand,
+        count: sql<number>`count(*)`,
+      })
+      .from(analyticsEvents)
+      .leftJoin(products, eq(analyticsEvents.productId, products.id))
+      .where(and(...conditions))
+      .groupBy(sql`${analyticsEvents.timestamp}::date`, analyticsEvents.productId, products.name, products.image, products.brand)
+      .orderBy(sql`${analyticsEvents.timestamp}::date DESC`, sql`count(*) DESC`);
+
+    return result.map(row => ({
+      date: row.date,
+      productId: row.productId || '',
+      productName: row.productName || 'Unknown Product',
+      productImage: row.productImage || '',
+      brand: row.brand || '',
+      count: Number(row.count),
+    }));
+  }
+
+  // Enhanced Shopify-style analytics - purchases by date and product (from order_items)
+  async getDetailedPurchases(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; quantity: number; revenue: number }[]> {
+    const conditions: any[] = [];
+    if (startDate) {
+      conditions.push(sql`${orders.createdAt}::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`${orders.createdAt}::date <= ${endDate}::date`);
+    }
+
+    const result = await db
+      .select({
+        date: sql<string>`${orders.createdAt}::date`,
+        productId: orderItems.productId,
+        productName: products.name,
+        productImage: products.image,
+        brand: products.brand,
+        quantity: sql<number>`sum(${orderItems.quantity})`,
+        revenue: sql<number>`sum(${orderItems.quantity} * ${orderItems.price}::numeric)`,
+      })
+      .from(orderItems)
+      .innerJoin(orders, eq(orderItems.orderId, orders.id))
+      .leftJoin(products, eq(orderItems.productId, products.id))
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .groupBy(sql`${orders.createdAt}::date`, orderItems.productId, products.name, products.image, products.brand)
+      .orderBy(sql`${orders.createdAt}::date DESC`, sql`sum(${orderItems.quantity}) DESC`);
+
+    return result.map(row => ({
+      date: row.date,
+      productId: row.productId || '',
+      productName: row.productName || 'Unknown Product',
+      productImage: row.productImage || '',
+      brand: row.brand || '',
+      quantity: Number(row.quantity),
+      revenue: Number(row.revenue),
     }));
   }
 }
