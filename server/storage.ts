@@ -123,6 +123,9 @@ export interface IStorage {
   getSuccessfulCheckoutsToday(): Promise<number>;
   getPageViewsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; views: number }[]>;
   getProductViewsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; views: number }[]>;
+  getCartAdditionsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; count: number }[]>;
+  getCheckoutsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; count: number }[]>;
+  getProductViewsByProductAndDateRange(startDate?: string, endDate?: string): Promise<{ productId: string; productName: string; views: number }[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -808,6 +811,85 @@ export class DbStorage implements IStorage {
 
     return result.map(row => ({
       date: row.date,
+      views: Number(row.views),
+    }));
+  }
+
+  async getCartAdditionsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; count: number }[]> {
+    const conditions = [eq(analyticsEvents.eventType, 'add_to_cart')];
+    if (startDate) {
+      conditions.push(sql`timestamp::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`timestamp::date <= ${endDate}::date`);
+    }
+
+    const result = await db
+      .select({
+        date: sql<string>`timestamp::date`,
+        count: sql<number>`count(*)`,
+      })
+      .from(analyticsEvents)
+      .where(and(...conditions))
+      .groupBy(sql`timestamp::date`)
+      .orderBy(sql`timestamp::date DESC`);
+
+    return result.map(row => ({
+      date: row.date,
+      count: Number(row.count),
+    }));
+  }
+
+  async getCheckoutsByDateRange(startDate?: string, endDate?: string): Promise<{ date: string; count: number }[]> {
+    const conditions = [eq(analyticsEvents.eventType, 'checkout_success')];
+    if (startDate) {
+      conditions.push(sql`timestamp::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`timestamp::date <= ${endDate}::date`);
+    }
+
+    const result = await db
+      .select({
+        date: sql<string>`timestamp::date`,
+        count: sql<number>`count(*)`,
+      })
+      .from(analyticsEvents)
+      .where(and(...conditions))
+      .groupBy(sql`timestamp::date`)
+      .orderBy(sql`timestamp::date DESC`);
+
+    return result.map(row => ({
+      date: row.date,
+      count: Number(row.count),
+    }));
+  }
+
+  async getProductViewsByProductAndDateRange(startDate?: string, endDate?: string): Promise<{ productId: string; productName: string; views: number }[]> {
+    const conditions = [sql`product_id IS NOT NULL`];
+    if (startDate) {
+      conditions.push(sql`viewed_at::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`viewed_at::date <= ${endDate}::date`);
+    }
+
+    const result = await db
+      .select({
+        productId: pageViews.productId,
+        productName: products.name,
+        views: sql<number>`count(*)`,
+      })
+      .from(pageViews)
+      .leftJoin(products, eq(pageViews.productId, products.id))
+      .where(and(...conditions))
+      .groupBy(pageViews.productId, products.name)
+      .orderBy(sql`count(*) DESC`)
+      .limit(20);
+
+    return result.map(row => ({
+      productId: row.productId || '',
+      productName: row.productName || 'Unknown Product',
       views: Number(row.views),
     }));
   }

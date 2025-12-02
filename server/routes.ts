@@ -2147,6 +2147,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Historical cart additions over time
+  app.get("/api/analytics/cart-additions-over-time", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const startDate = req.query.startDate as string | undefined;
+      const endDate = req.query.endDate as string | undefined;
+
+      const data = await storage.getCartAdditionsByDateRange(startDate, endDate);
+      res.json(data);
+    } catch (error: any) {
+      console.error("Cart additions over time analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Historical checkouts over time
+  app.get("/api/analytics/checkouts-over-time", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const startDate = req.query.startDate as string | undefined;
+      const endDate = req.query.endDate as string | undefined;
+
+      const data = await storage.getCheckoutsByDateRange(startDate, endDate);
+      res.json(data);
+    } catch (error: any) {
+      console.error("Checkouts over time analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Product views by product with date range
+  app.get("/api/analytics/product-views-by-product", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const startDate = req.query.startDate as string | undefined;
+      const endDate = req.query.endDate as string | undefined;
+
+      const data = await storage.getProductViewsByProductAndDateRange(startDate, endDate);
+      res.json(data);
+    } catch (error: any) {
+      console.error("Product views by product analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Google Merchant Centre export
   app.post("/api/admin/export-to-merchant-centre", async (req, res) => {
     try {

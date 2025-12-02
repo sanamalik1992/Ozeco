@@ -954,6 +954,21 @@ function AnalyticsDashboard() {
     enabled: !!startDate || dateFilter === 'all',
   });
 
+  const { data: cartAdditionsOverTime = [], isLoading: cartAdditionsLoading } = useQuery<Array<{ date: string; count: number }>>({
+    queryKey: ["/api/analytics/cart-additions-over-time", { startDate, endDate }],
+    enabled: !!startDate || dateFilter === 'all',
+  });
+
+  const { data: checkoutsOverTime = [], isLoading: checkoutsLoading } = useQuery<Array<{ date: string; count: number }>>({
+    queryKey: ["/api/analytics/checkouts-over-time", { startDate, endDate }],
+    enabled: !!startDate || dateFilter === 'all',
+  });
+
+  const { data: productViewsByProduct = [], isLoading: productsByProductLoading } = useQuery<Array<{ productId: string; productName: string; views: number }>>({
+    queryKey: ["/api/analytics/product-views-by-product", { startDate, endDate }],
+    enabled: !!startDate || dateFilter === 'all',
+  });
+
   // Debug logging
   console.log("Analytics Dashboard - Stats:", stats);
   console.log("Analytics Dashboard - Loading:", statsLoading);
@@ -1372,6 +1387,117 @@ function AnalyticsDashboard() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Cart Additions and Checkouts Over Time */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            {/* Cart Additions */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4" />
+                Cart Additions
+              </h3>
+              {cartAdditionsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : cartAdditionsOverTime.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">No cart additions in this period</p>
+              ) : (
+                <div className="border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Added to Cart</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {cartAdditionsOverTime.map((row) => (
+                        <TableRow key={row.date}>
+                          <TableCell>{new Date(row.date).toLocaleDateString('en-GB')}</TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">{row.count}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+
+            {/* Checkouts */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Successful Checkouts
+              </h3>
+              {checkoutsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : checkoutsOverTime.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">No checkouts in this period</p>
+              ) : (
+                <div className="border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Orders</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {checkoutsOverTime.map((row) => (
+                        <TableRow key={row.date}>
+                          <TableCell>{new Date(row.date).toLocaleDateString('en-GB')}</TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">{row.count}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Top Products by Views */}
+          <div className="mt-6">
+            <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Top Products by Views (Selected Period)
+            </h3>
+            {productsByProductLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : productViewsByProduct.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No product views in this period</p>
+            ) : (
+              <div className="border rounded-md">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead className="text-right">Views</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {productViewsByProduct.map((row) => (
+                      <TableRow key={row.productId}>
+                        <TableCell className="font-medium">{row.productName}</TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant="secondary">{row.views}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
