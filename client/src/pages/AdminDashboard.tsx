@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit, ImageIcon, BarChart3, Eye, Users, Activity, FileSpreadsheet } from "lucide-react";
+import { Loader2, LogOut, Search, Package, TrendingUp, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp, Plus, Trash2, Edit, ImageIcon, BarChart3, Eye, Users, Activity, FileSpreadsheet, Copy, Check } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -1759,6 +1759,7 @@ export default function AdminDashboard() {
   const [editingVariantPrice, setEditingVariantPrice] = useState<{ [key: string]: string }>({});
   const [editingVariantStock, setEditingVariantStock] = useState<{ [key: string]: string }>({});
   const [variantCounts, setVariantCounts] = useState<{ [key: string]: number }>({});
+  const [emailsCopied, setEmailsCopied] = useState(false);
 
   // Check if admin is authenticated
   const { data: authCheck, isLoading: authLoading } = useQuery<{ authenticated: boolean }>({
@@ -1956,6 +1957,27 @@ export default function AdminDashboard() {
 
     if (Object.keys(updates).length > 0) {
       updateVariantMutation.mutate({ id: variantId, updates });
+    }
+  };
+
+  const handleCopyAllEmails = async () => {
+    if (newsletterSubscribers.length === 0) return;
+    
+    const emails = newsletterSubscribers.map(sub => sub.email).join('\n');
+    try {
+      await navigator.clipboard.writeText(emails);
+      setEmailsCopied(true);
+      toast({
+        title: "Emails copied",
+        description: `${newsletterSubscribers.length} email${newsletterSubscribers.length !== 1 ? 's' : ''} copied to clipboard`,
+      });
+      setTimeout(() => setEmailsCopied(false), 2000);
+    } catch (error) {
+      toast({
+        title: "Copy failed",
+        description: "Could not copy emails to clipboard",
+        variant: "destructive",
+      });
     }
   };
 
@@ -2423,8 +2445,26 @@ export default function AdminDashboard() {
             </Card>
 
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between gap-2">
                 <CardTitle>Newsletter Subscribers</CardTitle>
+                <Button
+                  variant="outline"
+                  onClick={handleCopyAllEmails}
+                  disabled={newsletterSubscribers.length === 0 || subscribersLoading}
+                  data-testid="button-copy-all-emails"
+                >
+                  {emailsCopied ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy All Emails
+                    </>
+                  )}
+                </Button>
               </CardHeader>
               <CardContent>
                 {subscribersLoading ? (
