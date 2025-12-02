@@ -158,10 +158,11 @@ export class DbStorage implements IStorage {
           .map(v => parseFloat(v.price!));
         
         // lowestVariantPrice is the lowest AVAILABLE (in-stock) price
-        lowestVariantPrice = Math.min(...inStockPrices).toFixed(2);
+        const lowestPrice = Math.min(...inStockPrices);
+        lowestVariantPrice = lowestPrice.toFixed(2);
         
-        // displayPrice is the first in-stock variant's price
-        displayPrice = parseFloat(inStockVariantsWithPrices[0].price!).toFixed(2);
+        // displayPrice should be the LOWEST in-stock variant price
+        displayPrice = lowestPrice.toFixed(2);
       } else {
         // All variants are out of stock - fall back to lowest price overall
         const allPrices = variants
