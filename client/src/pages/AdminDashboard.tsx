@@ -779,83 +779,81 @@ function ProductVariants({ productId, productName, onUpdateVariant, editingVaria
   }
 
   return (
-    <div className="p-6 bg-accent/20 border-l-4 border-l-primary">
-      <div className="flex items-center gap-2 mb-4 flex-wrap">
-        <Package className="h-5 w-5 text-primary" />
-        <h4 className="text-base font-semibold">Product Variants - Adjust Price & Stock</h4>
-        <Badge variant="default">{variants.length} variant{variants.length !== 1 ? 's' : ''}</Badge>
+    <div className="py-3 px-4 bg-muted/30 border-l-4 border-l-primary/50">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Package className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium">Variants</span>
+          <Badge variant="secondary" className="text-xs">{variants.length}</Badge>
+        </div>
         <ManageVariantsDialog productId={productId} productName={productName} />
       </div>
-      <div className="space-y-3">
+      
+      <div className="space-y-2">
         {variants.map((variant) => (
-          <Card key={variant.id} className="p-4 bg-card">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex flex-col">
-                <Badge variant="outline" className="mb-2 w-fit" data-testid={`badge-variant-type-${variant.id}`}>{variant.name}</Badge>
-                <p className="text-base font-semibold" data-testid={`text-variant-value-${variant.id}`}>{variant.value}</p>
-                {variant.image && (
-                  <img 
-                    src={variant.image} 
-                    alt={variant.value}
-                    className="mt-2 w-20 h-20 object-contain rounded bg-muted"
-                  />
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium">Price</Label>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 text-lg font-bold text-primary">
-                    £<span data-testid={`text-variant-price-${variant.id}`}>{variant.price}</span>
-                  </div>
-                  <span className="text-muted-foreground">→</span>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="New price"
-                    value={editingVariantPrice[variant.id] || ""}
-                    onChange={(e) => setEditingVariantPrice({ ...editingVariantPrice, [variant.id]: e.target.value })}
-                    className="w-28"
-                    data-testid={`input-variant-price-${variant.id}`}
-                  />
-                  <Button
-                    size="sm"
-                    onClick={() => onUpdateVariant(variant.id, editingVariantPrice[variant.id])}
-                    disabled={!editingVariantPrice[variant.id] || isPending}
-                    data-testid={`button-update-variant-price-${variant.id}`}
-                  >
-                    Update
-                  </Button>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium">Stock Quantity</Label>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    <span className="text-lg font-bold" data-testid={`text-variant-stock-${variant.id}`}>{variant.stockQuantity}</span>
-                    <span className="text-sm text-muted-foreground">units</span>
-                  </div>
-                  <span className="text-muted-foreground">→</span>
-                  <Input
-                    type="number"
-                    min="0"
-                    placeholder="Qty"
-                    value={editingVariantStock[variant.id] || ""}
-                    onChange={(e) => setEditingVariantStock({ ...editingVariantStock, [variant.id]: e.target.value })}
-                    className="w-24"
-                    data-testid={`input-variant-stock-${variant.id}`}
-                  />
-                  <Button
-                    size="sm"
-                    onClick={() => onUpdateVariant(variant.id, undefined, editingVariantStock[variant.id])}
-                    disabled={!editingVariantStock[variant.id] || isPending}
-                    data-testid={`button-update-variant-stock-${variant.id}`}
-                  >
-                    Set
-                  </Button>
-                </div>
-              </div>
+          <div 
+            key={variant.id} 
+            className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2 p-3 bg-card rounded-md border items-center"
+          >
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs shrink-0" data-testid={`badge-variant-type-${variant.id}`}>
+                {variant.name}
+              </Badge>
+              <span className="font-medium text-sm" data-testid={`text-variant-value-${variant.id}`}>
+                {variant.value}
+              </span>
+              {variant.stockQuantity === 0 && (
+                <Badge variant="destructive" className="text-xs">Out of stock</Badge>
+              )}
+              {variant.stockQuantity > 0 && variant.stockQuantity < 5 && (
+                <Badge variant="secondary" className="text-xs">Low stock</Badge>
+              )}
             </div>
-          </Card>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground whitespace-nowrap">£{variant.price}</span>
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="Price"
+                value={editingVariantPrice[variant.id] || ""}
+                onChange={(e) => setEditingVariantPrice({ ...editingVariantPrice, [variant.id]: e.target.value })}
+                className="w-20 min-w-0"
+                data-testid={`input-variant-price-${variant.id}`}
+              />
+              <Button
+                variant="outline"
+                onClick={() => onUpdateVariant(variant.id, editingVariantPrice[variant.id])}
+                disabled={!editingVariantPrice[variant.id] || isPending}
+                data-testid={`button-update-variant-price-${variant.id}`}
+              >
+                Set
+              </Button>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground whitespace-nowrap" data-testid={`text-variant-stock-${variant.id}`}>
+                {variant.stockQuantity} units
+              </span>
+              <Input
+                type="number"
+                min="0"
+                placeholder="Qty"
+                value={editingVariantStock[variant.id] || ""}
+                onChange={(e) => setEditingVariantStock({ ...editingVariantStock, [variant.id]: e.target.value })}
+                className="w-16 min-w-0"
+                data-testid={`input-variant-stock-${variant.id}`}
+              />
+              <Button
+                variant="outline"
+                onClick={() => onUpdateVariant(variant.id, undefined, editingVariantStock[variant.id])}
+                disabled={!editingVariantStock[variant.id] || isPending}
+                data-testid={`button-update-variant-stock-${variant.id}`}
+              >
+                Set
+              </Button>
+            </div>
+          </div>
         ))}
       </div>
     </div>
@@ -2262,26 +2260,20 @@ export default function AdminDashboard() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => toggleProductExpansion(product.id)}
-                                className="h-8 w-8"
                                 data-testid={`button-toggle-variants-${product.slug}`}
                               >
                                 {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                               </Button>
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                                className="w-12 h-12 object-cover rounded bg-muted"
-                              />
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <p className="font-medium">{product.name}</p>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="font-medium">{product.name}</span>
                                   {variantCounts[product.id] > 0 && (
-                                    <Badge variant="secondary" className="text-xs" data-testid={`badge-variant-count-${product.slug}`}>
+                                    <Badge variant="secondary" className="text-xs shrink-0" data-testid={`badge-variant-count-${product.slug}`}>
                                       {variantCounts[product.id]} variant{variantCounts[product.id] !== 1 ? 's' : ''}
                                     </Badge>
                                   )}
                                 </div>
-                                <p className="text-xs text-muted-foreground">{product.slug}</p>
+                                <span className="text-xs text-muted-foreground">{product.slug}</span>
                               </div>
                             </div>
                           </TableCell>
@@ -2290,63 +2282,59 @@ export default function AdminDashboard() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">
+                          <span className="font-medium whitespace-nowrap">
                             {(product as ProductWithPricing).displayPrice || `£${product.price}`}
                           </span>
                           <div className="flex items-center gap-1">
                             <Input
                               type="number"
                               step="0.01"
-                              placeholder="New price"
+                              placeholder="New"
                               value={editingPrice[product.id] || ""}
                               onChange={(e) => setEditingPrice({ ...editingPrice, [product.id]: e.target.value })}
-                              className="w-24 h-8 text-sm"
+                              className="w-20"
                               data-testid={`input-price-${product.slug}`}
                             />
                             <Button
-                              size="sm"
                               variant="outline"
                               onClick={() => handlePriceUpdate(product.id)}
                               disabled={!editingPrice[product.id] || updateProductMutation.isPending}
                               data-testid={`button-update-price-${product.slug}`}
                             >
-                              Update
+                              Set
                             </Button>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{product.stockQuantity || 0}</span>
-                              {product.stockQuantity && product.stockQuantity < 3 && product.stockQuantity > 0 && (
-                                <Badge variant="destructive" className="text-xs">Low Stock</Badge>
-                              )}
-                              {product.stockQuantity === 0 && (
-                                <Badge variant="secondary" className="text-xs">Out of Stock</Badge>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Input
-                                type="number"
-                                min="0"
-                                placeholder="Qty"
-                                value={editingStock[product.id] || ""}
-                                onChange={(e) => setEditingStock({ ...editingStock, [product.id]: e.target.value })}
-                                className="w-20 h-8 text-sm"
-                                data-testid={`input-stock-${product.slug}`}
-                              />
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleStockQuantityUpdate(product.id)}
-                                disabled={!editingStock[product.id] || updateProductMutation.isPending}
-                                data-testid={`button-update-stock-${product.slug}`}
-                              >
-                                Set
-                              </Button>
-                            </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{product.stockQuantity || 0}</span>
+                            {product.stockQuantity && product.stockQuantity < 3 && product.stockQuantity > 0 && (
+                              <Badge variant="destructive" className="text-xs">Low</Badge>
+                            )}
+                            {product.stockQuantity === 0 && (
+                              <Badge variant="secondary" className="text-xs">Out</Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Input
+                              type="number"
+                              min="0"
+                              placeholder="Qty"
+                              value={editingStock[product.id] || ""}
+                              onChange={(e) => setEditingStock({ ...editingStock, [product.id]: e.target.value })}
+                              className="w-16"
+                              data-testid={`input-stock-${product.slug}`}
+                            />
+                            <Button
+                              variant="outline"
+                              onClick={() => handleStockQuantityUpdate(product.id)}
+                              disabled={!editingStock[product.id] || updateProductMutation.isPending}
+                              data-testid={`button-update-stock-${product.slug}`}
+                            >
+                              Set
+                            </Button>
                           </div>
                         </div>
                       </TableCell>
