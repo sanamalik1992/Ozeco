@@ -131,6 +131,9 @@ export interface IStorage {
   getDetailedProductViews(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; views: number }[]>;
   getDetailedCartAdditions(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; count: number }[]>;
   getDetailedPurchases(startDate?: string, endDate?: string): Promise<{ date: string; productId: string; productName: string; productImage: string; brand: string; quantity: number; revenue: number }[]>;
+  
+  // Sales summary by day
+  getSalesByDay(startDate?: string, endDate?: string): Promise<{ date: string; orderCount: number; revenue: number; itemsSold: number }[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -1020,6 +1023,62 @@ export class DbStorage implements IStorage {
       brand: row.brand || '',
       quantity: Number(row.quantity),
       revenue: Number(row.revenue),
+    }));
+  }
+
+  // Sales summary by day - aggregated order totals
+  async getSalesByDay(startDate?: string, endDate?: string): Promise<{ date: string; orderCount: number; revenue: number; itemsSold: number }[]> {
+    const conditions: any[] = [
+      inArray(orders.status, ['paid', 'completed'])
+    ];
+    if (startDate) {
+      conditions.push(sql`${orders.createdAt}::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      conditions.push(sql`${orders.createdAt}::date <= ${endDate}::date`);
+    }
+
+    // Get order count and revenue by day
+    const orderResult = await db
+      .select({
+        date: sql<string>`${orders.createdAt}::date`,
+        orderCount: sql<number>`count(DISTINCT ${orders.id})`,
+        revenue: sql<number>`sum(${orders.totalAmount}::numeric)`,
+      })
+      .from(orders)
+      .where(and(...conditions))
+      .groupBy(sql`${orders.createdAt}::date`)
+      .orderBy(sql`${orders.createdAt}::date DESC`);
+
+    // Get items sold by day
+    const itemsConditions: any[] = [
+      inArray(orders.status, ['paid', 'completed'])
+    ];
+    if (startDate) {
+      itemsConditions.push(sql`${orders.createdAt}::date >= ${startDate}::date`);
+    }
+    if (endDate) {
+      itemsConditions.push(sql`${orders.createdAt}::date <= ${endDate}::date`);
+    }
+
+    const itemsResult = await db
+      .select({
+        date: sql<string>`${orders.createdAt}::date`,
+        itemsSold: sql<number>`sum(${orderItems.quantity})`,
+      })
+      .from(orderItems)
+      .innerJoin(orders, eq(orderItems.orderId, orders.id))
+      .where(and(...itemsConditions))
+      .groupBy(sql`${orders.createdAt}::date`);
+
+    // Merge results
+    const itemsByDate = new Map(itemsResult.map(r => [r.date, Number(r.itemsSold)]));
+
+    return orderResult.map(row => ({
+      date: row.date,
+      orderCount: Number(row.orderCount),
+      revenue: Number(row.revenue),
+      itemsSold: itemsByDate.get(row.date) || 0,
     }));
   }
 }

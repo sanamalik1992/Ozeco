@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -1753,6 +1753,8 @@ export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [brandFilter, setBrandFilter] = useState<string>("all");
+  const [stockFilter, setStockFilter] = useState<string>("all");
   const [editingPrice, setEditingPrice] = useState<{ [key: string]: string }>({});
   const [editingStock, setEditingStock] = useState<{ [key: string]: string }>({});
   const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
@@ -1806,6 +1808,26 @@ export default function AdminDashboard() {
     queryKey: ["/api/admin/newsletter/subscribers"],
     enabled: authCheck?.authenticated === true,
   });
+
+  // Fetch sales by day (last 30 days for quick overview)
+  const { data: salesByDay = [], isLoading: salesLoading } = useQuery<Array<{ date: string; orderCount: number; revenue: number; itemsSold: number }>>({
+    queryKey: ["/api/analytics/sales-by-day"],
+    queryFn: async () => {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const startDate = thirtyDaysAgo.toISOString().split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+      const res = await fetch(`/api/analytics/sales-by-day?startDate=${startDate}&endDate=${today}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch sales data");
+      return res.json();
+    },
+    enabled: authCheck?.authenticated === true,
+  });
+
+  // Calculate totals from sales data
+  const totalRevenue = salesByDay.reduce((sum, day) => sum + day.revenue, 0);
+  const totalOrders = salesByDay.reduce((sum, day) => sum + day.orderCount, 0);
+  const totalItemsSold = salesByDay.reduce((sum, day) => sum + day.itemsSold, 0);
 
   // Update product mutation
   const updateProductMutation = useMutation({
@@ -1949,13 +1971,24 @@ export default function AdminDashboard() {
     setExpandedProducts(newExpanded);
   };
 
-  // Filter products by search query
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.brand.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get unique brands for filter
+  const uniqueBrands = [...new Set(products.map(p => p.brand))].sort();
 
-  const inStockCount = products.filter(p => p.inStock).length;
+  // Filter products by search query, brand, and stock status
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.brand.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesBrand = brandFilter === "all" || product.brand === brandFilter;
+    const matchesStock = stockFilter === "all" || 
+      (stockFilter === "in-stock" && product.inStock && (product.stockQuantity || 0) > 0) ||
+      (stockFilter === "low-stock" && product.inStock && (product.stockQuantity || 0) > 0 && (product.stockQuantity || 0) < 10) ||
+      (stockFilter === "out-of-stock" && (!product.inStock || (product.stockQuantity || 0) === 0));
+    return matchesSearch && matchesBrand && matchesStock;
+  });
+
+  const inStockCount = products.filter(p => p.inStock && (p.stockQuantity || 0) > 0).length;
+  const lowStockCount = products.filter(p => p.inStock && (p.stockQuantity || 0) > 0 && (p.stockQuantity || 0) < 10).length;
+  const outOfStockCount = products.filter(p => !p.inStock || (p.stockQuantity || 0) === 0).length;
   const bestsellersCount = products.filter(p => p.isBestseller).length;
 
   if (authLoading || productsLoading) {
@@ -2009,58 +2042,201 @@ export default function AdminDashboard() {
 
           <TabsContent value="inventory" className="space-y-6">
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Products</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{products.length}</div>
-              <p className="text-xs text-muted-foreground">Across 6 brands</p>
-            </CardContent>
-          </Card>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card 
+                className={`cursor-pointer transition-all ${stockFilter === 'all' ? 'ring-2 ring-primary' : 'hover-elevate'}`}
+                onClick={() => setStockFilter('all')}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{products.length}</div>
+                  <p className="text-xs text-muted-foreground">Across {uniqueBrands.length} brands</p>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">In Stock</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{inStockCount}</div>
-              <p className="text-xs text-muted-foreground">Available for purchase</p>
-            </CardContent>
-          </Card>
+              <Card 
+                className={`cursor-pointer transition-all ${stockFilter === 'in-stock' ? 'ring-2 ring-green-500' : 'hover-elevate'}`}
+                onClick={() => setStockFilter(stockFilter === 'in-stock' ? 'all' : 'in-stock')}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">In Stock</CardTitle>
+                  <div className="h-3 w-3 rounded-full bg-green-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">{inStockCount}</div>
+                  <p className="text-xs text-muted-foreground">Available for purchase</p>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Bestsellers</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{bestsellersCount}</div>
-              <p className="text-xs text-muted-foreground">Featured on homepage</p>
-            </CardContent>
-          </Card>
-        </div>
+              <Card 
+                className={`cursor-pointer transition-all ${stockFilter === 'low-stock' ? 'ring-2 ring-orange-500' : 'hover-elevate'}`}
+                onClick={() => setStockFilter(stockFilter === 'low-stock' ? 'all' : 'low-stock')}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Low Stock</CardTitle>
+                  <div className="h-3 w-3 rounded-full bg-orange-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-orange-600">{lowStockCount}</div>
+                  <p className="text-xs text-muted-foreground">Less than 10 units</p>
+                </CardContent>
+              </Card>
+
+              <Card 
+                className={`cursor-pointer transition-all ${stockFilter === 'out-of-stock' ? 'ring-2 ring-red-500' : 'hover-elevate'}`}
+                onClick={() => setStockFilter(stockFilter === 'out-of-stock' ? 'all' : 'out-of-stock')}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Out of Stock</CardTitle>
+                  <div className="h-3 w-3 rounded-full bg-red-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-red-600">{outOfStockCount}</div>
+                  <p className="text-xs text-muted-foreground">Needs restocking</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Sales by Day Summary */}
+            <Card>
+              <CardHeader>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-primary" />
+                      Sales Overview (Last 30 Days)
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Day-by-day breakdown of orders, revenue, and items sold
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <div className="text-center px-4 py-2 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+                      <p className="text-2xl font-bold text-green-600">£{totalRevenue.toFixed(2)}</p>
+                      <p className="text-xs text-green-600">Total Revenue</p>
+                    </div>
+                    <div className="text-center px-4 py-2 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <p className="text-2xl font-bold text-blue-600">{totalOrders}</p>
+                      <p className="text-xs text-blue-600">Total Orders</p>
+                    </div>
+                    <div className="text-center px-4 py-2 bg-purple-50 dark:bg-purple-950 rounded-lg border border-purple-200 dark:border-purple-800">
+                      <p className="text-2xl font-bold text-purple-600">{totalItemsSold}</p>
+                      <p className="text-xs text-purple-600">Items Sold</p>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {salesLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : salesByDay.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p>No sales recorded in the last 30 days</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Date</TableHead>
+                          <TableHead className="text-center">Orders</TableHead>
+                          <TableHead className="text-center">Items Sold</TableHead>
+                          <TableHead className="text-right">Revenue</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {salesByDay.map((day) => (
+                          <TableRow key={day.date} data-testid={`row-sales-${day.date}`}>
+                            <TableCell className="font-medium">
+                              {new Date(day.date).toLocaleDateString('en-GB', { 
+                                weekday: 'short', 
+                                day: 'numeric', 
+                                month: 'short',
+                                year: 'numeric'
+                              })}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="secondary">{day.orderCount}</Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline">{day.itemsSold}</Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Badge className="bg-green-500 text-white">£{day.revenue.toFixed(2)}</Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Products Table */}
             <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <CardTitle>Product Inventory</CardTitle>
-              <div className="relative max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                  data-testid="input-search-products"
-                />
-              </div>
-            </div>
-          </CardHeader>
+              <CardHeader>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <CardTitle>Product Inventory</CardTitle>
+                      <Badge variant="secondary" className="text-sm">
+                        {filteredProducts.length} of {products.length}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ExportToMerchantCentreButton />
+                    </div>
+                  </div>
+                  
+                  {/* Filters Row */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="relative flex-1 min-w-[200px] max-w-sm">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search products..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10"
+                        data-testid="input-search-products"
+                      />
+                    </div>
+                    
+                    <Select value={brandFilter} onValueChange={setBrandFilter}>
+                      <SelectTrigger className="w-[160px]" data-testid="select-brand-filter">
+                        <SelectValue placeholder="Filter by brand" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Brands</SelectItem>
+                        {uniqueBrands.map(brand => (
+                          <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {(brandFilter !== 'all' || stockFilter !== 'all' || searchQuery) && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          setBrandFilter('all');
+                          setStockFilter('all');
+                          setSearchQuery('');
+                        }}
+                        data-testid="button-clear-filters"
+                      >
+                        Clear Filters
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <Table>
@@ -2078,8 +2254,8 @@ export default function AdminDashboard() {
                   {filteredProducts.map((product) => {
                     const isExpanded = expandedProducts.has(product.id);
                     return (
-                      <>
-                        <TableRow key={product.id} data-testid={`row-product-${product.slug}`}>
+                      <Fragment key={product.id}>
+                        <TableRow data-testid={`row-product-${product.slug}`}>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Button
@@ -2222,7 +2398,7 @@ export default function AdminDashboard() {
                         </TableCell>
                       </TableRow>
                     )}
-                  </>
+                  </Fragment>
                 );
               })}
                 </TableBody>

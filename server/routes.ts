@@ -2261,6 +2261,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Sales by day summary - for admin dashboard day-to-day sales overview
+  app.get("/api/analytics/sales-by-day", async (req, res) => {
+    try {
+      const isAdmin = req.session && (req.session as any).isAdmin === true;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const startDate = req.query.startDate as string | undefined;
+      const endDate = req.query.endDate as string | undefined;
+
+      const data = await storage.getSalesByDay(startDate, endDate);
+      res.json(data);
+    } catch (error: any) {
+      console.error("Sales by day analytics error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Google Merchant Centre export
   app.post("/api/admin/export-to-merchant-centre", async (req, res) => {
     try {
