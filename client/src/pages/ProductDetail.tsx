@@ -1,6 +1,6 @@
-import { useRoute, Link } from "wouter";
+import { useRoute, Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useCart } from "@/lib/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -21,6 +21,7 @@ import type { ProductWithPricing, Review, ProductVariant } from "@shared/schema"
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:slug");
+  const [location, setLocation] = useLocation();
   const productSlug = params?.slug;
   const { addItem } = useCart();
   const { toast } = useToast();
@@ -28,6 +29,16 @@ export default function ProductDetail() {
   const [customerPhotosApi, setCustomerPhotosApi] = useState<CarouselApi>();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [variantInitialized, setVariantInitialized] = useState(false);
+  
+  // Get variant from URL query parameter
+  const urlVariant = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      return searchParams.get('variant');
+    }
+    return null;
+  }, [location]);
 
   const { data: product, isLoading } = useQuery<ProductWithPricing>({
     queryKey: [`/api/products/slug/${productSlug}`],
@@ -41,6 +52,46 @@ export default function ProductDetail() {
     queryKey: [`/api/products/${product?.id}/variants`],
     enabled: !!product?.id,
   });
+  
+  // Auto-select variant from URL parameter or first in-stock variant
+  useEffect(() => {
+    if (variants.length === 0 || variantInitialized) return;
+    
+    let variantToSelect: ProductVariant | null = null;
+    
+    // First, try to find variant from URL parameter
+    if (urlVariant) {
+      const normalizedUrlVariant = urlVariant.toLowerCase().replace(/-/g, ' ');
+      variantToSelect = variants.find(
+        v => v.value.toLowerCase() === normalizedUrlVariant ||
+             v.value.toLowerCase().replace(/\s+/g, '-') === urlVariant.toLowerCase()
+      ) || null;
+    }
+    
+    // If no URL variant or not found, select first in-stock variant
+    if (!variantToSelect) {
+      variantToSelect = variants.find(v => v.stockQuantity > 0) || variants[0];
+    }
+    
+    if (variantToSelect) {
+      setSelectedVariant(variantToSelect);
+      setVariantInitialized(true);
+    }
+  }, [variants, urlVariant, variantInitialized]);
+  
+  // Reset variant initialization when product changes
+  useEffect(() => {
+    setVariantInitialized(false);
+    setSelectedVariant(null);
+  }, [product?.id]);
+  
+  // Update URL when variant is manually selected
+  const handleVariantSelect = (variant: ProductVariant) => {
+    setSelectedVariant(variant);
+    const variantSlug = variant.value.toLowerCase().replace(/\s+/g, '-');
+    const newUrl = `/product/${productSlug}?variant=${variantSlug}`;
+    window.history.replaceState({}, '', newUrl);
+  };
   
   useEffect(() => {
     if (!mainCarouselApi) return;
@@ -291,7 +342,9 @@ export default function ProductDetail() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-3 flex-wrap">
                     <span className="text-4xl font-bold text-primary" data-testid="text-product-price">
-                      {product.displayPrice || `£${parseFloat(product.price).toFixed(2)}`}
+                      £{selectedVariant?.price 
+                        ? parseFloat(selectedVariant.price).toFixed(2) 
+                        : parseFloat(product.price).toFixed(2)}
                     </span>
                     {product.originalPrice && parseFloat(product.originalPrice) > parseFloat(product.price) && (
                       <>
@@ -299,11 +352,16 @@ export default function ProductDetail() {
                           £{parseFloat(product.originalPrice).toFixed(2)}
                         </span>
                         <Badge className="bg-red-500 text-white border-red-600" data-testid="badge-savings">
-                          Save £{(parseFloat(product.originalPrice) - parseFloat(product.price)).toFixed(0)}
+                          Save £{(parseFloat(product.originalPrice) - (selectedVariant?.price ? parseFloat(selectedVariant.price) : parseFloat(product.price))).toFixed(0)}
                         </Badge>
                       </>
                     )}
                   </div>
+                  {selectedVariant && (
+                    <span className="text-sm text-muted-foreground mt-1 block">
+                      {selectedVariant.value} selected
+                    </span>
+                  )}
                   <span className="text-sm text-muted-foreground mt-2 block">Free UK Delivery</span>
                 </div>
               </div>
@@ -356,7 +414,7 @@ export default function ProductDetail() {
                       {variants.map((variant) => (
                         <div key={variant.id} className="flex flex-col items-center gap-1">
                           <button
-                            onClick={() => setSelectedVariant(variant)}
+                            onClick={() => handleVariantSelect(variant)}
                             className={`
                               relative border-2 rounded-md overflow-visible transition-all hover-elevate active-elevate-2 w-16 h-16 bg-background
                               ${selectedVariant?.id === variant.id ? 'border-primary ring-2 ring-primary' : 'border-border'}
@@ -405,7 +463,7 @@ export default function ProductDetail() {
                         <Button
                           key={variant.id}
                           variant={selectedVariant?.id === variant.id ? "default" : "outline"}
-                          onClick={() => setSelectedVariant(variant)}
+                          onClick={() => handleVariantSelect(variant)}
                           disabled={variant.stockQuantity === 0}
                           data-testid={`button-variant-${variant.value.toLowerCase().replace(/\s+/g, '-')}`}
                         >
@@ -414,11 +472,6 @@ export default function ProductDetail() {
                           {variant.stockQuantity === 0 && ' (Sold Out)'}
                         </Button>
                       ))}
-                    </div>
-                  )}
-                  {selectedVariant && selectedVariant.price && (
-                    <div className="mt-3 text-sm text-muted-foreground">
-                      Price for {selectedVariant.value}: <span className="font-semibold text-primary">£{parseFloat(selectedVariant.price).toFixed(2)}</span>
                     </div>
                   )}
                 </div>
