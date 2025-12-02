@@ -944,28 +944,62 @@ function AnalyticsDashboard() {
     refetchInterval: 60000,
   });
 
+  // Build URL with date parameters for historical analytics queries
+  const buildAnalyticsUrl = (base: string) => {
+    const params = new URLSearchParams();
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    const queryString = params.toString();
+    return queryString ? `${base}?${queryString}` : base;
+  };
+
   const { data: pageViewsOverTime = [], isLoading: pageViewsLoading } = useQuery<Array<{ date: string; views: number }>>({
-    queryKey: ["/api/analytics/page-views-over-time", { startDate, endDate }],
+    queryKey: ["/api/analytics/page-views-over-time", startDate, endDate],
+    queryFn: async () => {
+      const res = await fetch(buildAnalyticsUrl("/api/analytics/page-views-over-time"), { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch page views");
+      return res.json();
+    },
     enabled: !!startDate || dateFilter === 'all',
   });
 
   const { data: productViewsOverTime = [], isLoading: productViewsLoading } = useQuery<Array<{ date: string; views: number }>>({
-    queryKey: ["/api/analytics/product-views-over-time", { startDate, endDate }],
+    queryKey: ["/api/analytics/product-views-over-time", startDate, endDate],
+    queryFn: async () => {
+      const res = await fetch(buildAnalyticsUrl("/api/analytics/product-views-over-time"), { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch product views");
+      return res.json();
+    },
     enabled: !!startDate || dateFilter === 'all',
   });
 
   const { data: cartAdditionsOverTime = [], isLoading: cartAdditionsLoading } = useQuery<Array<{ date: string; count: number }>>({
-    queryKey: ["/api/analytics/cart-additions-over-time", { startDate, endDate }],
+    queryKey: ["/api/analytics/cart-additions-over-time", startDate, endDate],
+    queryFn: async () => {
+      const res = await fetch(buildAnalyticsUrl("/api/analytics/cart-additions-over-time"), { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch cart additions");
+      return res.json();
+    },
     enabled: !!startDate || dateFilter === 'all',
   });
 
   const { data: checkoutsOverTime = [], isLoading: checkoutsLoading } = useQuery<Array<{ date: string; count: number }>>({
-    queryKey: ["/api/analytics/checkouts-over-time", { startDate, endDate }],
+    queryKey: ["/api/analytics/checkouts-over-time", startDate, endDate],
+    queryFn: async () => {
+      const res = await fetch(buildAnalyticsUrl("/api/analytics/checkouts-over-time"), { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch checkouts");
+      return res.json();
+    },
     enabled: !!startDate || dateFilter === 'all',
   });
 
   const { data: productViewsByProduct = [], isLoading: productsByProductLoading } = useQuery<Array<{ productId: string; productName: string; views: number }>>({
-    queryKey: ["/api/analytics/product-views-by-product", { startDate, endDate }],
+    queryKey: ["/api/analytics/product-views-by-product", startDate, endDate],
+    queryFn: async () => {
+      const res = await fetch(buildAnalyticsUrl("/api/analytics/product-views-by-product"), { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch product views by product");
+      return res.json();
+    },
     enabled: !!startDate || dateFilter === 'all',
   });
 
