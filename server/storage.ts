@@ -137,23 +137,36 @@ export class DbStorage implements IStorage {
       .where(eq(productVariants.productId, product.id));
     
     let lowestVariantPrice: string | null = null;
+    let displayPrice: string = product.price;
     
     if (variants.length > 0) {
-      // Find the lowest price among variants
-      const prices = variants
-        .map(v => v.price)
-        .filter((price): price is string => price !== null)
-        .map(price => parseFloat(price));
+      // Filter for IN-STOCK variants with valid prices
+      const inStockVariantsWithPrices = variants
+        .filter(v => v.stockQuantity > 0 && v.price !== null);
       
-      if (prices.length > 0) {
-        lowestVariantPrice = Math.min(...prices).toFixed(2);
+      if (inStockVariantsWithPrices.length > 0) {
+        // Get all in-stock variant prices
+        const inStockPrices = inStockVariantsWithPrices
+          .map(v => parseFloat(v.price!));
+        
+        // lowestVariantPrice is the lowest AVAILABLE (in-stock) price
+        lowestVariantPrice = Math.min(...inStockPrices).toFixed(2);
+        
+        // displayPrice is the first in-stock variant's price
+        displayPrice = parseFloat(inStockVariantsWithPrices[0].price!).toFixed(2);
+      } else {
+        // All variants are out of stock - fall back to lowest price overall
+        const allPrices = variants
+          .map(v => v.price)
+          .filter((price): price is string => price !== null)
+          .map(price => parseFloat(price));
+        
+        if (allPrices.length > 0) {
+          lowestVariantPrice = Math.min(...allPrices).toFixed(2);
+          displayPrice = lowestVariantPrice;
+        }
       }
     }
-    
-    // Display price is the lowest variant price if available, otherwise the base price
-    const displayPrice = lowestVariantPrice 
-      ? (parseFloat(lowestVariantPrice) < parseFloat(product.price) ? lowestVariantPrice : product.price)
-      : product.price;
     
     return {
       ...product,
