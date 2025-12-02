@@ -942,6 +942,22 @@ function AnalyticsDashboard() {
     refetchInterval: 60000,
   });
 
+  // Fetch today's sales revenue
+  const { data: todaySales } = useQuery<Array<{ date: string; orderCount: number; revenue: number; itemsSold: number }>>({
+    queryKey: ["/api/analytics/sales-today"],
+    queryFn: async () => {
+      const today = new Date();
+      const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      const res = await fetch(`/api/analytics/sales-by-day?startDate=${dateStr}&endDate=${dateStr}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch today's sales");
+      return res.json();
+    },
+    refetchInterval: 60000,
+  });
+
+  const todayRevenue = todaySales?.[0]?.revenue || 0;
+  const todayOrders = todaySales?.[0]?.orderCount || 0;
+
   // Build URL with date parameters for historical analytics queries
   const buildAnalyticsUrl = (base: string) => {
     const params = new URLSearchParams();
@@ -1112,7 +1128,18 @@ function AnalyticsDashboard() {
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <Card className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Sales Today</CardTitle>
+            <TrendingUp className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">£{todayRevenue.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">{todayOrders} order{todayOrders !== 1 ? 's' : ''} today</p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Live Visitors</CardTitle>
