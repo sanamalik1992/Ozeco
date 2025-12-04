@@ -80,8 +80,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Serve blog images statically before Vite middleware
+  // Serve static files before Vite middleware
   app.use("/blog", express.static(path.resolve(process.cwd(), "public/blog")));
+  app.use("/customer-photos", express.static(path.resolve(process.cwd(), "public/customer-photos")));
+  app.use("/products", express.static(path.resolve(process.cwd(), "public/products")));
   
   const server = await registerRoutes(app);
 
