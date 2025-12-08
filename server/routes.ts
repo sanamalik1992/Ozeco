@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProductSchema, insertCartItemSchema, insertFavoriteSchema, insertCustomerPhotoSchema, orders, orderItems, products, newsletterSubscribers, insertNewsletterSubscriberSchema, reviews, customerPhotos, blogPosts } from "@shared/schema";
+import { insertProductSchema, insertCartItemSchema, insertFavoriteSchema, insertCustomerPhotoSchema, orders, orderItems, products, productVariants, newsletterSubscribers, insertNewsletterSubscriberSchema, reviews, customerPhotos, blogPosts } from "@shared/schema";
 import { db } from "@db";
 import { sql, eq, and, gte } from "drizzle-orm";
 import Stripe from "stripe";
@@ -243,7 +243,214 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Stripe payment routes
+  // Stripe Checkout Session (hosted page) - more reliable than embedded Elements
+  app.post("/api/create-checkout-session", async (req, res) => {
+    try {
+      const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+      
+      console.log("Checkout session request - Stripe configured:", !!stripeSecretKey);
+      
+      if (!stripeSecretKey) {
+        console.error("Stripe secret key not configured");
+        return res.status(400).json({ 
+          error: "Stripe is not configured. Please contact support." 
+        });
+      }
+
+      if (!req.session) {
+        console.error("Session not initialized");
+        return res.status(500).json({ error: "Session not initialised" });
+      }
+
+      const sessionId = req.session.id || req.sessionID;
+      const shippingData = (req.session as any).shippingData;
+      
+      if (!shippingData) {
+        console.error("Shipping data missing from session");
+        return res.status(400).json({ error: "Shipping information not found" });
+      }
+
+      // SECURITY: Recalculate total from server-side cart (never trust client amount!)
+      const cartItems = await storage.getCartItems(sessionId);
+      console.log("Cart items found:", cartItems.length);
+
+      if (cartItems.length === 0) {
+        console.error("Cart is empty for session:", sessionId);
+        return res.status(400).json({ error: "Cart is empty" });
+      }
+
+      // Get discount code from request body (NEVER trust client-provided amounts!)
+      const { discountCode } = req.body;
+
+      // Calculate subtotal using integer pence to avoid floating-point errors
+      const subtotalInPence = cartItems.reduce((sum, item) => {
+        // Use variant price if variant selected, otherwise use product price
+        const price = item.variant?.price ?? item.product.price;
+        const priceInPence = Math.round(parseFloat(price) * 100);
+        return sum + (priceInPence * item.quantity);
+      }, 0);
+      const subtotal = (subtotalInPence / 100).toFixed(2);
+      
+      // SECURITY: Validate and compute discount amount SERVER-SIDE
+      let discount = 0;
+      let validatedDiscountCode: string | null = null;
+      
+      if (discountCode) {
+        const codeUpper = discountCode.trim().toUpperCase();
+        
+        // Check for Black Friday promo code first (£20 off, expires 6th Dec 2025)
+        if (codeUpper === 'BLACKFRIDAY20') {
+          const expiryDate = new Date('2025-12-06T23:59:59Z');
+          if (new Date() <= expiryDate) {
+            discount = 20.00;
+            validatedDiscountCode = 'BLACKFRIDAY20';
+            console.log("Black Friday promo code applied: £20 discount");
+          } else {
+            console.log("Black Friday promo code expired");
+          }
+        } else {
+          // Validate the discount code against newsletter_subscribers table
+          const [subscriber] = await db
+            .select()
+            .from(newsletterSubscribers)
+            .where(eq(newsletterSubscribers.discountCode, codeUpper))
+            .limit(1);
+          
+          if (subscriber) {
+            // Valid code found - apply £10 discount (server-controlled amount)
+            discount = 10.00;
+            validatedDiscountCode = subscriber.discountCode;
+            console.log("Valid discount code applied:", validatedDiscountCode, "Amount:", discount);
+          } else {
+            console.log("Invalid discount code attempted:", discountCode);
+            // Note: We don't fail the payment here, just ignore invalid codes
+          }
+        }
+      }
+      
+      // Calculate final total with server-validated discount
+      const totalInPence = Math.max(subtotalInPence - Math.round(discount * 100), 0);
+      const totalAmount = (totalInPence / 100).toFixed(2);
+      
+      console.log("Subtotal (pence):", subtotalInPence);
+      console.log("Server-validated discount:", discount);
+      console.log("Total amount (pence):", totalInPence);
+
+      // STEP 1: Create pending order BEFORE payment to prevent data loss
+      const [pendingOrder] = await db.insert(orders).values({
+        sessionId,
+        totalAmount,
+        subtotalAmount: subtotal,
+        discountCode: validatedDiscountCode,
+        discountAmount: discount > 0 ? discount.toFixed(2) : null,
+        status: "pending",
+        fulfillmentStatus: "pending",
+        paymentMethod: "stripe",
+        customerEmail: shippingData.customerEmail,
+        customerName: shippingData.customerName,
+        shippingAddressLine1: shippingData.shippingAddressLine1,
+        shippingAddressLine2: shippingData.shippingAddressLine2 || null,
+        shippingCity: shippingData.shippingCity,
+        shippingPostalCode: shippingData.shippingPostalCode,
+        shippingCountry: shippingData.shippingCountry || "GB",
+        customerPhone: shippingData.customerPhone || null,
+      }).returning();
+
+      console.log("Pending order created:", pendingOrder.id);
+
+      // STEP 2: Create order items linked to pending order
+      for (const item of cartItems) {
+        const price = item.variant?.price || item.product.price;
+        await db.insert(orderItems).values({
+          orderId: pendingOrder.id,
+          productId: item.product.id,
+          variantId: item.variant?.id || null,
+          quantity: item.quantity,
+          priceAtTime: price,
+        });
+      }
+
+      // STEP 3: Build line items for Stripe Checkout
+      const stripe = new Stripe(stripeSecretKey);
+      
+      const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = cartItems.map((item) => {
+        const price = item.variant?.price ?? item.product.price;
+        const priceInPence = Math.round(parseFloat(price) * 100);
+        const variantName = item.variant ? ` (${item.variant.value})` : '';
+        
+        return {
+          price_data: {
+            currency: 'gbp',
+            product_data: {
+              name: `${item.product.name}${variantName}`,
+              description: item.product.brand,
+              images: item.product.image ? [`${req.protocol}://${req.get('host')}${item.product.image}`] : [],
+            },
+            unit_amount: priceInPence,
+          },
+          quantity: item.quantity,
+        };
+      });
+
+      // Add discount as a negative line item if applicable
+      if (discount > 0 && validatedDiscountCode) {
+        lineItems.push({
+          price_data: {
+            currency: 'gbp',
+            product_data: {
+              name: `Discount (${validatedDiscountCode})`,
+            },
+            unit_amount: -Math.round(discount * 100),
+          },
+          quantity: 1,
+        });
+      }
+
+      // Determine the base URL for redirects
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+      // STEP 4: Create Stripe Checkout Session
+      const checkoutSession = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: lineItems,
+        mode: 'payment',
+        success_url: `${baseUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}&orderId=${pendingOrder.id}`,
+        cancel_url: `${baseUrl}/checkout?cancelled=true`,
+        customer_email: shippingData.customerEmail,
+        billing_address_collection: 'auto',
+        metadata: {
+          orderId: pendingOrder.id,
+          sessionId,
+          discountCode: validatedDiscountCode || '',
+          discountAmount: discount.toString(),
+        },
+        payment_intent_data: {
+          metadata: {
+            orderId: pendingOrder.id,
+            sessionId,
+          },
+        },
+      });
+
+      // STEP 5: Update order with checkout session ID
+      await db.update(orders)
+        .set({ stripePaymentIntentId: checkoutSession.id })
+        .where(eq(orders.id, pendingOrder.id));
+
+      console.log("Checkout session created:", checkoutSession.id);
+
+      res.json({
+        checkoutUrl: checkoutSession.url,
+        sessionId: checkoutSession.id,
+        orderId: pendingOrder.id,
+      });
+    } catch (error: any) {
+      console.error("Stripe Checkout error details:", error);
+      res.status(500).json({ error: error.message || "Checkout session creation failed" });
+    }
+  });
+
+  // Legacy payment intent endpoint (kept for backward compatibility)
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
       const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -435,10 +642,143 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     console.log("Stripe webhook event:", event.type);
 
-    // Handle payment_intent.succeeded event
-    if (event.type === 'payment_intent.succeeded') {
+    // Helper function to finalize order (shared between checkout.session.completed and payment_intent.succeeded)
+    const finalizeOrder = async (orderId: string, amountPaid: number) => {
+      // Get the order
+      const orderResults = await db.select().from(orders).where(eq(orders.id, orderId));
+      const order = orderResults[0];
+
+      if (!order) {
+        throw new Error(`Order ${orderId} not found`);
+      }
+
+      // IDEMPOTENCY: Check if order is already completed
+      if (order.status === "paid" || order.status === "completed") {
+        console.log("Order already paid/completed, skipping (idempotent)");
+        return { alreadyCompleted: true };
+      }
+
+      // VALIDATION: Verify Stripe amount matches order total
+      const expectedAmount = Math.round(parseFloat(order.totalAmount) * 100);
+      if (amountPaid !== expectedAmount) {
+        console.error(`Amount mismatch! Stripe: ${amountPaid}, Order: ${expectedAmount}`);
+        throw new Error("Payment amount mismatch - manual review required");
+      }
+
+      // ATOMIC UPDATE: Only update if order is still pending
+      console.log("Attempting to finalize order via webhook:", orderId);
+      const updateResult = await db.update(orders)
+        .set({ 
+          status: "paid",
+          fulfillmentStatus: "pending",
+        })
+        .where(and(
+          eq(orders.id, orderId),
+          eq(orders.status, "pending")
+        ))
+        .returning({ id: orders.id });
+
+      if (updateResult.length === 0) {
+        console.log("Order already completed, skipping fulfillment");
+        return { alreadyCompleted: true };
+      }
+
+      // Get order items for stock decrement
+      const items = await db.select({
+        id: orderItems.id,
+        productId: orderItems.productId,
+        quantity: orderItems.quantity,
+        variantId: orderItems.variantId,
+      }).from(orderItems).where(eq(orderItems.orderId, orderId));
+
+      // Decrement stock for each item (product and variant if applicable)
+      for (const item of items) {
+        // Decrement product stock
+        const productResults = await db.select({
+          stockQuantity: products.stockQuantity,
+          inStock: products.inStock,
+        }).from(products).where(eq(products.id, item.productId));
+
+        const product = productResults[0];
+        if (product && product.inStock) {
+          const newQuantity = Math.max(0, (product.stockQuantity ?? 0) - item.quantity);
+          await db
+            .update(products)
+            .set({
+              stockQuantity: newQuantity,
+              inStock: newQuantity > 0,
+            })
+            .where(eq(products.id, item.productId));
+        }
+
+        // Also decrement variant stock if variant was selected
+        if (item.variantId) {
+          const variantResults = await db.select({
+            stockQuantity: productVariants.stockQuantity,
+          }).from(productVariants).where(eq(productVariants.id, item.variantId));
+
+          const variant = variantResults[0];
+          if (variant) {
+            const newVariantQuantity = Math.max(0, (variant.stockQuantity ?? 0) - item.quantity);
+            await db
+              .update(productVariants)
+              .set({
+                stockQuantity: newVariantQuantity,
+              })
+              .where(eq(productVariants.id, item.variantId));
+          }
+        }
+      }
+
+      console.log("Order finalized via webhook:", orderId);
+
+      // Clear the cart
+      try {
+        await storage.clearCart(order.sessionId);
+      } catch (e) {
+        console.log("Cart already cleared or session expired");
+      }
+
+      // Send confirmation email
+      try {
+        const orderItemsWithDetails = await storage.getOrderItems(orderId);
+        await sendOrderConfirmationEmail({
+          ...order,
+          status: "paid",
+          items: orderItemsWithDetails,
+        });
+        console.log("Confirmation email sent for order:", orderId);
+      } catch (emailError) {
+        console.error("Failed to send confirmation email:", emailError);
+      }
+
+      return { alreadyCompleted: false };
+    };
+
+    // Handle checkout.session.completed event (for Stripe Checkout hosted page)
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      const orderId = session.metadata?.orderId;
+
+      console.log("Checkout session completed for order:", orderId);
+
+      if (!orderId) {
+        console.error("No orderId in checkout session metadata");
+        return res.status(400).send("No orderId in metadata");
+      }
+
+      try {
+        await finalizeOrder(orderId, session.amount_total);
+        res.json({ received: true });
+      } catch (error: any) {
+        console.error("Error processing checkout.session.completed webhook:", error);
+        res.status(500).send("Webhook processing failed");
+      }
+    }
+    // Handle payment_intent.succeeded event (for legacy embedded checkout)
+    else if (event.type === 'payment_intent.succeeded') {
       const paymentIntent = event.data.object;
-      const orderId = paymentIntent.metadata.orderId;
+      const orderId = paymentIntent.metadata?.orderId;
 
       console.log("Payment succeeded for order:", orderId);
 
@@ -448,98 +788,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       try {
-        // Get the order
-        const orderResults = await db.select().from(orders).where(eq(orders.id, orderId));
-        const order = orderResults[0];
-
-        if (!order) {
-          throw new Error(`Order ${orderId} not found`);
-        }
-
-        // IDEMPOTENCY: Check if order is already completed
-        if (order.status === "paid" || order.status === "completed") {
-          console.log("Order already paid/completed, skipping (idempotent)");
-          return res.json({ received: true });
-        }
-
-        // VALIDATION: Verify Stripe amount matches order total
-        const expectedAmount = Math.round(parseFloat(order.totalAmount) * 100);
-        if (paymentIntent.amount !== expectedAmount) {
-          console.error(`Amount mismatch! Stripe: ${paymentIntent.amount}, Order: ${expectedAmount}`);
-          throw new Error("Payment amount mismatch - manual review required");
-        }
-
-        // ATOMIC UPDATE: Only update if order is still pending (prevents race with verification endpoint)
-        console.log("Attempting to finalize order via webhook:", orderId);
-        const updateResult = await db.update(orders)
-          .set({ 
-            status: "paid",
-            fulfillmentStatus: "pending",
-          })
-          .where(and(
-            eq(orders.id, orderId),
-            eq(orders.status, "pending")  // Only update if still pending
-          ))
-          .returning({ id: orders.id });
-
-        // If update didn't affect any rows, order was already completed by verification endpoint
-        if (updateResult.length === 0) {
-          console.log("Order already completed by verification endpoint, skipping fulfillment (webhook)");
-          return res.json({ received: true });
-        }
-
-        // Get order items for stock decrement
-        const items = await db.select({
-          id: orderItems.id,
-          productId: orderItems.productId,
-          quantity: orderItems.quantity,
-        }).from(orderItems).where(eq(orderItems.orderId, orderId));
-
-        // Decrement stock for each item
-        for (const item of items) {
-          const productResults = await db.select({
-            stockQuantity: products.stockQuantity,
-            inStock: products.inStock,
-          }).from(products).where(eq(products.id, item.productId));
-
-          const product = productResults[0];
-          if (product && product.inStock) {
-            const newQuantity = Math.max(0, (product.stockQuantity ?? 0) - item.quantity);
-            await db
-              .update(products)
-              .set({
-                stockQuantity: newQuantity,
-                inStock: newQuantity > 0,
-              })
-              .where(eq(products.id, item.productId));
-          }
-        }
-
-        console.log("Order finalized via webhook:", orderId);
-
-        // Clear the cart (if session still exists)
-        try {
-          await storage.clearCart(order.sessionId);
-        } catch (e) {
-          console.log("Cart already cleared or session expired");
-        }
-
-        // Send confirmation email
-        try {
-          const orderItemsWithDetails = await storage.getOrderItems(orderId);
-          await sendOrderConfirmationEmail({
-            ...order,
-            status: "paid",
-            items: orderItemsWithDetails,
-          });
-          console.log("Confirmation email sent for order:", orderId);
-        } catch (emailError) {
-          console.error("Failed to send confirmation email:", emailError);
-        }
-
+        await finalizeOrder(orderId, paymentIntent.amount);
         res.json({ received: true });
       } catch (error: any) {
-        console.error("Error processing webhook:", error);
+        console.error("Error processing payment_intent.succeeded webhook:", error);
         res.status(500).send("Webhook processing failed");
       }
     } else {

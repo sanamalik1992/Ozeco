@@ -1,19 +1,16 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart-context";
-import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShippingForm, { type ShippingFormData } from "@/components/ShippingForm";
-import ApplePayButton from "@/components/ApplePayButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { Loader2, CreditCard, ArrowLeft, Check, Lock, Tag, X } from "lucide-react";
+import { Loader2, CreditCard, ArrowLeft, Check, Lock, Tag, X, ExternalLink } from "lucide-react";
 import PayPalButton from "@/components/PayPalButton";
 import { SiPaypal, SiShopify, SiVisa, SiMastercard, SiAmericanexpress } from "react-icons/si";
 import TrustBadges from "@/components/TrustBadges";
@@ -21,95 +18,15 @@ import TrustBadges from "@/components/TrustBadges";
 type PaymentMethod = 'stripe' | 'paypal';
 type CheckoutStep = 'shipping' | 'payment';
 
-function CheckoutForm({ shippingData, clientSecret, totalPrice, orderId }: { shippingData: ShippingFormData; clientSecret: string; totalPrice: number; orderId: string }) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const { toast } = useToast();
-  const { clearCart } = useCart();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [, setLocation] = useLocation();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) {
-      console.error("Stripe or elements not loaded");
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      console.log("Attempting to confirm payment...");
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/order-confirmation?orderId=${orderId}`,
-          receipt_email: shippingData.customerEmail,
-        },
-      });
-
-      if (error) {
-        console.error("Stripe payment error:", error);
-        toast({
-          title: "Payment Failed",
-          description: error.message || "A processing error occurred",
-          variant: "destructive",
-        });
-        setIsProcessing(false);
-      }
-    } catch (err: any) {
-      console.error("Unexpected error during payment:", err);
-      toast({
-        title: "Payment Failed",
-        description: err.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <ApplePayButton 
-        shippingData={shippingData} 
-        totalAmount={totalPrice} 
-        clientSecret={clientSecret}
-        orderId={orderId}
-      />
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <PaymentElement />
-        <Button 
-          type="submit" 
-          className="w-full" 
-          size="lg" 
-          disabled={!stripe || isProcessing}
-          data-testid="button-pay"
-        >
-          {isProcessing ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            "Complete Payment"
-          )}
-        </Button>
-      </form>
-    </div>
-  );
-}
-
 export default function Checkout() {
   const { items, isLoading: cartLoading, clearCart } = useCart();
   const [, setLocation] = useLocation();
+  const searchString = useSearch();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
   const [shippingData, setShippingData] = useState<ShippingFormData | null>(null);
-  const [clientSecret, setClientSecret] = useState("");
-  const [orderId, setOrderId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [stripePublicKey, setStripePublicKey] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState<{
     stripe: boolean;
@@ -119,10 +36,18 @@ export default function Checkout() {
   const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; amount: number } | null>(null);
   const [isValidatingCode, setIsValidatingCode] = useState(false);
 
-  const stripePromise = useMemo(() => 
-    stripePublicKey ? loadStripe(stripePublicKey) : null,
-    [stripePublicKey]
-  );
+  // Check if user returned from cancelled checkout
+  useEffect(() => {
+    const params = new URLSearchParams(searchString);
+    if (params.get('cancelled') === 'true') {
+      toast({
+        title: "Payment Cancelled",
+        description: "Your payment was cancelled. Your cart items are still saved.",
+        variant: "destructive",
+      });
+      setCurrentStep('payment');
+    }
+  }, [searchString, toast]);
 
   // Calculate total using integer cents to avoid floating-point errors
   // Use variant price if available, otherwise use product price
@@ -197,16 +122,10 @@ export default function Checkout() {
   // Fetch payment configuration from backend on mount
   useEffect(() => {
     console.log("Fetching payment configuration...");
-    Promise.all([
-      fetch("/api/config/stripe-key", { credentials: "include" }).then(res => res.json()),
-      fetch("/api/config/payment-methods", { credentials: "include" }).then(res => res.json())
-    ])
-      .then(([stripeData, paymentMethodsData]) => {
-        console.log("Payment config received:", { 
-          hasStripeKey: !!stripeData.publishableKey,
-          paymentMethods: paymentMethodsData 
-        });
-        setStripePublicKey(stripeData.publishableKey);
+    fetch("/api/config/payment-methods", { credentials: "include" })
+      .then(res => res.json())
+      .then((paymentMethodsData) => {
+        console.log("Payment config received:", paymentMethodsData);
         setAvailablePaymentMethods(paymentMethodsData);
         
         // Auto-select first available payment method
@@ -241,29 +160,6 @@ export default function Checkout() {
     try {
       await apiRequest("POST", "/api/checkout/shipping", data);
       setCurrentStep('payment');
-      
-      // Create PaymentIntent for Stripe if selected
-      if (paymentMethod === 'stripe' && stripePublicKey) {
-        console.log("Creating payment intent...");
-        // SECURITY: Only send discount CODE, server validates and computes amount
-        apiRequest("POST", "/api/create-payment-intent", {
-          discountCode: appliedDiscount?.code || null,
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("Payment intent created successfully, orderId:", data.orderId);
-            setClientSecret(data.clientSecret);
-            setOrderId(data.orderId);
-          })
-          .catch((error) => {
-            console.error("Error creating payment intent:", error);
-            toast({
-              title: "Error",
-              description: error.message || "Failed to initialise payment",
-              variant: "destructive",
-            });
-          });
-      }
     } catch (error: any) {
       console.error("Error saving shipping info:", error);
       toast({
@@ -271,6 +167,36 @@ export default function Checkout() {
         description: error.message || "Failed to save shipping information",
         variant: "destructive",
       });
+    }
+  };
+
+  // Handle Stripe Checkout redirect
+  const handleStripeCheckout = async () => {
+    setIsRedirecting(true);
+    try {
+      console.log("Creating Stripe Checkout session...");
+      const response = await apiRequest("POST", "/api/create-checkout-session", {
+        discountCode: appliedDiscount?.code || null,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create checkout session");
+      }
+      
+      const data = await response.json();
+      console.log("Checkout session created, redirecting to:", data.checkoutUrl);
+      
+      // Redirect to Stripe's hosted checkout page
+      window.location.href = data.checkoutUrl;
+    } catch (error: any) {
+      console.error("Error creating checkout session:", error);
+      toast({
+        title: "Checkout Error",
+        description: error.message || "Failed to start checkout. Please try again.",
+        variant: "destructive",
+      });
+      setIsRedirecting(false);
     }
   };
 
@@ -632,10 +558,45 @@ export default function Checkout() {
                           <CardTitle>Payment Details</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          {paymentMethod === 'stripe' && availablePaymentMethods.stripe && clientSecret && stripePromise ? (
-                            <Elements stripe={stripePromise} options={{ clientSecret }}>
-                              <CheckoutForm shippingData={shippingData!} clientSecret={clientSecret} totalPrice={totalPrice} orderId={orderId!} />
-                            </Elements>
+                          {paymentMethod === 'stripe' && availablePaymentMethods.stripe ? (
+                            <div className="space-y-4">
+                              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                                <div className="flex items-center gap-3">
+                                  <Lock className="h-5 w-5 text-primary" />
+                                  <div>
+                                    <p className="font-medium">Secure Stripe Checkout</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      You'll be redirected to Stripe's secure payment page
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <SiVisa className="h-6 w-6" />
+                                  <SiMastercard className="h-6 w-6" />
+                                  <SiAmericanexpress className="h-6 w-6" />
+                                  <span className="ml-2">All major cards accepted</span>
+                                </div>
+                              </div>
+                              <Button 
+                                onClick={handleStripeCheckout}
+                                disabled={isRedirecting}
+                                className="w-full" 
+                                size="lg"
+                                data-testid="button-pay-stripe"
+                              >
+                                {isRedirecting ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Redirecting to payment...
+                                  </>
+                                ) : (
+                                  <>
+                                    <ExternalLink className="mr-2 h-4 w-4" />
+                                    Pay £{totalPrice.toFixed(2)} Securely
+                                  </>
+                                )}
+                              </Button>
+                            </div>
                           ) : paymentMethod === 'paypal' && availablePaymentMethods.paypal ? (
                             <div className="space-y-4">
                               <p className="text-sm text-muted-foreground">
