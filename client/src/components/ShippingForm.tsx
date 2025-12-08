@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import AddressAutocomplete from "./AddressAutocomplete";
 
 const shippingSchema = z.object({
   customerName: z.string().min(2, "Name must be at least 2 characters"),
@@ -112,12 +113,28 @@ export default function ShippingForm({ onSubmit, defaultValues, children }: Ship
               <FormItem>
                 <FormLabel>Address Line 1</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="123 High Street" 
-                    {...field} 
+                  <AddressAutocomplete
+                    value={field.value}
+                    onChange={field.onChange}
+                    onAddressSelect={(address) => {
+                      form.setValue("shippingAddressLine1", address.addressLine1);
+                      if (address.addressLine2) {
+                        form.setValue("shippingAddressLine2", address.addressLine2);
+                      }
+                      if (address.city) {
+                        form.setValue("shippingCity", address.city);
+                      }
+                      if (address.postalCode) {
+                        form.setValue("shippingPostalCode", address.postalCode);
+                      }
+                    }}
+                    placeholder="Start typing your address..."
                     data-testid="input-address-line1"
                   />
                 </FormControl>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Type your address to see suggestions
+                </p>
                 <FormMessage />
               </FormItem>
             )}
