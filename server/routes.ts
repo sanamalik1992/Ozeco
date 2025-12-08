@@ -410,8 +410,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const baseUrl = `${req.protocol}://${req.get('host')}`;
 
       // STEP 4: Create Stripe Checkout Session
+      // Note: Don't specify payment_method_types to use dynamic payment methods
+      // This automatically shows PayPal, Klarna, etc. if enabled in Stripe Dashboard
       const checkoutSession = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
         line_items: lineItems,
         mode: 'payment',
         success_url: `${baseUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}&orderId=${pendingOrder.id}`,
