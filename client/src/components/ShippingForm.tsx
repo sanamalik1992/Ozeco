@@ -4,7 +4,7 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import AddressAutocomplete from "./AddressAutocomplete";
+import PostcodeLookup from "./PostcodeLookup";
 
 const shippingSchema = z.object({
   customerName: z.string().min(2, "Name must be at least 2 characters"),
@@ -108,33 +108,43 @@ export default function ShippingForm({ onSubmit, defaultValues, children }: Ship
 
           <FormField
             control={form.control}
+            name="shippingPostalCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Postcode</FormLabel>
+                <FormControl>
+                  <PostcodeLookup
+                    initialValue={field.value}
+                    onPostcodeFound={(data) => {
+                      form.setValue("shippingPostalCode", data.postcode);
+                      form.setValue("shippingCity", data.city);
+                      if (data.country) {
+                        form.setValue("shippingCountry", data.country);
+                      }
+                    }}
+                  />
+                </FormControl>
+                <p className="text-xs text-muted-foreground">
+                  Enter your postcode and click Find to auto-fill your city
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="shippingAddressLine1"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Address Line 1</FormLabel>
+                <FormLabel>House Number & Street</FormLabel>
                 <FormControl>
-                  <AddressAutocomplete
-                    value={field.value}
-                    onChange={field.onChange}
-                    onAddressSelect={(address) => {
-                      form.setValue("shippingAddressLine1", address.addressLine1);
-                      if (address.addressLine2) {
-                        form.setValue("shippingAddressLine2", address.addressLine2);
-                      }
-                      if (address.city) {
-                        form.setValue("shippingCity", address.city);
-                      }
-                      if (address.postalCode) {
-                        form.setValue("shippingPostalCode", address.postalCode);
-                      }
-                    }}
-                    placeholder="Start typing your address..."
+                  <Input 
+                    placeholder="123 High Street" 
+                    {...field} 
                     data-testid="input-address-line1"
                   />
                 </FormControl>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Type your address to see suggestions
-                </p>
                 <FormMessage />
               </FormItem>
             )}
@@ -148,7 +158,7 @@ export default function ShippingForm({ onSubmit, defaultValues, children }: Ship
                 <FormLabel>Address Line 2 (Optional)</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="Apartment, suite, etc." 
+                    placeholder="Flat, apartment, building name, etc." 
                     {...field} 
                     data-testid="input-address-line2"
                   />
@@ -158,43 +168,23 @@ export default function ShippingForm({ onSubmit, defaultValues, children }: Ship
             )}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="shippingCity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="London" 
-                      {...field} 
-                      data-testid="input-city"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="shippingPostalCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Postal Code</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="SW1A 1AA" 
-                      {...field} 
-                      data-testid="input-postal-code"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="shippingCity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>City / Town</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="London" 
+                    {...field} 
+                    data-testid="input-city"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
