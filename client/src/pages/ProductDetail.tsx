@@ -129,6 +129,20 @@ export default function ProductDetail() {
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
 
+  // Check if product/variant is out of stock
+  const isOutOfStock = useMemo(() => {
+    if (variants.length > 0) {
+      // Check if all variants are out of stock
+      const allVariantsOutOfStock = variants.every(v => v.stockQuantity === 0);
+      if (allVariantsOutOfStock) return true;
+      // Check if selected variant is out of stock
+      if (selectedVariant && selectedVariant.stockQuantity === 0) return true;
+      return false;
+    }
+    // No variants - check main product stock
+    return !product?.inStock || (product?.stockQuantity ?? 0) === 0;
+  }, [product, variants, selectedVariant]);
+
   const handleAddToCart = async () => {
     if (product) {
       // If product has variants, require variant selection
@@ -136,6 +150,17 @@ export default function ProductDetail() {
         toast({
           title: "Please select an option",
           description: "Select a color, size, or battery option before adding to cart",
+          variant: "destructive",
+          duration: 3000,
+        });
+        return;
+      }
+      
+      // Check stock availability
+      if (isOutOfStock) {
+        toast({
+          title: "Out of Stock",
+          description: "This item is currently unavailable",
           variant: "destructive",
           duration: 3000,
         });
@@ -491,9 +516,15 @@ export default function ProductDetail() {
                   </div>
                 )}
                 <div className="space-y-2">
-                  <Button size="lg" className="w-full" onClick={handleAddToCart} data-testid="button-add-to-cart">
+                  <Button 
+                    size="lg" 
+                    className="w-full" 
+                    onClick={handleAddToCart} 
+                    disabled={isOutOfStock}
+                    data-testid="button-add-to-cart"
+                  >
                     <ShoppingCart className="h-5 w-5 mr-2" />
-                    Add to Cart
+                    {isOutOfStock ? "Out of Stock" : "Add to Cart"}
                   </Button>
                   <div className="grid grid-cols-2 gap-2">
                     <FavoriteButton productId={product.id} productName={product.name} variant="default" size="sm" />

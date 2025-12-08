@@ -259,7 +259,11 @@ export default function Shop() {
                         style={{ filter: 'brightness(1.05) contrast(0.98)' }}
                         data-testid={`img-product-${product.slug}`}
                       />
-                      {product.isBestseller && (
+                      {!product.inStock || product.stockQuantity === 0 ? (
+                        <Badge className="absolute top-2 left-2 bg-gray-500 text-white" data-testid="badge-out-of-stock">
+                          Out of Stock
+                        </Badge>
+                      ) : product.isBestseller && (
                         <Badge className="absolute top-2 left-2 bg-orange-500 text-white" data-testid="badge-bestseller">
                           Bestseller
                         </Badge>
@@ -268,7 +272,7 @@ export default function Shop() {
                         <div onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}>
                           <FavoriteButton productId={product.id} productName={product.name} variant="icon" />
                         </div>
-                        {product.originalPrice && (
+                        {product.inStock && product.stockQuantity > 0 && product.originalPrice && (
                           <Badge className="bg-red-600 text-white" data-testid="badge-sale">
                             Save £{(parseFloat(product.originalPrice) - parseFloat(product.price)).toFixed(2)}
                           </Badge>
@@ -327,8 +331,9 @@ export default function Shop() {
                     </Link>
                     <Button 
                       size="icon" 
-                      variant="default" 
-                      className="bg-primary"
+                      variant={!product.inStock || product.stockQuantity === 0 ? "secondary" : "default"} 
+                      className={product.inStock && product.stockQuantity > 0 ? "bg-primary" : ""}
+                      disabled={!product.inStock || product.stockQuantity === 0}
                       onClick={(e) => handleAddToCart(product, e)}
                       data-testid={`button-cart-${product.slug}`}
                     >

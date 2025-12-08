@@ -127,6 +127,7 @@ export default function FeaturedProducts() {
               range={product.maxRange || ""}
               maxSpeed={product.topSpeed || ""}
               stockQuantity={product.stockQuantity}
+              inStock={product.inStock}
               onAddToCart={() => handleAddToCart(product)}
             />
           ))}

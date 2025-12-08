@@ -22,6 +22,7 @@ interface ProductCardProps {
   rating?: number;
   reviewCount?: number;
   stockQuantity?: number;
+  inStock?: boolean;
   onViewDetails?: () => void;
   onAddToCart?: () => void;
 }
@@ -41,13 +42,15 @@ export default function ProductCard({
   rating,
   reviewCount,
   stockQuantity,
+  inStock = true,
   onViewDetails,
   onAddToCart,
 }: ProductCardProps) {
   const [, setLocation] = useLocation();
   const isPopular = id === "2"; // Eleglide M2 is popular
   const hasDiscount = originalPrice && originalPrice > price;
-  const showStockUrgency = stockQuantity !== undefined && stockQuantity > 0 && stockQuantity < 10;
+  const isOutOfStock = !inStock || (stockQuantity !== undefined && stockQuantity === 0);
+  const showStockUrgency = !isOutOfStock && stockQuantity !== undefined && stockQuantity > 0 && stockQuantity < 10;
   
   // Use displayPrice if provided, otherwise fall back to price
   const priceToShow = displayPrice !== undefined ? displayPrice : price;
@@ -87,12 +90,17 @@ export default function ProductCard({
           <div onClick={(e) => e.stopPropagation()}>
             <FavoriteButton productId={id} productName={name} variant="icon" />
           </div>
-          {isPopular && (
-            <Badge className="bg-orange-500 text-white border-orange-600">
-              ⭐ Bestseller
+          {isOutOfStock && (
+            <Badge className="bg-gray-500 text-white border-gray-600" data-testid={`badge-out-of-stock-${id}`}>
+              Out of Stock
             </Badge>
           )}
-          {hasDiscount && originalPrice && (
+          {!isOutOfStock && isPopular && (
+            <Badge className="bg-orange-500 text-white border-orange-600">
+              Bestseller
+            </Badge>
+          )}
+          {!isOutOfStock && hasDiscount && originalPrice && (
             <Badge className="bg-red-500 text-white border-red-600">
               Save £{(originalPrice - price).toFixed(0)}
             </Badge>
@@ -140,18 +148,19 @@ export default function ProductCard({
         )}
         <div className="flex gap-2 mb-2">
           <Button
-            variant="default"
+            variant={isOutOfStock ? "secondary" : "default"}
             className="flex-1"
+            disabled={isOutOfStock}
             onClick={(e) => {
               e.stopPropagation();
-              if (onAddToCart) {
+              if (onAddToCart && !isOutOfStock) {
                 onAddToCart();
               }
             }}
             data-testid={`button-add-cart-${id}`}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
-            Add to Cart
+            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
           </Button>
           <Button
             size="icon"
