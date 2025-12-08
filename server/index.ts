@@ -84,6 +84,7 @@ app.use((req, res, next) => {
   app.use("/blog", express.static(path.resolve(process.cwd(), "public/blog")));
   app.use("/customer-photos", express.static(path.resolve(process.cwd(), "public/customer-photos")));
   app.use("/products", express.static(path.resolve(process.cwd(), "public/products")));
+  app.use("/emails", express.static(path.resolve(process.cwd(), "public/emails")));
   
   const server = await registerRoutes(app);
 
