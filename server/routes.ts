@@ -298,8 +298,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (discountCode) {
         const codeUpper = discountCode.trim().toUpperCase();
         
-        // Check for Black Friday promo code first (£20 off, expires 6th Dec 2025)
+        // Check for promotional codes first
         if (codeUpper === 'BLACKFRIDAY20') {
+          // Black Friday promo code (£20 off, expires 6th Dec 2025)
           const expiryDate = new Date('2025-12-06T23:59:59Z');
           if (new Date() <= expiryDate) {
             discount = 20.00;
@@ -307,6 +308,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log("Black Friday promo code applied: £20 discount");
           } else {
             console.log("Black Friday promo code expired");
+          }
+        } else if (codeUpper === 'XMAS20') {
+          // Christmas promo code for newsletter subscribers (£20 off, expires 14th Dec 2025)
+          const expiryDate = new Date('2025-12-14T23:59:59Z');
+          if (new Date() <= expiryDate) {
+            discount = 20.00;
+            validatedDiscountCode = 'XMAS20';
+            console.log("Christmas promo code applied: £20 discount");
+          } else {
+            console.log("Christmas promo code expired");
           }
         } else {
           // Validate the discount code against newsletter_subscribers table
@@ -506,8 +517,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (discountCode) {
         const codeUpper = discountCode.trim().toUpperCase();
         
-        // Check for Black Friday promo code first (£20 off, expires 6th Dec 2025)
+        // Check for promotional codes first
         if (codeUpper === 'BLACKFRIDAY20') {
+          // Black Friday promo code (£20 off, expires 6th Dec 2025)
           const expiryDate = new Date('2025-12-06T23:59:59Z');
           if (new Date() <= expiryDate) {
             discount = 20.00;
@@ -515,6 +527,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log("Black Friday promo code applied: £20 discount");
           } else {
             console.log("Black Friday promo code expired");
+          }
+        } else if (codeUpper === 'XMAS20') {
+          // Christmas promo code for newsletter subscribers (£20 off, expires 14th Dec 2025)
+          const expiryDate = new Date('2025-12-14T23:59:59Z');
+          if (new Date() <= expiryDate) {
+            discount = 20.00;
+            validatedDiscountCode = 'XMAS20';
+            console.log("Christmas promo code applied: £20 discount");
+          } else {
+            console.log("Christmas promo code expired");
           }
         } else {
           // Validate the discount code against newsletter_subscribers table
@@ -1416,8 +1438,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (discountCode) {
         const codeUpper = discountCode.trim().toUpperCase();
         
-        // Check for Black Friday promo code first (£20 off, expires 6th Dec 2025)
+        // Check for promotional codes first
         if (codeUpper === 'BLACKFRIDAY20') {
+          // Black Friday promo code (£20 off, expires 6th Dec 2025)
           const expiryDate = new Date('2025-12-06T23:59:59Z');
           if (new Date() <= expiryDate) {
             discount = 20.00;
@@ -1425,6 +1448,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log("Black Friday promo code applied (PayPal): £20 discount");
           } else {
             console.log("Black Friday promo code expired");
+          }
+        } else if (codeUpper === 'XMAS20') {
+          // Christmas promo code for newsletter subscribers (£20 off, expires 14th Dec 2025)
+          const expiryDate = new Date('2025-12-14T23:59:59Z');
+          if (new Date() <= expiryDate) {
+            discount = 20.00;
+            validatedDiscountCode = 'XMAS20';
+            console.log("Christmas promo code applied (PayPal): £20 discount");
+          } else {
+            console.log("Christmas promo code expired");
           }
         } else {
           // Validate the discount code against newsletter_subscribers table
@@ -1741,8 +1774,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const codeUpper = code.trim().toUpperCase();
 
-      // Check for Black Friday promo code first (£20 off, expires 6th Dec 2025)
+      // Check for promotional codes first
       if (codeUpper === 'BLACKFRIDAY20') {
+        // Black Friday promo code (£20 off, expires 6th Dec 2025)
         const expiryDate = new Date('2025-12-06T23:59:59Z');
         if (new Date() <= expiryDate) {
           return res.json({
@@ -1750,6 +1784,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
             discountAmount: 20.00,
             code: 'BLACKFRIDAY20',
             message: 'Black Friday discount applied!'
+          });
+        } else {
+          return res.status(404).json({ error: "This promo code has expired" });
+        }
+      }
+      
+      if (codeUpper === 'XMAS20') {
+        // Christmas promo code for newsletter subscribers (£20 off, expires 14th Dec 2025)
+        const expiryDate = new Date('2025-12-14T23:59:59Z');
+        if (new Date() <= expiryDate) {
+          return res.json({
+            valid: true,
+            discountAmount: 20.00,
+            code: 'XMAS20',
+            message: 'Christmas discount applied!'
           });
         } else {
           return res.status(404).json({ error: "This promo code has expired" });
