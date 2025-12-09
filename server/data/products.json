@@ -125,7 +125,7 @@
     "name": "Eleglide M1 Plus Electric Bike",
     "brand": "Eleglide",
     "slug": "eleglide-m1-plus",
-    "description": "Lightweight commuter Electric bike perfect for daily urban travel with excellent range and performance.",
+    "description": "Built by Eleglide, a trusted name in Electric bikes, the Eleglide M1 Plus Electric Bike combines quality engineering with thoughtful design. The frame provides durability while maintaining a comfortable riding position. Available in 27.5\" (21.7kg) and 29\" (22.8kg) versions, it strikes an ideal balance between sturdiness and portability, with a maximum load capacity of 120kg. Perfect for daily urban travel with excellent range and performance.",
     "price": "499.99",
     "originalPrice": "519.99",
     "image": "/products/eleglide-m1-plus/1.png",
@@ -148,7 +148,7 @@
     "maxRange": "100 km",
     "topSpeed": "25 km/h",
     "weight": "27.5\" - 21.7kg, 29\" - 22.8kg",
-    "maxLoad": null,
+    "maxLoad": "120kg",
     "frameType": null,
     "riderHeight": "5'3\" - 6'5\" (160-195 cm)",
     "features": [
