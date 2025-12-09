@@ -58,11 +58,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const ep2Product = await db.select().from(products).where(eq(products.slug, 'engwe-ep-2-3-0-boost')).limit(1);
       if (ep2Product.length > 0) {
         await db.update(productVariants)
-          .set({ image: '/products/engwe-ep-2-3-0-boost/green-1.png' })
+          .set({ image: 'https://engwe-bikes-uk.com/cdn/shop/files/EP-2-3.0-boost_7cf900be-0509-4772-abb3-1a301b5cb995.jpg?v=1764660293&width=1500' })
           .where(and(eq(productVariants.productId, ep2Product[0].id), eq(productVariants.value, 'Forest Green')))
           .execute();
         await db.update(productVariants)
-          .set({ image: '/products/engwe-ep-2-3-0-boost/black-1.png' })
+          .set({ image: 'https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost01.jpg?v=1764660015&width=1500' })
           .where(and(eq(productVariants.productId, ep2Product[0].id), eq(productVariants.value, 'Black')))
           .execute();
       }
@@ -1130,8 +1130,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Step 2: Update variant images
       console.log('🎨 Updating variant images...');
       const variantImageUpdates = [
-        { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: '/products/engwe-ep-2-3-0-boost/green-1.png' },
-        { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: '/products/engwe-ep-2-3-0-boost/black-1.png' },
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: 'https://engwe-bikes-uk.com/cdn/shop/files/EP-2-3.0-boost_7cf900be-0509-4772-abb3-1a301b5cb995.jpg?v=1764660293&width=1500' },
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: 'https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost01.jpg?v=1764660015&width=1500' },
       ];
       for (const v of variantImageUpdates) {
         const prod = await db.select().from(products).where(eq(products.slug, v.slug)).limit(1);
@@ -1256,8 +1256,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { slug: "touroll-u1", type: "Wheel Size", value: "29 Inch", price: "529.99", stock: 5, image: null },
         { slug: "fiido-d3-pro", type: "Color", value: "Black", price: "359.99", stock: 5, image: null },
         { slug: "fiido-d3-pro", type: "Color", value: "White", price: "359.99", stock: 5, image: null },
-        { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Forest Green", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/green-1.webp" },
-        { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Black", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/black-1.webp" },
+        { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Forest Green", price: "1149.99", stock: 5, image: "https://engwe-bikes-uk.com/cdn/shop/files/EP-2-3.0-boost_7cf900be-0509-4772-abb3-1a301b5cb995.jpg?v=1764660293&width=1500" },
+        { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Black", price: "1149.99", stock: 5, image: "https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost01.jpg?v=1764660015&width=1500" },
       ];
 
       let createdCount = 0;

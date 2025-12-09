@@ -473,10 +473,14 @@
     "description": "The workhorse of the family. With its step-through frame and sturdy cargo rack, the ENGWE L20 3.0 Boost makes school runs, shopping trips, and food deliveries effortless. The 350W motor and 48V 13Ah battery provide up to 80 km on a single charge, while puncture-resistant tyres minimise roadside hassle. Practical, reliable, and built to carry - this is everyday mobility done right.",
     "price": "999.99",
     "originalPrice": "1049.99",
-    "image": "/products/engwe-l20/1.webp",
+    "image": "https://engwe-bikes-uk.com/cdn/shop/files/L20-3.0-boost_6f7935d8-ea59-46e9-99d1-e266023eff75.jpg?v=1764661996&width=1500",
     "images": [
-      "/products/engwe-l20/1.webp",
-      "/products/engwe-l20/2.webp"
+      "https://engwe-bikes-uk.com/cdn/shop/files/L20-3.0-boost_6f7935d8-ea59-46e9-99d1-e266023eff75.jpg?v=1764661996&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/L20-3.0-BOOST_699b16ac-8799-4215-9679-12064c2d0a24.jpg?v=1764668047&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/L20_3.0_BOOST.jpg?v=1764661982&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/1_25915979-0903-4483-8425-fbbd0537183e.jpg?v=1764661982&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/L20-3.0-BOOST_-_1_88b29aff-7271-49aa-b8c8-847ba3e68610.jpg?v=1764661982&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/1_b1ac81de-d7d6-4a64-9b49-39829e414545.jpg?v=1764661982&width=1500"
     ],
     "category": "City",
     "inStock": true,
@@ -623,12 +627,16 @@
     "description": "The flagship of the ENGWE range. The EP-2 3.0 Boost sets a new standard with its 75Nm torque sensor that delivers silky-smooth, natural pedal assist - a feature usually found on bikes costing twice as much. The 48V 13Ah battery powers you up to 120 km on a single charge, and rapid 3.5-hour fast charging means minimal downtime. Hydraulic disc brakes, 20x4.0 inch fat tyres, and smart app connectivity complete a package that folds flat for easy storage. This is Electric biking at its finest.",
     "price": "1149.99",
     "originalPrice": "1299.99",
-    "image": "/products/engwe-ep-2-3-0-boost/green-1.png",
+    "image": "https://engwe-bikes-uk.com/cdn/shop/files/EP-2-3.0-boost_7cf900be-0509-4772-abb3-1a301b5cb995.jpg?v=1764660293&width=1500",
     "images": [
-      "/products/engwe-ep-2-3-0-boost/green-1.png",
-      "/products/engwe-ep-2-3-0-boost/green-2.png",
-      "/products/engwe-ep-2-3-0-boost/black-1.png",
-      "/products/engwe-ep-2-3-0-boost/black-2.png"
+      "https://engwe-bikes-uk.com/cdn/shop/files/EP-2-3.0-boost_7cf900be-0509-4772-abb3-1a301b5cb995.jpg?v=1764660293&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/EP-2-3.0-boost-07.jpg?v=1764660015&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost01.jpg?v=1764660015&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost04.jpg?v=1764660015&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost02.jpg?v=1764660015&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost03.jpg?v=1764660015&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost05.jpg?v=1764660015&width=1500",
+      "https://engwe-bikes-uk.com/cdn/shop/files/EP-23.0boost06.jpg?v=1764660015&width=1500"
     ],
     "category": "Folding",
     "inStock": true,
