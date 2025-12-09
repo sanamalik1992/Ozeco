@@ -18,7 +18,7 @@
       "/products/dyu-a1f-pro/7.png",
       "/products/dyu-a1f-pro/8.png"
     ],
-    "category": "Folding",
+    "category": "City",
     "inStock": false,
     "stockQuantity": 3,
     "isBestseller": true,
@@ -139,7 +139,7 @@
       "/products/eleglide-m1-plus/7.png",
       "/products/eleglide-m1-plus/8.png"
     ],
-    "category": "Mountain",
+    "category": "City",
     "inStock": true,
     "stockQuantity": 6,
     "isBestseller": true,
@@ -255,7 +255,7 @@
       "/products/eleglide-m2/7.jpg",
       "/products/eleglide-m2/8.png"
     ],
-    "category": "Mountain",
+    "category": "City",
     "inStock": true,
     "stockQuantity": 8,
     "isBestseller": true,
@@ -295,7 +295,7 @@
       "/products/engwe-t14/7.png",
       "/products/engwe-t14/8.png"
     ],
-    "category": "Folding",
+    "category": "City",
     "inStock": false,
     "stockQuantity": 0,
     "isBestseller": false,
@@ -408,7 +408,7 @@
       "/products/touroll-u1/7.jpg",
       "/products/touroll-u1/8.jpg"
     ],
-    "category": "Mountain",
+    "category": "City",
     "inStock": false,
     "stockQuantity": 0,
     "isBestseller": false,
@@ -557,7 +557,7 @@
       "/products/touroll-j1/7.png",
       "/products/touroll-j1/8.png"
     ],
-    "category": "Electric Commuter Bikes",
+    "category": "City",
     "inStock": false,
     "stockQuantity": 0,
     "isBestseller": false,
