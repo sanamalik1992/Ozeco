@@ -927,6 +927,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('🔄 Admin-triggered production data reset...');
       
+      // Step 1: Update product images from JSON first
+      const fs = await import('fs');
+      const path = await import('path');
+      const dataDir = path.join(process.cwd(), 'server', 'data');
+      const productsRaw = await fs.promises.readFile(path.join(dataDir, 'products.json'), 'utf-8');
+      const productsData = JSON.parse(productsRaw);
+      
+      console.log('📷 Updating product images from JSON...');
+      for (const p of productsData) {
+        await db.update(products)
+          .set({ image: p.image, images: p.images })
+          .where(eq(products.slug, p.slug))
+          .execute();
+      }
+      console.log(`   ✅ Updated images for ${productsData.length} products`);
+      
+      // Step 2: Update variant images
+      console.log('🎨 Updating variant images...');
+      const variantImageUpdates = [
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: '/products/engwe-ep-2-3-0-boost/green-1.png' },
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: '/products/engwe-ep-2-3-0-boost/black-1.png' },
+      ];
+      for (const v of variantImageUpdates) {
+        const prod = await db.select().from(products).where(eq(products.slug, v.slug)).limit(1);
+        if (prod.length > 0) {
+          await db.update(productVariants)
+            .set({ image: v.image })
+            .where(and(eq(productVariants.productId, prod[0].id), eq(productVariants.value, v.value)))
+            .execute();
+        }
+      }
+      console.log(`   ✅ Updated variant images`);
+      
       await db.delete(reviews).execute();
       await db.delete(customerPhotos).execute();
       await db.delete(blogPosts).execute();
@@ -943,7 +976,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         success: true, 
         message: "Production data has been reset and re-seeded successfully.",
-        note: "All reviews, customer photos, and blog posts now have correct dates."
+        note: "All reviews, customer photos, blog posts, product images, and variant images now updated."
       });
     } catch (error: any) {
       console.error('❌ Failed to reset production data:', error);
