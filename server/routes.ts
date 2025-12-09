@@ -44,7 +44,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             image: p.image, 
             images: p.images,
             price: p.price,
-            originalPrice: p.originalPrice
+            originalPrice: p.originalPrice,
+            weight: p.weight
           })
           .where(eq(products.slug, p.slug))
           .execute();
