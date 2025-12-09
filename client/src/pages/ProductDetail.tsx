@@ -91,7 +91,29 @@ export default function ProductDetail() {
     const variantSlug = variant.value.toLowerCase().replace(/\s+/g, '-');
     const newUrl = `/product/${productSlug}?variant=${variantSlug}`;
     window.history.replaceState({}, '', newUrl);
+    
+    // If variant has an image, scroll to first image (variant image will be first)
+    if (variant.image && mainCarouselApi) {
+      mainCarouselApi.scrollTo(0, false);
+      setSelectedImageIndex(0);
+    }
   };
+  
+  // Create display images array with selected variant image first
+  const displayImages = useMemo(() => {
+    if (!product) return [];
+    
+    const baseImages = product.images || [product.image];
+    
+    // If a variant with an image is selected, put it first
+    if (selectedVariant?.image) {
+      // Filter out the variant image if it already exists in base images
+      const filteredImages = baseImages.filter(img => img !== selectedVariant.image);
+      return [selectedVariant.image, ...filteredImages];
+    }
+    
+    return baseImages;
+  }, [product, selectedVariant]);
   
   useEffect(() => {
     if (!mainCarouselApi) return;
@@ -257,14 +279,14 @@ export default function ProductDetail() {
             <div className="space-y-4">
               {/* Main Image Carousel */}
               <div className="relative">
-                {product.images && product.images.length > 0 ? (
+                {displayImages.length > 0 ? (
                   <Carousel 
                     setApi={setMainCarouselApi}
                     opts={{ loop: true }}
                   >
                     <CarouselContent>
-                      {product.images.map((image, index) => (
-                        <CarouselItem key={index}>
+                      {displayImages.map((image, index) => (
+                        <CarouselItem key={`${selectedVariant?.id || 'base'}-${index}`}>
                           <img
                             src={image}
                             alt={`${product.name} - Image ${index + 1}`}
@@ -279,7 +301,7 @@ export default function ProductDetail() {
                         </CarouselItem>
                       ))}
                     </CarouselContent>
-                    {product.images.length > 1 && (
+                    {displayImages.length > 1 && (
                       <>
                         <CarouselPrevious className="left-2" data-testid="button-carousel-main-prev" />
                         <CarouselNext className="right-2" data-testid="button-carousel-main-next" />
@@ -300,11 +322,11 @@ export default function ProductDetail() {
               </div>
               
               {/* Thumbnail Navigation */}
-              {product.images && product.images.length > 1 && (
+              {displayImages.length > 1 && (
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                  {product.images.map((image, index) => (
+                  {displayImages.map((image, index) => (
                     <button
-                      key={index}
+                      key={`thumb-${selectedVariant?.id || 'base'}-${index}`}
                       onClick={() => {
                         setSelectedImageIndex(index);
                         mainCarouselApi?.scrollTo(index);
