@@ -193,6 +193,12 @@ export async function sendShippingConfirmationEmail(
       Great news! Your Electric bike order is on its way to you.
     </p>
     
+    <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; margin-bottom: 20px;">
+      <p style="margin: 0 0 8px 0; font-weight: 600; color: #065f46;">Estimated Delivery Times:</p>
+      <p style="margin: 0 0 4px 0; color: #047857;">UK Mainland: 2-3 working days</p>
+      <p style="margin: 0; color: #047857;">Other areas: Est. 5-7 working days</p>
+    </div>
+    
     <div style="background: #ecfdf5; border: 2px solid #10b981; padding: 25px; border-radius: 8px; margin: 30px 0; text-align: center;">
       <p style="margin: 0 0 10px 0; color: #065f46; font-weight: 600; font-size: 14px;">TRACKING NUMBER</p>
       <p style="margin: 0; color: #065f46; font-size: 24px; font-weight: bold; font-family: monospace; letter-spacing: 1px;">${trackingNumber}</p>
