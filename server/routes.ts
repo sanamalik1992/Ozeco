@@ -15,6 +15,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/products", async (req, res) => {
     try {
       const products = await storage.getAllProducts();
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.set('Pragma', 'no-cache');
       res.json(products);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

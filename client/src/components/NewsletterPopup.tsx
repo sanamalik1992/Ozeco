@@ -68,11 +68,18 @@ export function NewsletterPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-2xl p-0 overflow-hidden" data-testid="dialog-newsletter">
+      <DialogContent className="sm:max-w-2xl p-0 overflow-hidden" data-testid="dialog-newsletter" aria-describedby="newsletter-description">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Newsletter Signup</DialogTitle>
+          <DialogDescription id="newsletter-description">
+            Subscribe to get £10 off your first Electric bike order
+          </DialogDescription>
+        </DialogHeader>
         <button
           onClick={handleClose}
           className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 transition-opacity z-50 bg-background/80 backdrop-blur-sm p-1 rounded-full"
           data-testid="button-close-newsletter"
+          aria-label="Close newsletter popup"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
