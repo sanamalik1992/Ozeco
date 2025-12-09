@@ -136,10 +136,16 @@ export default function Shop() {
     .filter(p => selectedCategory === "all" || p.category === selectedCategory)
     .sort((a, b) => {
       switch (sortBy) {
-        case "price-low":
-          return parseFloat(a.price) - parseFloat(b.price);
-        case "price-high":
-          return parseFloat(b.price) - parseFloat(a.price);
+        case "price-low": {
+          const priceA = parseFloat(a.lowestVariantPrice || a.price);
+          const priceB = parseFloat(b.lowestVariantPrice || b.price);
+          return priceA - priceB;
+        }
+        case "price-high": {
+          const priceA = parseFloat(a.lowestVariantPrice || a.price);
+          const priceB = parseFloat(b.lowestVariantPrice || b.price);
+          return priceB - priceA;
+        }
         case "name":
           return a.name.localeCompare(b.name);
         default: // featured - bestsellers first
