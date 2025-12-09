@@ -283,8 +283,8 @@ export async function seedProductionIfEmpty() {
       { slug: "touroll-u1", type: "Wheel Size", value: "29 Inch", price: "529.99", stock: 5, image: null },
       { slug: "fiido-d3-pro", type: "Color", value: "Black", price: "359.99", stock: 5, image: null },
       { slug: "fiido-d3-pro", type: "Color", value: "White", price: "359.99", stock: 5, image: null },
-      { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Forest Green", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/green-1.webp" },
-      { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Black", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/black-1.webp" },
+      { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Forest Green", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/green-1.png" },
+      { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Black", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/black-1.png" },
     ];
 
     let variantsInserted = 0;
