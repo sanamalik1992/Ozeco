@@ -10,7 +10,7 @@ export default function SizeFitGuide() {
   const [selectedHeight, setSelectedHeight] = useState<string>("");
 
   const heightRanges = [
-    { range: "4'10\" - 5'2\" (147-157cm)", size: "Small (14\"-16\")", bikes: ["Fiido D4S", "DYU models"] },
+    { range: "4'10\" - 5'2\" (147-157cm)", size: "Small (14\"-16\")", bikes: ["Fiido D3 Pro", "DYU models"] },
     { range: "5'2\" - 5'6\" (157-168cm)", size: "Small/Medium (16\"-18\")", bikes: ["Most folding e-bikes", "Eleglide M1 Plus"] },
     { range: "5'6\" - 5'10\" (168-178cm)", size: "Medium (18\"-20\")", bikes: ["Eleglide M2", "ENGWE Engine Pro", "Touroll H7"] },
     { range: "5'10\" - 6'2\" (178-188cm)", size: "Large (20\"-22\")", bikes: ["ENGWE EP-2 Pro", "Duotts models"] },
