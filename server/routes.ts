@@ -141,16 +141,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch {}
       }
       
+      // Step 5: Delete and reseed blog posts
+      console.log('📝 Reseeding blog posts...');
+      await db.delete(blogPosts).execute();
+      
+      let blogPostsRaw = '';
+      try {
+        blogPostsRaw = await fs.promises.readFile(path.join(dataDir, 'blog-posts.json'), 'utf-8');
+      } catch (e) {
+        console.log('   No blog-posts.json found, skipping');
+      }
+      
+      let blogPostsInserted = 0;
+      if (blogPostsRaw) {
+        const blogPostsData = JSON.parse(blogPostsRaw);
+        for (const post of blogPostsData) {
+          try {
+            await db.insert(blogPosts).values({
+              slug: post.slug,
+              title: post.title,
+              excerpt: post.excerpt,
+              content: post.content,
+              author: post.author,
+              publishedDate: new Date(post.publishedDate),
+              category: post.category,
+              featuredImage: post.featuredImage,
+              views: post.views || 0
+            } as any);
+            blogPostsInserted++;
+          } catch (e) {
+            console.log(`   Failed to insert blog post: ${post.slug}`);
+          }
+        }
+      }
+      
       console.log('✅ FORCE UPDATE COMPLETE');
       console.log(`   Products updated: ${productsData.length}`);
       console.log(`   Reviews inserted: ${reviewsInserted}`);
       console.log(`   Photos inserted: ${photosInserted}`);
+      console.log(`   Blog posts inserted: ${blogPostsInserted}`);
       
       res.json({
         success: true,
         productsUpdated: productsData.length,
         reviewsInserted,
         photosInserted,
+        blogPostsInserted,
         message: 'All data force updated successfully. Hard refresh your browser.'
       });
     } catch (error: any) {
