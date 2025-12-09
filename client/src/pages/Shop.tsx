@@ -266,8 +266,8 @@ export default function Shop() {
                         data-testid={`img-product-${product.slug}`}
                       />
                       {!product.inStock || product.stockQuantity === 0 ? (
-                        <Badge className="absolute top-2 left-2 bg-gray-500 text-white" data-testid="badge-out-of-stock">
-                          Out of Stock
+                        <Badge className="absolute top-2 left-2 bg-red-600 text-white" data-testid="badge-sold-out">
+                          Sold Out
                         </Badge>
                       ) : product.isBestseller && (
                         <Badge className="absolute top-2 left-2 bg-orange-500 text-white" data-testid="badge-bestseller">
