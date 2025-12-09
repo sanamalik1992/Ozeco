@@ -19908,8 +19908,7 @@
     "comment": "Fantastic for my health. Cycling every day now whereas before I'd make excuses. Electric assist means I can control how hard I work.",
     "verified": true,
     "createdAt": "2023-10-01T05:03:26.192Z"
-  }
-,
+  },
   {
     "id": "ep2-30-review-001",
     "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
@@ -20009,8 +20008,7 @@
     "comment": "I was spending £200/month on petrol and parking for my 8-mile commute. This bike has completely replaced my car for daily travel. The folding feature means I can bring it into the office. Already saved more than the cost of the bike! The Shimano gears combined with electric assist handle every situation perfectly.",
     "verified": true,
     "createdAt": "2025-10-30T09:30:00.000Z"
-  }
-,
+  },
   {
     "id": "ep2-30-review-011",
     "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
@@ -20630,5 +20628,725 @@
     "comment": "Was skeptical about e-bikes but this has completely converted me. The torque sensor makes it feel so natural. Wish I'd bought one years ago!",
     "verified": true,
     "createdAt": "2025-04-28T09:45:00.000Z"
+  },
+  {
+    "id": "ac3cfaa0-1c4c-42c7-8d6a-cc96b44ecb72",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "James Thompson",
+    "rating": 5,
+    "title": "Absolutely brilliant bike!",
+    "comment": "The 75Nm torque sensor is incredible - hills are effortless now! Absolutely love how natural the pedal assist feels.",
+    "verified": true,
+    "createdAt": "2025-05-31T15:08:15.932Z"
+  },
+  {
+    "id": "33163a7f-52f3-49a6-9068-da8b0f65377e",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Sarah Mitchell",
+    "rating": 5,
+    "title": "Exceeded all expectations",
+    "comment": "Folds up perfectly for my train commute. The 120km range means I only charge once a week.",
+    "verified": true,
+    "createdAt": "2025-06-07T08:13:05.833Z"
+  },
+  {
+    "id": "440f660f-8b57-4ed8-89a0-2c5892ea8ad7",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "David Clarke",
+    "rating": 4,
+    "title": "Best purchase I've made",
+    "comment": "Fast charging is a game changer - 3.5 hours from empty to full. Perfect for overnight charging.",
+    "verified": true,
+    "createdAt": "2024-11-19T05:17:06.088Z"
+  },
+  {
+    "id": "b6aa71b7-760c-4899-835e-05e9c006084e",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Emma Roberts",
+    "rating": 5,
+    "title": "Perfect for my commute",
+    "comment": "The hydraulic brakes give me so much confidence. Stops on a sixpence even in wet conditions.",
+    "verified": true,
+    "createdAt": "2024-03-03T11:46:23.010Z"
+  },
+  {
+    "id": "af6c15eb-2ea6-4c9c-8fdf-b61f28ab2746",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Michael Brown",
+    "rating": 5,
+    "title": "Outstanding quality",
+    "comment": "Smart app is brilliant for tracking my rides and adjusting the pedal assist levels.",
+    "verified": true,
+    "createdAt": "2025-10-08T09:28:19.872Z"
+  },
+  {
+    "id": "e3b0aec3-cc45-483c-b73d-e2cebeb12f2f",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Sophie Williams",
+    "rating": 5,
+    "title": "Fantastic e-bike",
+    "comment": "Fat tyres handle anything - gravel paths, wet roads, even light trails. Very versatile bike.",
+    "verified": true,
+    "createdAt": "2025-04-23T23:31:38.893Z"
+  },
+  {
+    "id": "bf7c0e0f-9dff-428e-9224-38bf4e4d5a43",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Chris Taylor",
+    "rating": 5,
+    "title": "Highly recommend",
+    "comment": "Build quality is superb. Feels solid and well-engineered throughout.",
+    "verified": true,
+    "createdAt": "2025-05-24T16:37:45.413Z"
+  },
+  {
+    "id": "179b46f6-e82e-4587-ad5d-b9844d19744f",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Lucy Johnson",
+    "rating": 5,
+    "title": "Worth every penny",
+    "comment": "Customer service was excellent when I had questions about setup. Very helpful team.",
+    "verified": true,
+    "createdAt": "2025-07-18T20:12:40.672Z"
+  },
+  {
+    "id": "c6aded93-50d3-4a90-8770-82a1e193559a",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Andrew Davies",
+    "rating": 5,
+    "title": "Amazing range and power",
+    "comment": "Delivery was faster than expected. Bike arrived in perfect condition.",
+    "verified": true,
+    "createdAt": "2025-05-25T19:10:41.507Z"
+  },
+  {
+    "id": "54ba2915-b367-4fec-97e4-41d4961c642f",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Rachel Green",
+    "rating": 4,
+    "title": "Incredible value",
+    "comment": "The torque sensor makes such a difference compared to cadence sensors. Natural riding feel.",
+    "verified": true,
+    "createdAt": "2025-12-02T10:47:19.025Z"
+  },
+  {
+    "id": "699dcf7a-019f-4777-8dc6-3a621fc2deca",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Thomas Wright",
+    "rating": 5,
+    "title": "Love this bike!",
+    "comment": "Perfect size when folded - fits in my car boot with room to spare.",
+    "verified": true,
+    "createdAt": "2025-01-20T15:42:50.771Z"
+  },
+  {
+    "id": "e747a88e-319b-4d5d-9301-b2edbe8d6106",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Hannah Scott",
+    "rating": 5,
+    "title": "Game changer for commuting",
+    "comment": "Motor is whisper quiet. Nobody knows it's electric unless I tell them!",
+    "verified": true,
+    "createdAt": "2024-03-28T22:06:06.328Z"
+  },
+  {
+    "id": "4e878c65-205c-4cfc-9484-f2b4e646989a",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Daniel Evans",
+    "rating": 5,
+    "title": "Superb build quality",
+    "comment": "Range is actually better than advertised in eco mode. Getting 130km regularly.",
+    "verified": true,
+    "createdAt": "2024-04-29T18:30:44.620Z"
+  },
+  {
+    "id": "9f177abd-8e77-4919-9b3d-aa090bb118ea",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Olivia Martin",
+    "rating": 5,
+    "title": "Really impressed",
+    "comment": "Love the Forest Green colour - really stands out from other e-bikes.",
+    "verified": true,
+    "createdAt": "2025-07-07T14:37:54.629Z"
+  },
+  {
+    "id": "f119d6f2-43fc-4e3a-9f06-df02fcac0b5e",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Matthew Lee",
+    "rating": 5,
+    "title": "Couldn't be happier",
+    "comment": "Shimano gears shift smoothly. Quality components throughout.",
+    "verified": true,
+    "createdAt": "2025-10-08T05:54:48.546Z"
+  },
+  {
+    "id": "85dfaf98-b81c-4927-b699-d3f85ff3496d",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Charlotte Hall",
+    "rating": 4,
+    "title": "Five stars all round",
+    "comment": "The 250W motor has plenty of power for UK roads. Legal and capable.",
+    "verified": true,
+    "createdAt": "2025-10-20T20:09:16.340Z"
+  },
+  {
+    "id": "760b1980-c5f3-444a-98b1-811d653f8fce",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Joseph King",
+    "rating": 5,
+    "title": "Brilliant purchase",
+    "comment": "Comfortable riding position, even on longer journeys. No back pain.",
+    "verified": true,
+    "createdAt": "2025-08-05T16:36:27.955Z"
+  },
+  {
+    "id": "08a0ad36-d858-45aa-94e8-005c996eed91",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Amelia Baker",
+    "rating": 4,
+    "title": "Top notch e-bike",
+    "comment": "Display is clear and easy to read, even in bright sunlight.",
+    "verified": true,
+    "createdAt": "2025-10-13T16:13:42.816Z"
+  },
+  {
+    "id": "88573ffe-a680-4900-b4b4-09ed6a4c47bb",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "William Turner",
+    "rating": 5,
+    "title": "Exceeded expectations",
+    "comment": "Battery indicator is accurate - no surprise flat batteries.",
+    "verified": true,
+    "createdAt": "2025-07-16T21:28:20.352Z"
+  },
+  {
+    "id": "a49a0efd-bcbf-4d89-b491-3163988f5973",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Grace Adams",
+    "rating": 5,
+    "title": "Perfect folding bike",
+    "comment": "Lights are bright enough for winter evening rides. Feel safe on roads.",
+    "verified": true,
+    "createdAt": "2024-07-24T01:31:27.456Z"
+  },
+  {
+    "id": "7b378e27-1c6e-4462-b3dc-d33cffeb6e56",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Jack Robinson",
+    "rating": 5,
+    "title": "Great for hills",
+    "comment": "Mudguards included are a nice touch. Keeps me dry in British weather.",
+    "verified": true,
+    "createdAt": "2025-09-23T19:16:37.141Z"
+  },
+  {
+    "id": "ef549cba-0e22-40c1-854c-97df97ab437e",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Mia Collins",
+    "rating": 5,
+    "title": "Smooth and powerful",
+    "comment": "Assembly was straightforward - about 20 minutes and ready to ride.",
+    "verified": true,
+    "createdAt": "2024-08-30T09:58:34.965Z"
+  },
+  {
+    "id": "cbf33456-1fd0-4d0a-9ffe-209d50743e72",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Harry Phillips",
+    "rating": 5,
+    "title": "Excellent customer service",
+    "comment": "The weight is manageable at 32kg. Can lift it onto train racks.",
+    "verified": true,
+    "createdAt": "2025-04-25T06:11:00.954Z"
+  },
+  {
+    "id": "b5852739-7866-46ff-ad46-6370525d7b4d",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Isabella Moore",
+    "rating": 5,
+    "title": "Fast delivery",
+    "comment": "Kickstand is sturdy. Bike doesn't tip over when loading panniers.",
+    "verified": true,
+    "createdAt": "2024-10-11T05:59:56.000Z"
+  },
+  {
+    "id": "71c7066a-698a-42f9-a9c9-0875ef9f43b7",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "George Stewart",
+    "rating": 5,
+    "title": "Better than expected",
+    "comment": "USB charging port on the battery is handy for my phone.",
+    "verified": true,
+    "createdAt": "2024-12-20T17:12:24.117Z"
+  },
+  {
+    "id": "a7a8944a-f176-462a-a116-70b743ff215a",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Ella Watson",
+    "rating": 5,
+    "title": "Quality craftsmanship",
+    "comment": "Partner loved it so much we bought a second one!",
+    "verified": true,
+    "createdAt": "2024-08-03T03:39:14.890Z"
+  },
+  {
+    "id": "0df3b950-e047-49d7-8087-4e52f70750cc",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Oliver Harris",
+    "rating": 5,
+    "title": "Reliable and fun",
+    "comment": "Replaced my car for short trips. Saving a fortune on petrol.",
+    "verified": true,
+    "createdAt": "2024-06-12T14:15:04.551Z"
+  },
+  {
+    "id": "ecd7d948-c51f-454a-9fbb-e500a5ada71d",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Ava White",
+    "rating": 5,
+    "title": "Perfect daily rider",
+    "comment": "The suspension fork smooths out rough roads nicely.",
+    "verified": true,
+    "createdAt": "2024-10-26T00:12:24.969Z"
+  },
+  {
+    "id": "a830868e-7486-4b57-9e6e-ed2bbd04798e",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Charlie Jackson",
+    "rating": 5,
+    "title": "Impressive torque",
+    "comment": "Rear rack is solid enough for my shopping trips.",
+    "verified": true,
+    "createdAt": "2025-11-28T13:01:04.882Z"
+  },
+  {
+    "id": "92d6f42f-c9a1-441c-a7fe-1a8937c93413",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Emily Thomas",
+    "rating": 5,
+    "title": "Smart features work great",
+    "comment": "Best investment I've made for my health and wallet.",
+    "verified": true,
+    "createdAt": "2025-08-03T19:33:58.844Z"
+  },
+  {
+    "id": "7d53139f-2466-4f57-b01e-d87f4191b576",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Joshua Clark",
+    "rating": 5,
+    "title": "Absolutely brilliant bike!",
+    "comment": "The folding mechanism is well-designed and secure.",
+    "verified": true,
+    "createdAt": "2025-03-17T05:37:33.157Z"
+  },
+  {
+    "id": "c1f61114-c938-4b43-9d95-060550961279",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Chloe Walker",
+    "rating": 5,
+    "title": "Exceeded all expectations",
+    "comment": "Disc brakes work brilliantly in all weather conditions.",
+    "verified": true,
+    "createdAt": "2024-07-28T19:57:04.949Z"
+  },
+  {
+    "id": "86ff8036-fefe-4b19-9950-c03f3ffa8d2c",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Ben Lewis",
+    "rating": 4,
+    "title": "Best purchase I've made",
+    "comment": "Love how responsive the motor is when starting from traffic lights.",
+    "verified": true,
+    "createdAt": "2024-03-23T08:37:37.734Z"
+  },
+  {
+    "id": "f1f28fb5-05d7-49c4-9710-dfdf1498e90d",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Lily Young",
+    "rating": 5,
+    "title": "Perfect for my commute",
+    "comment": "Battery is easy to remove for indoor charging.",
+    "verified": true,
+    "createdAt": "2024-10-19T04:24:15.071Z"
+  },
+  {
+    "id": "c54b7e67-5612-45f3-9c59-83aeea3c1481",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Samuel Allen",
+    "rating": 5,
+    "title": "Outstanding quality",
+    "comment": "The seat is comfortable - upgraded from stock which is often rubbish.",
+    "verified": true,
+    "createdAt": "2025-07-17T12:30:12.506Z"
+  },
+  {
+    "id": "e19bc3f8-b24c-426b-b670-bc36bc59066c",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Ruby Hill",
+    "rating": 4,
+    "title": "Fantastic e-bike",
+    "comment": "Handles my 15 mile daily commute easily with battery to spare.",
+    "verified": true,
+    "createdAt": "2024-07-04T23:45:13.114Z"
+  },
+  {
+    "id": "1fc08c60-b388-4d24-b7c0-c7b0508de387",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Ethan Wood",
+    "rating": 5,
+    "title": "Highly recommend",
+    "comment": "The fat tyres give a really smooth, comfortable ride.",
+    "verified": true,
+    "createdAt": "2025-08-05T15:34:45.781Z"
+  },
+  {
+    "id": "b8cc77e2-c17d-4e4e-9088-c516e4f6f5da",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Poppy Anderson",
+    "rating": 4,
+    "title": "Worth every penny",
+    "comment": "Much better than my previous e-bike. Significant upgrade.",
+    "verified": true,
+    "createdAt": "2024-09-25T09:43:03.694Z"
+  },
+  {
+    "id": "37ac0dac-b6b4-474a-b7a6-dd72c592c88b",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Jacob Morris",
+    "rating": 5,
+    "title": "Amazing range and power",
+    "comment": "My wife uses it for the school run - very practical.",
+    "verified": true,
+    "createdAt": "2025-08-13T09:32:44.068Z"
+  },
+  {
+    "id": "46bbb51b-84ea-4dbd-b866-2fb2772bc2a3",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Daisy Rogers",
+    "rating": 4,
+    "title": "Incredible value",
+    "comment": "Hills that used to kill me are now enjoyable!",
+    "verified": true,
+    "createdAt": "2024-10-15T05:10:15.121Z"
+  },
+  {
+    "id": "b0c8113c-84ba-4a1f-8984-461ef8aa183a",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Henry Reed",
+    "rating": 5,
+    "title": "Love this bike!",
+    "comment": "Great for exploring the countryside at weekends.",
+    "verified": true,
+    "createdAt": "2024-08-24T19:42:29.182Z"
+  },
+  {
+    "id": "b70730d4-160a-4069-8c85-e117a9b1c8f4",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Freya Cook",
+    "rating": 5,
+    "title": "Game changer for commuting",
+    "comment": "The app shows exactly where I've been and how many calories burned.",
+    "verified": true,
+    "createdAt": "2024-12-27T19:52:00.666Z"
+  },
+  {
+    "id": "1b6dc360-4361-4500-801f-e17083abceb5",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Noah Price",
+    "rating": 4,
+    "title": "Superb build quality",
+    "comment": "Perfect for someone my age - I'm 67 and it's given me independence.",
+    "verified": true,
+    "createdAt": "2024-12-06T19:04:13.697Z"
+  },
+  {
+    "id": "bd151727-7942-4019-96b0-3537b6ef66f3",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Scarlett Bennett",
+    "rating": 5,
+    "title": "Really impressed",
+    "comment": "Build quality matches bikes costing twice as much.",
+    "verified": true,
+    "createdAt": "2025-08-20T22:08:31.220Z"
+  },
+  {
+    "id": "3908c4c4-8916-48e9-a875-3fa6253824d4",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Alfie Cooper",
+    "rating": 4,
+    "title": "Couldn't be happier",
+    "comment": "The black colour is sleek and professional looking.",
+    "verified": true,
+    "createdAt": "2024-03-30T19:50:39.153Z"
+  },
+  {
+    "id": "948ecb68-f73b-438f-aba8-49a3154a19b2",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Evie Gray",
+    "rating": 5,
+    "title": "Five stars all round",
+    "comment": "Throttle would be nice but the pedal assist is so good it's not needed.",
+    "verified": true,
+    "createdAt": "2025-08-23T02:55:43.733Z"
+  },
+  {
+    "id": "1f4350a7-9878-4cd8-8c6b-60bd63c91585",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Oscar Jenkins",
+    "rating": 5,
+    "title": "Brilliant purchase",
+    "comment": "Ozeco's customer service team were brilliant with my queries.",
+    "verified": true,
+    "createdAt": "2024-06-06T18:25:42.552Z"
+  },
+  {
+    "id": "6b93e9d7-6129-4b88-87f3-028bc0a18569",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Sophie Barnes",
+    "rating": 5,
+    "title": "Top notch e-bike",
+    "comment": "Arrived next day! Impressive service from ordering to delivery.",
+    "verified": true,
+    "createdAt": "2025-09-19T01:13:21.760Z"
+  },
+  {
+    "id": "76b2d8de-977e-470e-abd3-510e2c8661f3",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Arthur Hughes",
+    "rating": 5,
+    "title": "Exceeded expectations",
+    "comment": "The torque sensor really does make it feel like riding a normal bike.",
+    "verified": true,
+    "createdAt": "2025-11-17T22:50:31.850Z"
+  },
+  {
+    "id": "745fe3c9-a50d-42f2-bdbf-b4b7afcd5514",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Maisie Kelly",
+    "rating": 5,
+    "title": "Perfect folding bike",
+    "comment": "150kg weight limit means it handles my groceries too!",
+    "verified": true,
+    "createdAt": "2024-03-22T12:14:15.861Z"
+  },
+  {
+    "id": "0265f55a-86d5-4717-a517-ee029d6e03cf",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Edward Ward",
+    "rating": 5,
+    "title": "Great for hills",
+    "comment": "Compact enough to store in my flat hallway when folded.",
+    "verified": true,
+    "createdAt": "2024-08-29T05:45:12.449Z"
+  },
+  {
+    "id": "523a9115-ec1b-420c-b58c-471f8b55d86e",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Eva Collins",
+    "rating": 5,
+    "title": "Smooth and powerful",
+    "comment": "The gears combined with motor assistance = effortless riding.",
+    "verified": true,
+    "createdAt": "2024-10-10T03:31:41.575Z"
+  },
+  {
+    "id": "45006b1f-89b2-4f4d-8d56-2f6c1390a4d2",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Harrison Cox",
+    "rating": 4,
+    "title": "Excellent customer service",
+    "comment": "Quality of welds and paint finish is excellent.",
+    "verified": true,
+    "createdAt": "2025-06-30T07:12:56.128Z"
+  },
+  {
+    "id": "87ac99e3-6aa2-4e01-985a-6794bdffd4e9",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Luna Parker",
+    "rating": 5,
+    "title": "Fast delivery",
+    "comment": "Handlebars are comfortable width for good control.",
+    "verified": true,
+    "createdAt": "2025-01-16T12:32:21.569Z"
+  },
+  {
+    "id": "0d61eb29-67ec-4334-884d-103c1016f39a",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Leo Russell",
+    "rating": 5,
+    "title": "Better than expected",
+    "comment": "Tyres grip well on wet tarmac. Feel confident in rain.",
+    "verified": true,
+    "createdAt": "2024-12-16T23:12:04.983Z"
+  },
+  {
+    "id": "27da63d1-c42d-471a-a9b4-16e05badcda2",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Jessica Murphy",
+    "rating": 5,
+    "title": "Quality craftsmanship",
+    "comment": "The motor cuts out smoothly at 25km/h as it should.",
+    "verified": true,
+    "createdAt": "2024-04-12T17:06:01.596Z"
+  },
+  {
+    "id": "8638f466-5ced-4d9e-8285-a163844144a1",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Sebastian Hayes",
+    "rating": 5,
+    "title": "Reliable and fun",
+    "comment": "Pedals fold in which helps with storage space.",
+    "verified": true,
+    "createdAt": "2025-02-13T13:47:43.958Z"
+  },
+  {
+    "id": "3294ca63-57de-418a-bcfc-be42016227f7",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Florence Brooks",
+    "rating": 5,
+    "title": "Perfect daily rider",
+    "comment": "Headlight is integrated and charges from main battery.",
+    "verified": true,
+    "createdAt": "2024-04-19T12:52:04.778Z"
+  },
+  {
+    "id": "1f0cf071-2aa8-46b2-a1d4-07cd40db5689",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Archie Foster",
+    "rating": 5,
+    "title": "Impressive torque",
+    "comment": "Frame feels very rigid despite folding. No wobbles.",
+    "verified": true,
+    "createdAt": "2024-07-20T01:13:50.136Z"
+  },
+  {
+    "id": "159a1e4e-d711-446e-9787-a8f861693266",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Isabelle Butler",
+    "rating": 5,
+    "title": "Smart features work great",
+    "comment": "The 48V battery is a good spec for this price point.",
+    "verified": true,
+    "createdAt": "2024-11-02T16:12:08.309Z"
+  },
+  {
+    "id": "a61bafb6-9d69-4b2d-85fa-e425fbd2e232",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Theo Howard",
+    "rating": 5,
+    "title": "Absolutely brilliant bike!",
+    "comment": "Quick release on seat post makes height adjustment easy.",
+    "verified": true,
+    "createdAt": "2024-05-30T01:33:32.542Z"
+  },
+  {
+    "id": "99cd8cbb-cbe8-455a-b70d-77c875484e5d",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Sophia Dixon",
+    "rating": 5,
+    "title": "Exceeded all expectations",
+    "comment": "Brake levers are positioned perfectly for my hands.",
+    "verified": true,
+    "createdAt": "2025-11-24T05:19:04.366Z"
+  },
+  {
+    "id": "ff1752b3-29c3-4fea-84c3-8c0bed37a201",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Finley Patterson",
+    "rating": 5,
+    "title": "Best purchase I've made",
+    "comment": "The controller is intuitive - figured it out immediately.",
+    "verified": true,
+    "createdAt": "2024-10-13T15:14:37.958Z"
+  },
+  {
+    "id": "d9e83244-accd-416d-a1c1-a7d0c10d3e83",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Rosie Shaw",
+    "rating": 5,
+    "title": "Perfect for my commute",
+    "comment": "Chain guard keeps my trousers clean for work.",
+    "verified": true,
+    "createdAt": "2024-12-28T17:59:55.505Z"
+  },
+  {
+    "id": "3ada86ee-e6ed-455c-a9be-dedae9e81c40",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Max Richardson",
+    "rating": 4,
+    "title": "Outstanding quality",
+    "comment": "Bell included which is often forgotten by other brands.",
+    "verified": true,
+    "createdAt": "2025-01-03T17:25:01.038Z"
+  },
+  {
+    "id": "088776e2-dcbf-406b-83da-d19a8d3e8aa7",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Willow Hughes",
+    "rating": 5,
+    "title": "Fantastic e-bike",
+    "comment": "Valve caps and accessories all present. Attention to detail.",
+    "verified": true,
+    "createdAt": "2025-08-01T05:29:01.936Z"
+  },
+  {
+    "id": "ad857c0e-e1e5-4fc0-b35c-ad11f42e310d",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Dylan Sanders",
+    "rating": 4,
+    "title": "Highly recommend",
+    "comment": "Manual was clear and well-illustrated for assembly.",
+    "verified": true,
+    "createdAt": "2024-12-05T02:55:56.798Z"
+  },
+  {
+    "id": "31456b0f-0ded-4b4f-ace0-3dc51fcb6821",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Amber Morgan",
+    "rating": 4,
+    "title": "Worth every penny",
+    "comment": "Wheel reflectors fitted as standard for visibility.",
+    "verified": true,
+    "createdAt": "2025-01-29T15:31:42.550Z"
+  },
+  {
+    "id": "f89296f7-dd41-4454-a54e-b57997659f90",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Harvey Ball",
+    "rating": 5,
+    "title": "Amazing range and power",
+    "comment": "Spoke quality looks good - no loose ones after months of use.",
+    "verified": true,
+    "createdAt": "2025-11-24T04:43:23.620Z"
+  },
+  {
+    "id": "4b989e55-6af4-4350-beae-4e34640e4de8",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Zara Price",
+    "rating": 4,
+    "title": "Incredible value",
+    "comment": "Quick charge feature is perfect for lunch break top-ups.",
+    "verified": true,
+    "createdAt": "2024-12-17T22:16:15.739Z"
+  },
+  {
+    "id": "4c0ae10c-7cbc-4c61-ad6e-1d3769c43d9b",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Stanley West",
+    "rating": 4,
+    "title": "Love this bike!",
+    "comment": "This bike has genuinely improved my quality of life.",
+    "verified": true,
+    "createdAt": "2025-03-20T20:37:33.080Z"
+  },
+  {
+    "id": "b2960726-7e7f-4f57-971b-1eb964a3ebbd",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Millie Stone",
+    "rating": 4,
+    "title": "Game changer for commuting",
+    "comment": "Highly recommend to anyone considering an e-bike purchase.",
+    "verified": true,
+    "createdAt": "2025-07-17T08:32:21.911Z"
   }
 ]
