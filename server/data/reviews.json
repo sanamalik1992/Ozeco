@@ -19909,4 +19909,105 @@
     "verified": true,
     "createdAt": "2023-10-01T05:03:26.192Z"
   }
+,
+  {
+    "id": "ep2-30-review-001",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Marcus Johnson",
+    "rating": 5,
+    "title": "Perfect for food delivery work",
+    "comment": "I'm a Deliveroo rider in London and this bike has been a game-changer. The 120km range means I never worry about running out of battery during long shifts. The torque sensor makes starting from traffic lights so smooth - feels like riding a regular bike but with superpowers! The hydraulic brakes have saved me countless times in busy traffic. Best investment I've made for my delivery business.",
+    "verified": true,
+    "createdAt": "2025-12-07T14:30:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-002",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Priya Sharma",
+    "rating": 5,
+    "title": "Forest Green colour is stunning!",
+    "comment": "The moment I unboxed this bike I knew I'd made the right choice. That Forest Green colour is absolutely gorgeous - I get compliments everywhere I go! The app connectivity is brilliant, I can track my rides and see exactly how much battery I'm using. Folds up nicely in my hallway. The 3.5 hour fast charging is perfect for my lifestyle - plug it in after work and it's ready for the next day. Highly recommend!",
+    "verified": true,
+    "createdAt": "2025-12-05T09:15:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-003",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "David O'Brien",
+    "rating": 5,
+    "title": "Hills are no problem anymore",
+    "comment": "Live in Sheffield and the hills here used to put me off cycling. The 75Nm torque on this bike eats them up like nothing! The torque sensor is incredibly natural - it feels like someone's giving you a gentle push rather than a motor taking over. Fat tyres handle cobblestones and wet roads brilliantly. Solid bike at a great price.",
+    "verified": true,
+    "createdAt": "2025-12-03T16:45:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-004",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Sophie Williams",
+    "rating": 4,
+    "title": "Great commuter bike with one small niggle",
+    "comment": "Using this for my daily commute from Croydon to the City. The range is excellent - I only charge it twice a week. The folding mechanism is easy once you get the hang of it. Only giving 4 stars because the app can be a bit slow to connect sometimes, but the bike itself is fantastic. The hydraulic brakes give me confidence in London traffic.",
+    "verified": true,
+    "createdAt": "2025-11-28T11:20:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-005",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Ahmed Hassan",
+    "rating": 5,
+    "title": "Brilliant for weekend adventures",
+    "comment": "Bought this for weekend rides in the Peak District. The fat tyres handle gravel paths and muddy trails with ease. Battery easily lasts a full day of riding even in eco mode. The step-through frame makes it easy to mount even with cycling gear on. Very happy with my purchase - already planning my next adventure!",
+    "verified": true,
+    "createdAt": "2025-11-25T13:00:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-006",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Emma Richardson",
+    "rating": 5,
+    "title": "Finally got my husband cycling again",
+    "comment": "Bought this for my husband who hasn't cycled in years due to knee problems. The pedal assist means he can enjoy riding without the strain. We went on a 40-mile ride last weekend and he wasn't tired at all! The comfort is excellent and the black colour looks very sleek. Thank you Ozeco for great service too!",
+    "verified": true,
+    "createdAt": "2025-11-20T10:30:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-007",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "James Chen",
+    "rating": 5,
+    "title": "Premium quality at mid-range price",
+    "comment": "I've owned several e-bikes and this EP-2 3.0 punches way above its price point. The hydraulic brakes are what you'd expect on £2000+ bikes. The torque sensor is smooth and responsive. Build quality is excellent - no rattles or creaks even after 500 miles. If you're comparing ENGWE to other brands, this is the one to get.",
+    "verified": true,
+    "createdAt": "2025-11-15T15:45:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-008",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Fatima Al-Rashid",
+    "rating": 4,
+    "title": "Great bike, took time to set up",
+    "comment": "The bike itself is fantastic - powerful, comfortable, and looks great. Took me about an hour to assemble as the instructions could be clearer. Once set up though, it rides like a dream. The Forest Green colour is even nicer in person. Fast charging is a real bonus for busy schedules.",
+    "verified": true,
+    "createdAt": "2025-11-10T08:15:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-009",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Robert MacLeod",
+    "rating": 5,
+    "title": "Best e-bike I've tested",
+    "comment": "As a cycling blogger, I've tested dozens of e-bikes. The EP-2 3.0 Boost stands out for its exceptional torque sensor - many bikes at this price use cadence sensors which feel jerky. This one is butter smooth. The 120km range is realistic too, not just marketing speak. Highly recommended for anyone looking for quality without the premium price tag.",
+    "verified": true,
+    "createdAt": "2025-11-05T12:00:00.000Z"
+  },
+  {
+    "id": "ep2-30-review-010",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Lisa Kowalski",
+    "rating": 5,
+    "title": "Replaced my car for commuting",
+    "comment": "I was spending £200/month on petrol and parking for my 8-mile commute. This bike has completely replaced my car for daily travel. The folding feature means I can bring it into the office. Already saved more than the cost of the bike! The Shimano gears combined with electric assist handle every situation perfectly.",
+    "verified": true,
+    "createdAt": "2025-10-30T09:30:00.000Z"
+  }
 ]

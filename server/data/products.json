@@ -615,5 +615,46 @@
       "Integrated Rack"
     ],
     "createdAt": "2025-11-13T21:02:03.496Z"
+  },
+  {
+    "id": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "name": "ENGWE EP-2 3.0 Boost Electric Bike",
+    "brand": "ENGWE",
+    "slug": "engwe-ep-2-3-0-boost",
+    "description": "The ENGWE EP-2 3.0 Boost is the ultimate folding fat tyre Electric bike, combining powerful performance with smart technology. Featuring a robust 250W motor with an impressive 75Nm torque sensor for natural, responsive pedal assist, this bike delivers exceptional hill-climbing ability and smooth acceleration. The high-capacity battery provides up to 120km range on a single charge with rapid 3.5-hour fast charging. Premium hydraulic disc brakes ensure reliable stopping power in all conditions, while the 20x4.0 inch fat tyres provide excellent stability on any terrain. Smart app connectivity allows you to customise riding modes, track your journeys, and monitor battery status. The compact folding design makes storage and transport effortless, perfect for commuters and adventurers alike.",
+    "price": "1149.99",
+    "originalPrice": "1199.99",
+    "image": "/products/engwe-ep-2-3-0-boost/green-1.webp",
+    "images": [
+      "/products/engwe-ep-2-3-0-boost/green-1.webp",
+      "/products/engwe-ep-2-3-0-boost/green-2.webp",
+      "/products/engwe-ep-2-3-0-boost/black-1.webp",
+      "/products/engwe-ep-2-3-0-boost/black-2.webp",
+      "/products/engwe-ep-2-3-0-boost/green-3.jpeg",
+      "/products/engwe-ep-2-3-0-boost/black-3.jpeg"
+    ],
+    "category": "Electric Folding Bikes",
+    "inStock": true,
+    "stockQuantity": 10,
+    "isBestseller": false,
+    "motorPower": "250W (75Nm Torque)",
+    "batteryCapacity": "48V 13Ah",
+    "maxRange": "120 km",
+    "topSpeed": "25 km/h",
+    "weight": "32 kg",
+    "maxLoad": "150 kg",
+    "frameType": "Foldable Aluminium",
+    "riderHeight": "5'4\" - 6'2\" (165-190 cm)",
+    "features": [
+      "250W Motor with 75Nm Torque Sensor",
+      "Smart App Control",
+      "3.5h Fast Charging",
+      "Hydraulic Disc Brakes",
+      "20x4.0 Fat Tyres",
+      "Compact Folding Design",
+      "120km Long Range",
+      "Shimano 7-Speed Gears"
+    ],
+    "createdAt": "2025-12-09T10:00:00.000Z"
   }
 ]
