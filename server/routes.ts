@@ -11,6 +11,146 @@ import { getUncachableResendClient } from "./resend";
 import { getClientIP, getLocationFromIP } from "./geolocation";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Emergency force update endpoint - requires admin password as query param
+  app.get("/api/force-update-production", async (req, res) => {
+    try {
+      const { key } = req.query;
+      const adminPassword = process.env.ADMIN_PASSWORD;
+      
+      if (!key || key !== adminPassword) {
+        return res.status(403).json({ error: 'Invalid key. Use ?key=YOUR_ADMIN_PASSWORD' });
+      }
+      
+      console.log('🚨 FORCE UPDATE TRIGGERED (authenticated)');
+      
+      const fs = await import('fs');
+      const path = await import('path');
+      const dataDir = path.join(process.cwd(), 'server', 'data');
+      
+      // Load JSON files
+      const productsRaw = await fs.promises.readFile(path.join(dataDir, 'products.json'), 'utf-8');
+      const reviewsRaw = await fs.promises.readFile(path.join(dataDir, 'reviews.json'), 'utf-8');
+      const photosRaw = await fs.promises.readFile(path.join(dataDir, 'customer-photos.json'), 'utf-8');
+      
+      const productsData = JSON.parse(productsRaw);
+      const reviewsData = JSON.parse(reviewsRaw);
+      const photosData = JSON.parse(photosRaw);
+      
+      // Step 1: Update ALL product images from JSON
+      console.log('📷 Updating product images...');
+      for (const p of productsData) {
+        await db.update(products)
+          .set({ image: p.image, images: p.images })
+          .where(eq(products.slug, p.slug))
+          .execute();
+      }
+      
+      // Step 2: Update variant images for EP-2 3.0 Boost
+      console.log('🎨 Updating variant images...');
+      const ep2Product = await db.select().from(products).where(eq(products.slug, 'engwe-ep-2-3-0-boost')).limit(1);
+      if (ep2Product.length > 0) {
+        await db.update(productVariants)
+          .set({ image: '/products/engwe-ep-2-3-0-boost/green-1.png' })
+          .where(and(eq(productVariants.productId, ep2Product[0].id), eq(productVariants.value, 'Forest Green')))
+          .execute();
+        await db.update(productVariants)
+          .set({ image: '/products/engwe-ep-2-3-0-boost/black-1.png' })
+          .where(and(eq(productVariants.productId, ep2Product[0].id), eq(productVariants.value, 'Black')))
+          .execute();
+      }
+      
+      // Step 3: Delete and reseed reviews
+      console.log('⭐ Reseeding reviews...');
+      await db.delete(reviews).execute();
+      
+      // Get product ID mapping
+      const allProducts = await db.select().from(products);
+      const slugToId: Record<string, string> = {};
+      for (const prod of allProducts) {
+        slugToId[prod.slug] = prod.id;
+      }
+      
+      // Map old product IDs to new ones
+      const oldIdToSlug: Record<string, string> = {};
+      for (const p of productsData) {
+        oldIdToSlug[p.id] = p.slug;
+      }
+      
+      // Insert reviews in batches
+      let reviewsInserted = 0;
+      for (let i = 0; i < reviewsData.length; i += 100) {
+        const batch = reviewsData.slice(i, i + 100);
+        const toInsert = batch.map((r: any) => {
+          const slug = oldIdToSlug[r.productId];
+          const newProductId = slug ? slugToId[slug] : null;
+          if (!newProductId) return null;
+          return {
+            productId: newProductId,
+            customerName: r.customerName,
+            rating: r.rating,
+            title: r.title,
+            comment: r.comment,
+            verified: r.verified,
+            createdAt: new Date(r.createdAt)
+          };
+        }).filter(Boolean);
+        
+        if (toInsert.length > 0) {
+          try {
+            await db.insert(reviews).values(toInsert as any);
+            reviewsInserted += toInsert.length;
+          } catch (e) {
+            // Insert individually on batch failure
+            for (const rev of toInsert) {
+              try {
+                await db.insert(reviews).values(rev as any);
+                reviewsInserted++;
+              } catch {}
+            }
+          }
+        }
+      }
+      
+      // Step 4: Delete and reseed customer photos
+      console.log('📸 Reseeding customer photos...');
+      await db.delete(customerPhotos).execute();
+      
+      let photosInserted = 0;
+      for (const p of photosData) {
+        const slug = oldIdToSlug[p.productId];
+        const newProductId = slug ? slugToId[slug] : null;
+        if (!newProductId) continue;
+        try {
+          await db.insert(customerPhotos).values({
+            productId: newProductId,
+            customerName: p.customerName,
+            imageUrl: p.imageUrl,
+            caption: p.caption,
+            approved: p.approved,
+            createdAt: new Date(p.createdAt)
+          } as any);
+          photosInserted++;
+        } catch {}
+      }
+      
+      console.log('✅ FORCE UPDATE COMPLETE');
+      console.log(`   Products updated: ${productsData.length}`);
+      console.log(`   Reviews inserted: ${reviewsInserted}`);
+      console.log(`   Photos inserted: ${photosInserted}`);
+      
+      res.json({
+        success: true,
+        productsUpdated: productsData.length,
+        reviewsInserted,
+        photosInserted,
+        message: 'All data force updated successfully. Hard refresh your browser.'
+      });
+    } catch (error: any) {
+      console.error('❌ Force update failed:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
