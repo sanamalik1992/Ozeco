@@ -36,11 +36,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const reviewsData = JSON.parse(reviewsRaw);
       const photosData = JSON.parse(photosRaw);
       
-      // Step 1: Update ALL product images from JSON
-      console.log('📷 Updating product images...');
+      // Step 1: Update ALL product data from JSON (images + pricing)
+      console.log('📷 Updating products...');
       for (const p of productsData) {
         await db.update(products)
-          .set({ image: p.image, images: p.images })
+          .set({ 
+            image: p.image, 
+            images: p.images,
+            price: p.price,
+            originalPrice: p.originalPrice
+          })
           .where(eq(products.slug, p.slug))
           .execute();
       }
