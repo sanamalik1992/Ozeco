@@ -39,6 +39,7 @@ export default function AdminOrders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
   const [editingTracking, setEditingTracking] = useState<{ [key: string]: string }>({});
+  const [editingCourierLink, setEditingCourierLink] = useState<{ [key: string]: string }>({});
 
   // Fetch orders with fresh data (no caching for admin)
   const { data: orders = [], isLoading: ordersLoading, refetch } = useQuery<Order[]>({
@@ -70,25 +71,30 @@ export default function AdminOrders() {
     },
   });
 
-  // Update tracking number mutation
+  // Update tracking number and courier link mutation
   const updateTrackingMutation = useMutation({
-    mutationFn: async ({ orderId, trackingNumber }: { orderId: string; trackingNumber: string }) => {
-      const response = await apiRequest("PATCH", `/api/admin/orders/${orderId}/tracking`, { trackingNumber });
-      if (!response.ok) throw new Error("Failed to update tracking number");
+    mutationFn: async ({ orderId, trackingNumber, courierLink }: { orderId: string; trackingNumber: string; courierLink: string }) => {
+      const response = await apiRequest("PATCH", `/api/admin/orders/${orderId}/tracking`, { trackingNumber, courierLink });
+      if (!response.ok) throw new Error("Failed to update tracking information");
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+      // Check if shipping email was sent (both fields filled)
+      const hasBoth = data.trackingNumber && data.courierLink;
       toast({
         title: "Tracking Updated",
-        description: "Tracking number updated successfully",
+        description: hasBoth 
+          ? "Tracking info updated & shipping email sent to customer!" 
+          : "Tracking information updated. Add both tracking number & courier link to send shipping email.",
       });
       setEditingTracking({});
+      setEditingCourierLink({});
     },
     onError: () => {
       toast({
         title: "Update Failed",
-        description: "Failed to update tracking number",
+        description: "Failed to update tracking information",
         variant: "destructive",
       });
     },
@@ -99,10 +105,9 @@ export default function AdminOrders() {
   };
 
   const handleTrackingUpdate = (orderId: string) => {
-    const trackingNumber = editingTracking[orderId];
-    if (trackingNumber !== undefined) {
-      updateTrackingMutation.mutate({ orderId, trackingNumber });
-    }
+    const trackingNumber = editingTracking[orderId] ?? selectedOrder?.trackingNumber ?? "";
+    const courierLink = editingCourierLink[orderId] ?? selectedOrder?.courierLink ?? "";
+    updateTrackingMutation.mutate({ orderId, trackingNumber, courierLink });
   };
 
   // Filter orders by search query
@@ -295,38 +300,70 @@ export default function AdminOrders() {
                 </div>
               </div>
 
-              {/* Tracking Number */}
+              {/* Tracking Information */}
               <div>
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
                   <Package className="h-4 w-4" />
                   Tracking Information
                 </h3>
-                <div className="bg-muted/50 p-4 rounded-lg space-y-3">
-                  {selectedOrder.trackingNumber ? (
-                    <p className="text-sm">
-                      <span className="font-medium">Tracking Number:</span>{" "}
-                      <code className="bg-background px-2 py-1 rounded">{selectedOrder.trackingNumber}</code>
-                    </p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No tracking number added yet</p>
+                <div className="bg-muted/50 p-4 rounded-lg space-y-4">
+                  {/* Current Status */}
+                  {(selectedOrder.trackingNumber || selectedOrder.courierLink) && (
+                    <div className="space-y-2 pb-3 border-b">
+                      {selectedOrder.trackingNumber && (
+                        <p className="text-sm">
+                          <span className="font-medium">Tracking Number:</span>{" "}
+                          <code className="bg-background px-2 py-1 rounded">{selectedOrder.trackingNumber}</code>
+                        </p>
+                      )}
+                      {selectedOrder.courierLink && (
+                        <p className="text-sm">
+                          <span className="font-medium">Courier Link:</span>{" "}
+                          <a href={selectedOrder.courierLink} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                            {selectedOrder.courierLink.substring(0, 50)}...
+                          </a>
+                        </p>
+                      )}
+                      {selectedOrder.trackingNumber && selectedOrder.courierLink && (
+                        <Badge variant="default" className="bg-green-600">Shipping Email Sent</Badge>
+                      )}
+                    </div>
                   )}
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="text"
-                      placeholder="Enter tracking number"
-                      value={editingTracking[selectedOrder.id] ?? selectedOrder.trackingNumber ?? ""}
-                      onChange={(e) => setEditingTracking({ ...editingTracking, [selectedOrder.id]: e.target.value })}
-                      className="flex-1"
-                      data-testid="input-tracking-number"
-                    />
-                    <Button
-                      size="sm"
-                      onClick={() => handleTrackingUpdate(selectedOrder.id)}
-                      disabled={updateTrackingMutation.isPending}
-                      data-testid="button-update-tracking"
-                    >
-                      Update
-                    </Button>
+                  
+                  {/* Edit Fields */}
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium mb-1 block">Tracking Number</label>
+                      <Input
+                        type="text"
+                        placeholder="e.g. JD123456789GB"
+                        value={editingTracking[selectedOrder.id] ?? selectedOrder.trackingNumber ?? ""}
+                        onChange={(e) => setEditingTracking({ ...editingTracking, [selectedOrder.id]: e.target.value })}
+                        data-testid="input-tracking-number"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-1 block">Courier Tracking Link</label>
+                      <Input
+                        type="url"
+                        placeholder="e.g. https://www.dhl.com/track?id=123456"
+                        value={editingCourierLink[selectedOrder.id] ?? selectedOrder.courierLink ?? ""}
+                        onChange={(e) => setEditingCourierLink({ ...editingCourierLink, [selectedOrder.id]: e.target.value })}
+                        data-testid="input-courier-link"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() => handleTrackingUpdate(selectedOrder.id)}
+                        disabled={updateTrackingMutation.isPending}
+                        data-testid="button-update-tracking"
+                      >
+                        {updateTrackingMutation.isPending ? "Updating..." : "Update & Send Email"}
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        Email sent automatically when both fields are filled
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

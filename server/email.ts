@@ -149,7 +149,8 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData) {
 
 export async function sendShippingConfirmationEmail(
   order: OrderEmailData,
-  trackingNumber: string
+  trackingNumber: string,
+  courierLink?: string | null
 ) {
   try {
     const { client: resendClient, fromEmail } = await getUncachableResendClient();
@@ -157,6 +158,7 @@ export async function sendShippingConfirmationEmail(
     console.log(`📦 Sending shipping confirmation email for order ${order.id}`);
     console.log(`📦 Customer email: ${order.customerEmail}`);
     console.log(`📦 Tracking number: ${trackingNumber}`);
+    console.log(`📦 Courier link: ${courierLink || 'None'}`);
 
   const itemsHtml = order.items
     .map(
@@ -194,6 +196,11 @@ export async function sendShippingConfirmationEmail(
     <div style="background: #ecfdf5; border: 2px solid #10b981; padding: 25px; border-radius: 8px; margin: 30px 0; text-align: center;">
       <p style="margin: 0 0 10px 0; color: #065f46; font-weight: 600; font-size: 14px;">TRACKING NUMBER</p>
       <p style="margin: 0; color: #065f46; font-size: 24px; font-weight: bold; font-family: monospace; letter-spacing: 1px;">${trackingNumber}</p>
+      ${courierLink ? `
+      <div style="margin-top: 20px;">
+        <a href="${courierLink}" style="display: inline-block; background: #10b981; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Track Your Parcel</a>
+      </div>
+      ` : ''}
     </div>
     
     <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin: 30px 0;">

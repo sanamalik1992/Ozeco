@@ -1652,7 +1652,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: "Unauthorized" });
       }
 
-      let { trackingNumber } = req.body;
+      let { trackingNumber, courierLink } = req.body;
+      
+      // Get current order to check previous values
+      const currentOrder = await storage.getOrder(req.params.id);
+      if (!currentOrder) {
+        return res.status(404).json({ error: "Order not found" });
+      }
       
       // Validate tracking number if provided
       if (trackingNumber) {
@@ -1668,20 +1674,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         trackingNumber = null;
       }
       
-      const order = await storage.updateOrderTracking(req.params.id, trackingNumber || null);
+      // Validate courier link if provided
+      if (courierLink) {
+        courierLink = courierLink.trim();
+        if (courierLink.length === 0) {
+          courierLink = null;
+        } else if (!courierLink.startsWith('http://') && !courierLink.startsWith('https://')) {
+          return res.status(400).json({ error: "Courier link must be a valid URL starting with http:// or https://" });
+        }
+      } else {
+        courierLink = null;
+      }
+      
+      const order = await storage.updateOrderTracking(req.params.id, trackingNumber || null, courierLink || null);
       
       if (!order) {
         return res.status(404).json({ error: "Order not found" });
       }
 
-      // Send shipping confirmation email if tracking number is provided
-      if (trackingNumber) {
+      // Check if BOTH tracking number and courier link are now filled (and weren't both filled before)
+      const hadBothBefore = currentOrder.trackingNumber && currentOrder.courierLink;
+      const hasBothNow = order.trackingNumber && order.courierLink;
+      
+      // Send shipping confirmation email only when both fields are filled for the first time
+      if (hasBothNow && !hadBothBefore) {
         try {
           const orderItems = await storage.getOrderItems(order.id);
           await sendShippingConfirmationEmail({
             ...order,
             items: orderItems,
-          }, trackingNumber);
+          }, order.trackingNumber!, order.courierLink);
+          console.log(`✅ Shipping confirmation email sent for order ${order.id}`);
         } catch (emailError) {
           console.error('Failed to send shipping confirmation email:', emailError);
         }
