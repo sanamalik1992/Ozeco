@@ -91,8 +91,8 @@ export default function ProductCard({
             <FavoriteButton productId={id} productName={name} variant="icon" />
           </div>
           {isOutOfStock && (
-            <Badge className="bg-gray-500 text-white border-gray-600" data-testid={`badge-out-of-stock-${id}`}>
-              Out of Stock
+            <Badge className="bg-red-600 text-white border-red-700" data-testid={`badge-out-of-stock-${id}`}>
+              Sold Out
             </Badge>
           )}
           {!isOutOfStock && isPopular && (
@@ -160,7 +160,7 @@ export default function ProductCard({
             data-testid={`button-add-cart-${id}`}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
-            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+            {isOutOfStock ? "Sold Out" : "Add to Cart"}
           </Button>
           <Button
             size="icon"
