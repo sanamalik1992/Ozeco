@@ -1695,6 +1695,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if BOTH tracking number and courier link are now filled (and weren't both filled before)
       const hadBothBefore = currentOrder.trackingNumber && currentOrder.courierLink;
       const hasBothNow = order.trackingNumber && order.courierLink;
+      let emailSent = false;
       
       // Send shipping confirmation email only when both fields are filled for the first time
       if (hasBothNow && !hadBothBefore) {
@@ -1704,13 +1705,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ...order,
             items: orderItems,
           }, order.trackingNumber!, order.courierLink);
+          emailSent = true;
           console.log(`✅ Shipping confirmation email sent for order ${order.id}`);
         } catch (emailError) {
           console.error('Failed to send shipping confirmation email:', emailError);
         }
       }
 
-      res.json(order);
+      res.json({ ...order, emailSent });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

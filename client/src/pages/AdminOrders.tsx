@@ -80,13 +80,14 @@ export default function AdminOrders() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
-      // Check if shipping email was sent (both fields filled)
-      const hasBoth = data.trackingNumber && data.courierLink;
+      // Check if email was actually sent this time (based on backend flag)
       toast({
         title: "Tracking Updated",
-        description: hasBoth 
+        description: data.emailSent 
           ? "Tracking info updated & shipping email sent to customer!" 
-          : "Tracking information updated. Add both tracking number & courier link to send shipping email.",
+          : data.trackingNumber && data.courierLink
+            ? "Tracking information updated. Shipping email was already sent previously."
+            : "Tracking information updated. Add both tracking number & courier link to send shipping email.",
       });
       setEditingTracking({});
       setEditingCourierLink({});
