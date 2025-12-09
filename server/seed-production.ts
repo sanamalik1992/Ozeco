@@ -1,5 +1,6 @@
 import { db } from '@db';
-import { products, reviews, customerPhotos, blogPosts } from '@shared/schema';
+import { products, reviews, customerPhotos, blogPosts, productVariants } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 import fs from 'fs';
 import path from 'path';
 
@@ -253,6 +254,77 @@ export async function seedProductionIfEmpty() {
     } else {
       console.log(`   ⏭️  Blog posts already complete (${currentBlogPostCount} present)\n`);
     }
+
+    // Step 6: Insert product variants
+    console.log('🎨 Seeding product variants...');
+    const variantData = [
+      { slug: "engwe-t14", type: "Color", value: "Blue", price: "474.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/fonogapi.png?v=1747666664&width=416" },
+      { slug: "engwe-t14", type: "Color", value: "Grey", price: "474.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/5yzpcgwa.png?v=1747600357&width=416" },
+      { slug: "engwe-t14", type: "Color", value: "Orange", price: "474.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/engwe-t14-folding-electric-bike-uk-pogo-cycles-19.jpg?v=1747666675&width=416" },
+      { slug: "engwe-t14", type: "Color", value: "White", price: "474.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/v7ma4rnd.png?v=1747600357&width=416" },
+      { slug: "engwe-engine-pro-2-0", type: "Color", value: "Black", price: "1129.99", stock: 8, image: "https://engwe-bikes-uk.com/cdn/shop/files/4_273d206a-f78c-4295-8b1a-72e6846b3252.jpg?v=1751964957&width=416" },
+      { slug: "engwe-engine-pro-2-0", type: "Color", value: "Blue", price: "1129.99", stock: 8, image: "https://engwe-bikes-uk.com/cdn/shop/files/3_18b2d0a7-4e3f-485f-bcf8-1e330bb480ba.jpg?v=1751964957&width=416" },
+      { slug: "engwe-engine-pro-2-0", type: "Color", value: "Green", price: "1129.99", stock: 8, image: "https://engwe-bikes-uk.com/cdn/shop/files/7.jpg?v=1751964921&width=416" },
+      { slug: "engwe-engine-x", type: "Color", value: "Black", price: "899.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/ejh2g8zn.png?v=1747666206&width=416" },
+      { slug: "engwe-engine-x", type: "Color", value: "Red", price: "899.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/or68pika.png?v=1747666416&width=416" },
+      { slug: "engwe-engine-x", type: "Color", value: "White", price: "899.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/bjy0kolj.png?v=1747666224&width=416" },
+      { slug: "engwe-ep-2-boost", type: "Color", value: "Black", price: "849.99", stock: 7, image: "https://engwe-bikes-uk.com/cdn/shop/files/3_b02d9783-702a-4623-bd84-2aea89d0019d.jpg?v=1753065836&width=416" },
+      { slug: "engwe-ep-2-boost", type: "Color", value: "Grey", price: "849.99", stock: 7, image: "https://engwe-bikes-uk.com/cdn/shop/files/2_f7000d51-73b1-442e-9190-8c7e25f9bf48.jpg?v=1753325816&width=416" },
+      { slug: "engwe-ep-2-boost", type: "Color", value: "Orange", price: "849.99", stock: 5, image: "https://engwe-bikes-uk.com/cdn/shop/files/1_fff95917-986e-48c3-bb0f-168ea6386d3a.jpg?v=1753065836&width=416" },
+      { slug: "engwe-l20", type: "Color", value: "Black", price: "999.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/IMG-2140.webp?v=1756504566&width=400" },
+      { slug: "engwe-l20", type: "Color", value: "Champagne", price: "999.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/IMG-2139.webp?v=1756504566&width=416" },
+      { slug: "eleglide-m1-plus", type: "Wheel Size", value: "27.5 Inch", price: "499.99", stock: 5, image: null },
+      { slug: "eleglide-m1-plus", type: "Wheel Size", value: "29 Inch", price: "539.99", stock: 6, image: null },
+      { slug: "eleglide-m2", type: "Wheel Size", value: "27.5 Inch", price: "549.99", stock: 5, image: null },
+      { slug: "eleglide-m2", type: "Wheel Size", value: "29 Inch", price: "599.99", stock: 3, image: null },
+      { slug: "duotts-c29", type: "Battery", value: "Single Battery", price: "684.99", stock: 10, image: null },
+      { slug: "duotts-c29", type: "Battery", value: "Double Battery", price: "839.99", stock: 10, image: null },
+      { slug: "touroll-u1", type: "Wheel Size", value: "26 Inch", price: "509.99", stock: 5, image: null },
+      { slug: "touroll-u1", type: "Wheel Size", value: "29 Inch", price: "529.99", stock: 5, image: null },
+      { slug: "fiido-d3-pro", type: "Color", value: "Black", price: "359.99", stock: 5, image: null },
+      { slug: "fiido-d3-pro", type: "Color", value: "White", price: "359.99", stock: 5, image: null },
+      { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Forest Green", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/green-1.webp" },
+      { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Black", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/black-1.webp" },
+    ];
+
+    let variantsInserted = 0;
+    let variantsSkipped = 0;
+
+    for (const variantInfo of variantData) {
+      // Find product by slug
+      const product = insertedProducts.find(p => p.slug === variantInfo.slug);
+      if (!product) {
+        variantsSkipped++;
+        continue;
+      }
+
+      // Check if variant already exists
+      const existingVariants = await db.select().from(productVariants).where(eq(productVariants.productId, product.id));
+      const exists = existingVariants.some(v => 
+        v.name.toLowerCase() === variantInfo.type.toLowerCase() && 
+        v.value.toLowerCase() === variantInfo.value.toLowerCase()
+      );
+
+      if (exists) {
+        variantsSkipped++;
+        continue;
+      }
+
+      try {
+        await db.insert(productVariants).values({
+          productId: product.id,
+          name: variantInfo.type,
+          value: variantInfo.value,
+          price: variantInfo.price,
+          stockQuantity: variantInfo.stock,
+          image: variantInfo.image || null,
+        } as any);
+        variantsInserted++;
+      } catch {
+        variantsSkipped++;
+      }
+    }
+    console.log(`   ✅ Inserted ${variantsInserted} variants (${variantsSkipped} skipped)\n`);
 
     console.log('═══════════════════════════════════════════════');
     console.log('✅ PRODUCTION DATABASE FULLY SEEDED!');
