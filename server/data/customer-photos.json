@@ -296,4 +296,41 @@
     "approved": true,
     "createdAt": "2025-10-02T14:03:44.275Z"
   }
+,
+  {
+    "id": "ep2-30-photo-001",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Marcus Johnson",
+    "imageUrl": "/customer-photos/ep2-boost/review-1.jpeg",
+    "caption": "My trusty delivery companion! Does 10+ hours a day without breaking a sweat.",
+    "approved": true,
+    "createdAt": "2025-12-07T14:30:00.000Z"
+  },
+  {
+    "id": "ep2-30-photo-002",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Priya Sharma",
+    "imageUrl": "/customer-photos/ep2-boost/review-2.jpeg",
+    "caption": "Forest Green looks amazing in the sunshine! Love this bike.",
+    "approved": true,
+    "createdAt": "2025-12-05T09:15:00.000Z"
+  },
+  {
+    "id": "ep2-30-photo-003",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "David O'Brien",
+    "imageUrl": "/customer-photos/ep2-boost/review-3.webp",
+    "caption": "Peak District trails conquered! Fat tyres handle everything.",
+    "approved": true,
+    "createdAt": "2025-12-03T16:45:00.000Z"
+  },
+  {
+    "id": "ep2-30-photo-004",
+    "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
+    "customerName": "Ahmed Hassan",
+    "imageUrl": "/customer-photos/ep2-boost/review-4.jpeg",
+    "caption": "Weekend adventure ready! Battery lasted the whole day.",
+    "approved": true,
+    "createdAt": "2025-11-25T13:00:00.000Z"
+  }
 ]
