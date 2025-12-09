@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Headphones, Award, Truck } from "lucide-react";
+import type { ReactNode } from "react";
 
-const features = [
+const features: { icon: typeof Truck; title: string; description: ReactNode }[] = [
   {
     icon: Truck,
     title: "Free UK Delivery",
@@ -15,7 +16,7 @@ const features = [
   {
     icon: Headphones,
     title: "UK-Based Support",
-    description: "Expert customer service available Mon-Fri, 9:00 AM - 5:30 PM (GMT). Call 0333 339 8590.",
+    description: <>Expert customer service available Mon-Fri, 9:00 AM - 5:30 PM (GMT). Call <a href="tel:03333398590" className="text-primary hover:underline">0333 339 8590</a>.</>,
   },
   {
     icon: MapPin,
