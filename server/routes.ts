@@ -57,8 +57,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('🎨 Updating ALL variant images to local paths...');
       const allVariantUpdates = [
         // EP-2 3.0 Boost
-        { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: '/products/engwe-ep-2-3-0-boost/1.jpg' },
-        { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: '/products/engwe-ep-2-3-0-boost/3.jpg' },
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: '/products/engwe-ep-2-3-0-boost/3.jpg' },
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: '/products/engwe-ep-2-3-0-boost/4.jpg' },
         // Engine X - use main product images
         { slug: 'engwe-engine-x', value: 'Black', image: '/products/engwe-engine-x/1.png' },
         { slug: 'engwe-engine-x', value: 'Red', image: '/products/engwe-engine-x/1.png' },
@@ -72,8 +72,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { slug: 'engwe-ep-2-boost', value: 'Grey', image: '/products/engwe-ep-2-boost/1.jpg' },
         { slug: 'engwe-ep-2-boost', value: 'Orange', image: '/products/engwe-ep-2-boost/2.jpg' },
         // L20 - use local images
-        { slug: 'engwe-l20', value: 'Black', image: '/products/engwe-l20/1.jpg' },
-        { slug: 'engwe-l20', value: 'Champagne', image: '/products/engwe-l20/1.jpg' },
+        { slug: 'engwe-l20', value: 'Black', image: '/products/engwe-l20/3.jpg' },
+        { slug: 'engwe-l20', value: 'Champagne', image: '/products/engwe-l20/3.jpg' },
         // T14 - use local images
         { slug: 'engwe-t14', value: 'Orange', image: '/products/engwe-t14/2.png' },
         { slug: 'engwe-t14', value: 'Blue', image: '/products/engwe-t14/2.png' },
@@ -1156,8 +1156,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('🎨 Updating ALL variant images to local paths...');
       const variantImageUpdates = [
         // EP-2 3.0 Boost
-        { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: '/products/engwe-ep-2-3-0-boost/1.jpg' },
-        { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: '/products/engwe-ep-2-3-0-boost/3.jpg' },
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: '/products/engwe-ep-2-3-0-boost/3.jpg' },
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: '/products/engwe-ep-2-3-0-boost/4.jpg' },
         // Engine X
         { slug: 'engwe-engine-x', value: 'Black', image: '/products/engwe-engine-x/1.png' },
         { slug: 'engwe-engine-x', value: 'Red', image: '/products/engwe-engine-x/1.png' },
@@ -1171,8 +1171,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { slug: 'engwe-ep-2-boost', value: 'Grey', image: '/products/engwe-ep-2-boost/1.jpg' },
         { slug: 'engwe-ep-2-boost', value: 'Orange', image: '/products/engwe-ep-2-boost/2.jpg' },
         // L20
-        { slug: 'engwe-l20', value: 'Black', image: '/products/engwe-l20/1.jpg' },
-        { slug: 'engwe-l20', value: 'Champagne', image: '/products/engwe-l20/1.jpg' },
+        { slug: 'engwe-l20', value: 'Black', image: '/products/engwe-l20/3.jpg' },
+        { slug: 'engwe-l20', value: 'Champagne', image: '/products/engwe-l20/3.jpg' },
         // T14
         { slug: 'engwe-t14', value: 'Orange', image: '/products/engwe-t14/2.png' },
         { slug: 'engwe-t14', value: 'Blue', image: '/products/engwe-t14/2.png' },
