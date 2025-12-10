@@ -53,19 +53,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .execute();
       }
       
-      // Step 2: Update variant images for EP-2 3.0 Boost
-      console.log('🎨 Updating variant images...');
-      const ep2Product = await db.select().from(products).where(eq(products.slug, 'engwe-ep-2-3-0-boost')).limit(1);
-      if (ep2Product.length > 0) {
-        await db.update(productVariants)
-          .set({ image: '/products/engwe-ep-2-3-0-boost/1.jpg' })
-          .where(and(eq(productVariants.productId, ep2Product[0].id), eq(productVariants.value, 'Forest Green')))
-          .execute();
-        await db.update(productVariants)
-          .set({ image: '/products/engwe-ep-2-3-0-boost/3.jpg' })
-          .where(and(eq(productVariants.productId, ep2Product[0].id), eq(productVariants.value, 'Black')))
-          .execute();
+      // Step 2: Update ALL ENGWE variant images to use local paths
+      console.log('🎨 Updating ALL variant images to local paths...');
+      const allVariantUpdates = [
+        // EP-2 3.0 Boost
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: '/products/engwe-ep-2-3-0-boost/1.jpg' },
+        { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: '/products/engwe-ep-2-3-0-boost/3.jpg' },
+        // Engine X - use main product images
+        { slug: 'engwe-engine-x', value: 'Black', image: '/products/engwe-engine-x/1.png' },
+        { slug: 'engwe-engine-x', value: 'Red', image: '/products/engwe-engine-x/1.png' },
+        { slug: 'engwe-engine-x', value: 'White', image: '/products/engwe-engine-x/1.png' },
+        // Engine Pro 2.0 - use main product images
+        { slug: 'engwe-engine-pro-2-0', value: 'Black', image: '/products/engwe-engine-pro-2-0/1.png' },
+        { slug: 'engwe-engine-pro-2-0', value: 'Blue', image: '/products/engwe-engine-pro-2-0/1.png' },
+        { slug: 'engwe-engine-pro-2-0', value: 'Green', image: '/products/engwe-engine-pro-2-0/1.png' },
+        // EP-2 Boost - use local images
+        { slug: 'engwe-ep-2-boost', value: 'Black', image: '/products/engwe-ep-2-boost/3.jpg' },
+        { slug: 'engwe-ep-2-boost', value: 'Grey', image: '/products/engwe-ep-2-boost/1.jpg' },
+        { slug: 'engwe-ep-2-boost', value: 'Orange', image: '/products/engwe-ep-2-boost/2.jpg' },
+        // L20 - use local images
+        { slug: 'engwe-l20', value: 'Black', image: '/products/engwe-l20/1.jpg' },
+        { slug: 'engwe-l20', value: 'Champagne', image: '/products/engwe-l20/1.jpg' },
+        // T14 - use local images
+        { slug: 'engwe-t14', value: 'Orange', image: '/products/engwe-t14/2.png' },
+        { slug: 'engwe-t14', value: 'Blue', image: '/products/engwe-t14/2.png' },
+        { slug: 'engwe-t14', value: 'Grey', image: '/products/engwe-t14/2.png' },
+        { slug: 'engwe-t14', value: 'White', image: '/products/engwe-t14/2.png' },
+      ];
+      
+      for (const v of allVariantUpdates) {
+        const prod = await db.select().from(products).where(eq(products.slug, v.slug)).limit(1);
+        if (prod.length > 0) {
+          await db.update(productVariants)
+            .set({ image: v.image })
+            .where(and(eq(productVariants.productId, prod[0].id), eq(productVariants.value, v.value)))
+            .execute();
+        }
       }
+      console.log(`   ✅ Updated ${allVariantUpdates.length} variant images`);
       
       // Step 3: Delete and reseed reviews
       console.log('⭐ Reseeding reviews...');
@@ -1127,11 +1152,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.log(`   ✅ Updated images for ${productsData.length} products`);
       
-      // Step 2: Update variant images
-      console.log('🎨 Updating variant images...');
+      // Step 2: Update ALL ENGWE variant images to local paths
+      console.log('🎨 Updating ALL variant images to local paths...');
       const variantImageUpdates = [
+        // EP-2 3.0 Boost
         { slug: 'engwe-ep-2-3-0-boost', value: 'Forest Green', image: '/products/engwe-ep-2-3-0-boost/1.jpg' },
         { slug: 'engwe-ep-2-3-0-boost', value: 'Black', image: '/products/engwe-ep-2-3-0-boost/3.jpg' },
+        // Engine X
+        { slug: 'engwe-engine-x', value: 'Black', image: '/products/engwe-engine-x/1.png' },
+        { slug: 'engwe-engine-x', value: 'Red', image: '/products/engwe-engine-x/1.png' },
+        { slug: 'engwe-engine-x', value: 'White', image: '/products/engwe-engine-x/1.png' },
+        // Engine Pro 2.0
+        { slug: 'engwe-engine-pro-2-0', value: 'Black', image: '/products/engwe-engine-pro-2-0/1.png' },
+        { slug: 'engwe-engine-pro-2-0', value: 'Blue', image: '/products/engwe-engine-pro-2-0/1.png' },
+        { slug: 'engwe-engine-pro-2-0', value: 'Green', image: '/products/engwe-engine-pro-2-0/1.png' },
+        // EP-2 Boost
+        { slug: 'engwe-ep-2-boost', value: 'Black', image: '/products/engwe-ep-2-boost/3.jpg' },
+        { slug: 'engwe-ep-2-boost', value: 'Grey', image: '/products/engwe-ep-2-boost/1.jpg' },
+        { slug: 'engwe-ep-2-boost', value: 'Orange', image: '/products/engwe-ep-2-boost/2.jpg' },
+        // L20
+        { slug: 'engwe-l20', value: 'Black', image: '/products/engwe-l20/1.jpg' },
+        { slug: 'engwe-l20', value: 'Champagne', image: '/products/engwe-l20/1.jpg' },
+        // T14
+        { slug: 'engwe-t14', value: 'Orange', image: '/products/engwe-t14/2.png' },
+        { slug: 'engwe-t14', value: 'Blue', image: '/products/engwe-t14/2.png' },
+        { slug: 'engwe-t14', value: 'Grey', image: '/products/engwe-t14/2.png' },
+        { slug: 'engwe-t14', value: 'White', image: '/products/engwe-t14/2.png' },
       ];
       for (const v of variantImageUpdates) {
         const prod = await db.select().from(products).where(eq(products.slug, v.slug)).limit(1);
@@ -1142,7 +1188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .execute();
         }
       }
-      console.log(`   ✅ Updated variant images`);
+      console.log(`   ✅ Updated ${variantImageUpdates.length} variant images`);
       
       await db.delete(reviews).execute();
       await db.delete(customerPhotos).execute();
@@ -1231,21 +1277,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Variant data from development database
       const variantData = [
-        { slug: "engwe-t14", type: "Color", value: "Blue", price: "474.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/fonogapi.png?v=1747666664&width=416" },
-        { slug: "engwe-t14", type: "Color", value: "Grey", price: "474.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/5yzpcgwa.png?v=1747600357&width=416" },
-        { slug: "engwe-t14", type: "Color", value: "Orange", price: "474.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/engwe-t14-folding-electric-bike-uk-pogo-cycles-19.jpg?v=1747666675&width=416" },
-        { slug: "engwe-t14", type: "Color", value: "White", price: "474.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/v7ma4rnd.png?v=1747600357&width=416" },
-        { slug: "engwe-engine-pro-2-0", type: "Color", value: "Black", price: "1129.99", stock: 8, image: "https://engwe-bikes-uk.com/cdn/shop/files/4_273d206a-f78c-4295-8b1a-72e6846b3252.jpg?v=1751964957&width=416" },
-        { slug: "engwe-engine-pro-2-0", type: "Color", value: "Blue", price: "1129.99", stock: 8, image: "https://engwe-bikes-uk.com/cdn/shop/files/3_18b2d0a7-4e3f-485f-bcf8-1e330bb480ba.jpg?v=1751964957&width=416" },
-        { slug: "engwe-engine-pro-2-0", type: "Color", value: "Green", price: "1129.99", stock: 8, image: "https://engwe-bikes-uk.com/cdn/shop/files/7.jpg?v=1751964921&width=416" },
-        { slug: "engwe-engine-x", type: "Color", value: "Black", price: "899.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/ejh2g8zn.png?v=1747666206&width=416" },
-        { slug: "engwe-engine-x", type: "Color", value: "Red", price: "899.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/or68pika.png?v=1747666416&width=416" },
-        { slug: "engwe-engine-x", type: "Color", value: "White", price: "899.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/bjy0kolj.png?v=1747666224&width=416" },
-        { slug: "engwe-ep-2-boost", type: "Color", value: "Black", price: "849.99", stock: 7, image: "https://engwe-bikes-uk.com/cdn/shop/files/3_b02d9783-702a-4623-bd84-2aea89d0019d.jpg?v=1753065836&width=416" },
-        { slug: "engwe-ep-2-boost", type: "Color", value: "Grey", price: "849.99", stock: 7, image: "https://engwe-bikes-uk.com/cdn/shop/files/2_f7000d51-73b1-442e-9190-8c7e25f9bf48.jpg?v=1753325816&width=416" },
-        { slug: "engwe-ep-2-boost", type: "Color", value: "Orange", price: "849.99", stock: 5, image: "https://engwe-bikes-uk.com/cdn/shop/files/1_fff95917-986e-48c3-bb0f-168ea6386d3a.jpg?v=1753065836&width=416" },
-        { slug: "engwe-l20", type: "Color", value: "Black", price: "999.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/IMG-2140.webp?v=1756504566&width=400" },
-        { slug: "engwe-l20", type: "Color", value: "Champagne", price: "999.99", stock: 5, image: "https://www.ozeco.co.uk/cdn/shop/files/IMG-2139.webp?v=1756504566&width=416" },
+        { slug: "engwe-t14", type: "Color", value: "Blue", price: "474.99", stock: 5, image: "/products/engwe-t14/2.png" },
+        { slug: "engwe-t14", type: "Color", value: "Grey", price: "474.99", stock: 5, image: "/products/engwe-t14/2.png" },
+        { slug: "engwe-t14", type: "Color", value: "Orange", price: "474.99", stock: 5, image: "/products/engwe-t14/2.png" },
+        { slug: "engwe-t14", type: "Color", value: "White", price: "474.99", stock: 5, image: "/products/engwe-t14/2.png" },
+        { slug: "engwe-engine-pro-2-0", type: "Color", value: "Black", price: "1129.99", stock: 8, image: "/products/engwe-engine-pro-2-0/1.png" },
+        { slug: "engwe-engine-pro-2-0", type: "Color", value: "Blue", price: "1129.99", stock: 8, image: "/products/engwe-engine-pro-2-0/1.png" },
+        { slug: "engwe-engine-pro-2-0", type: "Color", value: "Green", price: "1129.99", stock: 8, image: "/products/engwe-engine-pro-2-0/1.png" },
+        { slug: "engwe-engine-x", type: "Color", value: "Black", price: "899.99", stock: 5, image: "/products/engwe-engine-x/1.png" },
+        { slug: "engwe-engine-x", type: "Color", value: "Red", price: "899.99", stock: 5, image: "/products/engwe-engine-x/1.png" },
+        { slug: "engwe-engine-x", type: "Color", value: "White", price: "899.99", stock: 5, image: "/products/engwe-engine-x/1.png" },
+        { slug: "engwe-ep-2-boost", type: "Color", value: "Black", price: "849.99", stock: 7, image: "/products/engwe-ep-2-boost/3.jpg" },
+        { slug: "engwe-ep-2-boost", type: "Color", value: "Grey", price: "849.99", stock: 7, image: "/products/engwe-ep-2-boost/1.jpg" },
+        { slug: "engwe-ep-2-boost", type: "Color", value: "Orange", price: "849.99", stock: 5, image: "/products/engwe-ep-2-boost/2.jpg" },
+        { slug: "engwe-l20", type: "Color", value: "Black", price: "999.99", stock: 5, image: "/products/engwe-l20/1.jpg" },
+        { slug: "engwe-l20", type: "Color", value: "Champagne", price: "999.99", stock: 5, image: "/products/engwe-l20/1.jpg" },
         { slug: "eleglide-m1-plus", type: "Wheel Size", value: "27.5 Inch", price: "499.99", stock: 5, image: null },
         { slug: "eleglide-m1-plus", type: "Wheel Size", value: "29 Inch", price: "539.99", stock: 6, image: null },
         { slug: "eleglide-m2", type: "Wheel Size", value: "27.5 Inch", price: "549.99", stock: 5, image: null },
