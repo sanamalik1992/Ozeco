@@ -1,4 +1,4 @@
-import { Shield, Truck, Award, Headset, Star } from "lucide-react";
+import { Shield, Truck, Award, Headset } from "lucide-react";
 
 const trustSignals = [
   {
@@ -23,25 +23,8 @@ export default function TrustBar() {
   return (
     <div className="bg-muted/50 border-y">
       <div className="container mx-auto px-4">
-        {/* Customer Reviews Section */}
-        <div className="py-4 border-b border-border">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-3 text-center">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-foreground">Rated Excellent</span>
-              <div className="flex gap-0.5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="h-5 w-5 fill-green-500 text-green-500" data-testid={`star-${star}`} />
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Based on <span className="font-semibold text-foreground">1,200+ verified customer reviews</span></span>
-            </div>
-          </div>
-        </div>
-
         {/* Trust Signals */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
           {trustSignals.map((signal, index) => (
             <div
               key={index}
