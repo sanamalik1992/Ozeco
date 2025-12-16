@@ -23,11 +23,11 @@ export default function TrustBar() {
   return (
     <div className="bg-muted/50 border-y">
       <div className="container mx-auto px-4">
-        {/* Trustpilot Section */}
+        {/* Customer Reviews Section */}
         <div className="py-4 border-b border-border">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 text-center">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-foreground">Excellent</span>
+              <span className="font-semibold text-foreground">Rated Excellent</span>
               <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star key={star} className="h-5 w-5 fill-green-500 text-green-500" data-testid={`star-${star}`} />
@@ -35,8 +35,7 @@ export default function TrustBar() {
               </div>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Based on <span className="font-semibold text-foreground">1,247 reviews</span> on</span>
-              <span className="font-bold text-green-600">Trustpilot</span>
+              <span>Based on <span className="font-semibold text-foreground">1,200+ verified customer reviews</span></span>
             </div>
           </div>
         </div>
