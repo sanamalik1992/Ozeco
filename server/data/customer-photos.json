@@ -332,5 +332,32 @@
     "caption": "Weekend adventure ready! Battery lasted the whole day.",
     "approved": true,
     "createdAt": "2025-11-25T13:00:00.000Z"
+  },
+  {
+    "id": "d1a2b3c4-1111-4aaa-bbbb-111111111111",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "James H.",
+    "imageUrl": "/customer-photos/IMG_9708_1770900047091.jpeg",
+    "caption": "Just collected my new TWOFISH TF1 - the red looks even better in person!",
+    "approved": true,
+    "createdAt": "2025-12-15T10:30:00.000Z"
+  },
+  {
+    "id": "d1a2b3c4-2222-4aaa-bbbb-222222222222",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Steve D.",
+    "imageUrl": "/customer-photos/IMG_9709_1770900047091.jpeg",
+    "caption": "The blue TF1 looking sharp on my driveway. Ready for the weekend ride!",
+    "approved": true,
+    "createdAt": "2026-01-29T10:00:00.000Z"
+  },
+  {
+    "id": "d1a2b3c4-3333-4aaa-bbbb-333333333333",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "David M.",
+    "imageUrl": "/customer-photos/IMG_9710_1770900149151.jpeg",
+    "caption": "Took the TF1 out to the countryside today. What a view, what a bike!",
+    "approved": true,
+    "createdAt": "2025-05-20T15:30:00.000Z"
   }
 ]

@@ -21348,5 +21348,155 @@
     "comment": "Highly recommend to anyone considering an e-bike purchase.",
     "verified": true,
     "createdAt": "2025-07-17T08:32:21.911Z"
+  },
+  {
+    "id": "tf1-review-001",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "James H.",
+    "rating": 5,
+    "title": "Brilliant value for money",
+    "comment": "Honestly couldn't believe the quality for under £400. Arrived well packaged, took about 30 minutes to assemble. The Shimano gears shift smoothly and the motor kicks in nicely on hills. Been using it for my commute for three months now and it's been faultless.",
+    "verified": true,
+    "createdAt": "2025-03-15T10:22:00.000Z"
+  },
+  {
+    "id": "tf1-review-002",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Sarah T.",
+    "rating": 4,
+    "title": "Great first Electric bike",
+    "comment": "Bought this as my first Electric bike and I'm really pleased with it. The range is genuinely around 50-55 km which is more than enough for me. Only reason for 4 stars is the saddle could be comfier, but I swapped it out easily enough. Would recommend to anyone starting out.",
+    "verified": true,
+    "createdAt": "2025-04-02T14:35:00.000Z"
+  },
+  {
+    "id": "tf1-review-003",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "David M.",
+    "rating": 5,
+    "title": "Perfect for the countryside",
+    "comment": "I live in the Cotswolds and this handles the hills like a dream. The front suspension is surprisingly good for the price point. Got the blue one and it looks cracking. Ozeco were really helpful when I had a question about the battery too.",
+    "verified": true,
+    "createdAt": "2025-05-18T09:10:00.000Z"
+  },
+  {
+    "id": "tf1-review-004",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Karen W.",
+    "rating": 5,
+    "title": "Exceeded all expectations",
+    "comment": "My husband bought one first and I was so jealous I ordered one myself the following week! We now go on rides together every weekend. The bike is sturdy, well-built and the battery lasts ages. Delivery was quick too.",
+    "verified": true,
+    "createdAt": "2025-05-29T16:45:00.000Z"
+  },
+  {
+    "id": "tf1-review-005",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Mark P.",
+    "rating": 4,
+    "title": "Solid mountain bike",
+    "comment": "Took this on some proper trails in the Peak District and it held up well. The disc brakes are responsive and the 21-speed gears give you plenty of options. Battery life is decent. Lost one star because the lights aren't the brightest, but that's a minor gripe.",
+    "verified": true,
+    "createdAt": "2025-07-08T11:20:00.000Z"
+  },
+  {
+    "id": "tf1-review-006",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Louise R.",
+    "rating": 5,
+    "title": "Fantastic service and product",
+    "comment": "From ordering to delivery, Ozeco made everything easy. The bike arrived within 2 days and was mostly assembled already. It rides beautifully and I love the red colour option. Highly recommended!",
+    "verified": true,
+    "createdAt": "2025-07-22T13:55:00.000Z"
+  },
+  {
+    "id": "tf1-review-007",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Chris B.",
+    "rating": 5,
+    "title": "Replaced my car for commuting",
+    "comment": "Since getting this bike I've barely touched my car. 12-mile round trip to work and back and still have battery to spare. It's saved me a fortune in petrol already. The bike feels really solid and well put together. Cracking purchase.",
+    "verified": true,
+    "createdAt": "2025-09-04T08:30:00.000Z"
+  },
+  {
+    "id": "tf1-review-008",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Helen G.",
+    "rating": 4,
+    "title": "Really good entry-level e-bike",
+    "comment": "Did loads of research before buying and this was the best value I could find. The motor assists well without being overpowering, and the bike looks much more expensive than it is. Comfortable ride overall, just wish the display was a bit bigger.",
+    "verified": true,
+    "createdAt": "2025-09-19T15:12:00.000Z"
+  },
+  {
+    "id": "tf1-review-009",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Tom A.",
+    "rating": 5,
+    "title": "Christmas present success",
+    "comment": "Bought this for my dad's Christmas present and he absolutely loves it. He's 62 and says the pedal assist has given him a new lease of life. Goes out cycling almost every day now. The grey colour looks really smart.",
+    "verified": true,
+    "createdAt": "2025-11-28T17:40:00.000Z"
+  },
+  {
+    "id": "tf1-review-010",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Rachel K.",
+    "rating": 5,
+    "title": "Can't fault it",
+    "comment": "Three months in and this bike is still going strong. Use it 4-5 times a week for school runs and errands. The battery charges in about 5 hours which is fine overnight. Really comfortable ride and the suspension makes a huge difference on our bumpy roads.",
+    "verified": true,
+    "createdAt": "2025-12-10T10:05:00.000Z"
+  },
+  {
+    "id": "tf1-review-011",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Andy F.",
+    "rating": 5,
+    "title": "Unbeatable at this price",
+    "comment": "I've ridden Electric bikes costing twice as much and this genuinely holds its own. The TWOFISH TF1 is well-specced, rides smoothly and looks the business. Ozeco's customer service was top notch when I needed advice on tyre pressure. Five stars all day.",
+    "verified": true,
+    "createdAt": "2026-01-06T12:18:00.000Z"
+  },
+  {
+    "id": "tf1-review-012",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Gemma L.",
+    "rating": 5,
+    "title": "Love love love it",
+    "comment": "Got the white one and it's gorgeous. Turns heads everywhere I go! More importantly it rides like a dream. The hills near my house used to kill me on my old bike but now I breeze up them. Best purchase I've made in ages.",
+    "verified": true,
+    "createdAt": "2026-01-15T14:30:00.000Z"
+  },
+  {
+    "id": "tf1-review-013",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Steve D.",
+    "rating": 5,
+    "title": "Arrived fast, rides even faster",
+    "comment": "Ordered on Monday, arrived Wednesday. Had it built and out on the road within an hour. The motor is punchy and the gears are smooth. Took it out for a 25-mile ride at the weekend and still had half battery left. Absolutely chuffed with it.",
+    "verified": true,
+    "createdAt": "2026-01-29T09:45:00.000Z"
+  },
+  {
+    "id": "tf1-review-014",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Claire N.",
+    "rating": 4,
+    "title": "Great bike, minor niggles",
+    "comment": "Really enjoying this bike overall. The ride quality is excellent and the range is as advertised. Two small things - the kickstand could be sturdier and the pedals are a bit basic. But for £400 I really can't complain. Would buy again.",
+    "verified": true,
+    "createdAt": "2026-02-03T11:22:00.000Z"
+  },
+  {
+    "id": "tf1-review-015",
+    "productId": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "customerName": "Mike J.",
+    "rating": 5,
+    "title": "Second one bought for the wife",
+    "comment": "Bought mine in November and liked it so much I just ordered another for my wife. We've been exploring the countryside together every weekend. The battery easily handles 40-50km rides. Build quality is impressive for this price bracket. Ozeco are a pleasure to deal with.",
+    "verified": true,
+    "createdAt": "2026-02-08T16:55:00.000Z"
   }
 ]
