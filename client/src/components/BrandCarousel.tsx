@@ -27,6 +27,10 @@ const brands = [
     name: "Fiido",
     count: "1 model",
   },
+  {
+    name: "TWOFISH",
+    count: "1 model",
+  },
 ];
 
 export default function BrandCarousel() {

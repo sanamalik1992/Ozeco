@@ -36,22 +36,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const reviewsData = JSON.parse(reviewsRaw);
       const photosData = JSON.parse(photosRaw);
       
-      // Step 1: Update ALL product data from JSON (images + pricing)
+      // Step 1: Update ALL product data from JSON (images + pricing) and insert new products
       console.log('📷 Updating products...');
+      let newProductsInserted = 0;
       for (const p of productsData) {
-        await db.update(products)
-          .set({ 
-            image: p.image, 
-            images: p.images,
+        const existing = await db.select({ id: products.id }).from(products).where(eq(products.slug, p.slug)).limit(1);
+        if (existing.length > 0) {
+          await db.update(products)
+            .set({ 
+              image: p.image, 
+              images: p.images,
+              price: p.price,
+              originalPrice: p.originalPrice,
+              weight: p.weight,
+              maxLoad: p.maxLoad,
+              description: p.description,
+              features: p.features,
+              name: p.name,
+              brand: p.brand,
+              category: p.category,
+              motorPower: p.motorPower,
+              batteryCapacity: p.batteryCapacity,
+              maxRange: p.maxRange,
+              topSpeed: p.topSpeed,
+              frameType: p.frameType,
+              riderHeight: p.riderHeight,
+            })
+            .where(eq(products.slug, p.slug))
+            .execute();
+        } else {
+          await db.insert(products).values({
+            name: p.name,
+            brand: p.brand,
+            slug: p.slug,
+            description: p.description,
             price: p.price,
             originalPrice: p.originalPrice,
+            image: p.image,
+            images: p.images,
+            category: p.category,
+            inStock: p.inStock ?? true,
+            stockQuantity: p.stockQuantity ?? 10,
+            isBestseller: p.isBestseller ?? false,
+            motorPower: p.motorPower,
+            batteryCapacity: p.batteryCapacity,
+            maxRange: p.maxRange,
+            topSpeed: p.topSpeed,
             weight: p.weight,
             maxLoad: p.maxLoad,
-            description: p.description,
-            features: p.features
-          })
-          .where(eq(products.slug, p.slug))
-          .execute();
+            frameType: p.frameType,
+            riderHeight: p.riderHeight,
+            features: p.features,
+          } as any).execute();
+          newProductsInserted++;
+          console.log(`   🆕 Inserted new product: ${p.name}`);
+        }
       }
       
       // Step 2: Update ALL ENGWE variant images to use local paths
@@ -80,18 +119,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { slug: 'engwe-t14', value: 'Blue', image: '/products/engwe-t14/2.png' },
         { slug: 'engwe-t14', value: 'Grey', image: '/products/engwe-t14/2.png' },
         { slug: 'engwe-t14', value: 'White', image: '/products/engwe-t14/2.png' },
+        // TWOFISH TF1
+        { slug: 'twofish-tf1', value: 'Blue', image: '/products/twofish-tf1/blue.webp' },
+        { slug: 'twofish-tf1', value: 'Red', image: '/products/twofish-tf1/red.webp' },
+        { slug: 'twofish-tf1', value: 'White', image: '/products/twofish-tf1/white.webp' },
+        { slug: 'twofish-tf1', value: 'Grey', image: '/products/twofish-tf1/grey.webp' },
+      ];
+      
+      const variantInsertData = [
+        { slug: 'twofish-tf1', type: 'Color', value: 'Blue', price: '399.99', stock: 5, image: '/products/twofish-tf1/blue.webp' },
+        { slug: 'twofish-tf1', type: 'Color', value: 'Red', price: '399.99', stock: 5, image: '/products/twofish-tf1/red.webp' },
+        { slug: 'twofish-tf1', type: 'Color', value: 'White', price: '399.99', stock: 5, image: '/products/twofish-tf1/white.webp' },
+        { slug: 'twofish-tf1', type: 'Color', value: 'Grey', price: '399.99', stock: 5, image: '/products/twofish-tf1/grey.webp' },
       ];
       
       for (const v of allVariantUpdates) {
         const prod = await db.select().from(products).where(eq(products.slug, v.slug)).limit(1);
         if (prod.length > 0) {
-          await db.update(productVariants)
-            .set({ image: v.image })
+          const existingVariant = await db.select().from(productVariants)
             .where(and(eq(productVariants.productId, prod[0].id), eq(productVariants.value, v.value)))
-            .execute();
+            .limit(1);
+          if (existingVariant.length > 0) {
+            await db.update(productVariants)
+              .set({ image: v.image })
+              .where(and(eq(productVariants.productId, prod[0].id), eq(productVariants.value, v.value)))
+              .execute();
+          }
         }
       }
-      console.log(`   ✅ Updated ${allVariantUpdates.length} variant images`);
+      
+      // Insert variants for new products if they don't exist
+      let newVariantsInserted = 0;
+      for (const vi of variantInsertData) {
+        const prod = await db.select().from(products).where(eq(products.slug, vi.slug)).limit(1);
+        if (prod.length > 0) {
+          const existing = await db.select().from(productVariants)
+            .where(and(eq(productVariants.productId, prod[0].id), eq(productVariants.value, vi.value)))
+            .limit(1);
+          if (existing.length === 0) {
+            await db.insert(productVariants).values({
+              productId: prod[0].id,
+              name: vi.type,
+              value: vi.value,
+              price: vi.price,
+              stockQuantity: vi.stock,
+              image: vi.image,
+            } as any).execute();
+            newVariantsInserted++;
+          }
+        }
+      }
+      console.log(`   ✅ Updated ${allVariantUpdates.length} variant images, inserted ${newVariantsInserted} new variants`);
       
       // Step 3: Delete and reseed reviews
       console.log('⭐ Reseeding reviews...');
@@ -1195,6 +1273,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { slug: 'engwe-t14', value: 'Blue', image: '/products/engwe-t14/2.png' },
         { slug: 'engwe-t14', value: 'Grey', image: '/products/engwe-t14/2.png' },
         { slug: 'engwe-t14', value: 'White', image: '/products/engwe-t14/2.png' },
+        { slug: 'twofish-tf1', value: 'Blue', image: '/products/twofish-tf1/blue.webp' },
+        { slug: 'twofish-tf1', value: 'Red', image: '/products/twofish-tf1/red.webp' },
+        { slug: 'twofish-tf1', value: 'White', image: '/products/twofish-tf1/white.webp' },
+        { slug: 'twofish-tf1', value: 'Grey', image: '/products/twofish-tf1/grey.webp' },
       ];
       for (const v of variantImageUpdates) {
         const prod = await db.select().from(products).where(eq(products.slug, v.slug)).limit(1);

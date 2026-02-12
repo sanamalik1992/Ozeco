@@ -285,6 +285,10 @@ export async function seedProductionIfEmpty() {
       { slug: "fiido-d3-pro", type: "Color", value: "White", price: "359.99", stock: 5, image: null },
       { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Forest Green", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/green-1.png" },
       { slug: "engwe-ep-2-3-0-boost", type: "Color", value: "Black", price: "1149.99", stock: 5, image: "/products/engwe-ep-2-3-0-boost/black-1.png" },
+      { slug: "twofish-tf1", type: "Color", value: "Blue", price: "399.99", stock: 5, image: "/products/twofish-tf1/blue.webp" },
+      { slug: "twofish-tf1", type: "Color", value: "Red", price: "399.99", stock: 5, image: "/products/twofish-tf1/red.webp" },
+      { slug: "twofish-tf1", type: "Color", value: "White", price: "399.99", stock: 5, image: "/products/twofish-tf1/white.webp" },
+      { slug: "twofish-tf1", type: "Color", value: "Grey", price: "399.99", stock: 5, image: "/products/twofish-tf1/grey.webp" },
     ];
 
     let variantsInserted = 0;

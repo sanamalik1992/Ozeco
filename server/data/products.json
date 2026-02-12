@@ -658,5 +658,46 @@
       "Shimano 7-Speed Gears"
     ],
     "createdAt": "2025-12-09T10:00:00.000Z"
+  },
+  {
+    "id": "f06b3a8f-8216-4cf8-b784-169e4133a166",
+    "name": "TWOFISH TF1 26\" Electric Mountain Bike",
+    "brand": "TWOFISH",
+    "slug": "twofish-tf1",
+    "description": "Adventure-ready performance at an unbeatable price. The TWOFISH TF1 packs a punchy 250W brushless motor into a rugged 26-inch mountain bike frame built to handle everything from woodland trails to daily commutes. A generous 36V 10.4Ah removable battery delivers up to 60 km on a single charge, while Shimano 21-speed gears let you find the perfect ratio for any gradient. Front suspension soaks up bumps and potholes, mechanical disc brakes provide confident stopping in all conditions, and integrated LED lighting keeps you visible after dark. Available in four striking colours, this is serious Electric bike capability without the serious price tag.",
+    "price": "399.99",
+    "originalPrice": "449.99",
+    "image": "/products/twofish-tf1/blue.webp",
+    "images": [
+      "/products/twofish-tf1/blue.webp",
+      "/products/twofish-tf1/red.webp",
+      "/products/twofish-tf1/white.webp",
+      "/products/twofish-tf1/grey.webp",
+      "/products/twofish-tf1/lifestyle1.jpeg",
+      "/products/twofish-tf1/lifestyle2.jpeg",
+      "/products/twofish-tf1/lifestyle3.jpeg"
+    ],
+    "category": "Mountain",
+    "inStock": true,
+    "stockQuantity": 20,
+    "isBestseller": false,
+    "motorPower": "250W",
+    "batteryCapacity": "36V 10.4Ah",
+    "maxRange": "60 km",
+    "topSpeed": "25 km/h",
+    "weight": "23 kg",
+    "maxLoad": "120 kg",
+    "frameType": "Aluminium Alloy",
+    "riderHeight": "5'4\" - 6'2\" (165-190 cm)",
+    "features": [
+      "250W Brushless Motor",
+      "Shimano 21-Speed Gears",
+      "Front Suspension Fork",
+      "Mechanical Disc Brakes",
+      "Removable 36V Battery",
+      "Integrated LED Lights",
+      "26\" Mountain Tyres"
+    ],
+    "createdAt": "2026-02-12T12:00:00.000Z"
   }
 ]

@@ -137,6 +137,13 @@ export default function Header() {
                   >
                     <span className="font-semibold">Fiido</span>
                   </Link>
+                  <Link 
+                    href="/shop?brand=TWOFISH" 
+                    className="inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-3 py-2 w-full" 
+                    data-testid="button-brand-twofish"
+                  >
+                    <span className="font-semibold">TWOFISH</span>
+                  </Link>
                 </Card>
               </div>
             </div>
@@ -386,6 +393,14 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Fiido
+                  </Link>
+                  <Link 
+                    href="/shop?brand=TWOFISH" 
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover-elevate active-elevate-2 min-h-9 px-4 py-2 w-full justify-start" 
+                    data-testid="button-mobile-brand-twofish"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    TWOFISH
                   </Link>
                 </div>
               )}

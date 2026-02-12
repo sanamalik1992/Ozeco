@@ -4,6 +4,7 @@ import eleglideLogo from "@assets/IMG_5242_1763073445688.jpeg";
 import duottsLogo from "@assets/IMG_5243_1763073445688.jpeg";
 import fiidoLogo from "@assets/IMG_5244_1763073445688.jpeg";
 import tourollLogo from "@assets/IMG_5245_1763073445687.webp";
+import twofishLogo from "@assets/IMG_9704_1770899862846.jpeg";
 
 interface BrandLogoProps {
   brand: string;
@@ -17,6 +18,7 @@ const brandLogos: Record<string, string> = {
   Duotts: duottsLogo,
   Fiido: fiidoLogo,
   Touroll: tourollLogo,
+  TWOFISH: twofishLogo,
 };
 
 export default function BrandLogo({ brand, className = "" }: BrandLogoProps) {
