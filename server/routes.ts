@@ -852,12 +852,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Stripe webhook handler (must use raw body for signature verification)
   app.post("/api/webhooks/stripe", async (req, res) => {
+    console.log("🔔 Stripe webhook received");
+    console.log("🔔 Has signature:", !!req.headers['stripe-signature']);
+    console.log("🔔 Has rawBody:", !!req.rawBody);
+    console.log("🔔 rawBody type:", typeof req.rawBody, req.rawBody instanceof Buffer ? 'Buffer' : 'not Buffer');
+    
     const sig = req.headers['stripe-signature'];
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
       console.error("Stripe webhook secret not configured");
       return res.status(400).send("Webhook secret not configured");
+    }
+
+    if (!sig) {
+      console.error("No stripe-signature header received");
+      return res.status(400).send("No signature header");
+    }
+
+    if (!req.rawBody) {
+      console.error("No raw body available for webhook verification");
+      return res.status(400).send("No raw body available");
     }
 
     let event: any;
@@ -869,7 +884,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const stripe = new Stripe(stripeSecretKey);
-      event = stripe.webhooks.constructEvent(req.rawBody as Buffer, sig as string, webhookSecret);
+      const body = req.rawBody instanceof Buffer ? req.rawBody : Buffer.from(req.rawBody as string);
+      event = stripe.webhooks.constructEvent(body, sig as string, webhookSecret);
     } catch (err: any) {
       console.error("Webhook signature verification failed:", err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
