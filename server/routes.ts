@@ -1014,8 +1014,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Checkout session completed for order:", orderId);
 
       if (!orderId) {
-        console.error("No orderId in checkout session metadata");
-        return res.status(400).send("No orderId in metadata");
+        console.log("No orderId in checkout session metadata - not an Ozeco order, acknowledging");
+        return res.json({ received: true, skipped: true });
       }
 
       try {
@@ -1034,8 +1034,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Payment succeeded for order:", orderId);
 
       if (!orderId) {
-        console.error("No orderId in payment intent metadata");
-        return res.status(400).send("No orderId in metadata");
+        console.log("No orderId in payment intent metadata - not an Ozeco order, acknowledging");
+        return res.json({ received: true, skipped: true });
       }
 
       try {
