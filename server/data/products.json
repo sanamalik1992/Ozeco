@@ -602,7 +602,7 @@
     "inStock": false,
     "stockQuantity": 0,
     "isBestseller": false,
-    "motorPower": "350W",
+    "motorPower": "250W",
     "batteryCapacity": "36V 12.8Ah",
     "maxRange": "75 km",
     "topSpeed": "25 km/h",
