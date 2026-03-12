@@ -584,7 +584,7 @@
     "name": "Touroll J1 ST Electric Bike",
     "brand": "Touroll",
     "slug": "touroll-j1-st",
-    "description": "Hop on, hop off - no fuss. The Touroll J1 ST features a low step-through frame that makes mounting and dismounting a doddle, whatever you are wearing. Under the elegant exterior sits a 350W motor and 36V 12.8Ah battery good for up to 75 km on a single charge. A comfort saddle and integrated rear rack add everyday practicality, making this the go-to choice for relaxed, easy riding.",
+    "description": "Hop on, hop off - no fuss. The Touroll J1 ST features a low step-through frame that makes mounting and dismounting a doddle, whatever you are wearing. Under the elegant exterior sits a 250W motor and 36V 12.8Ah battery good for up to 75 km on a single charge. A comfort saddle and integrated rear rack add everyday practicality, making this the go-to choice for relaxed, easy riding.",
     "price": "619.99",
     "originalPrice": "639.99",
     "image": "/products/touroll-j1-st/1.png",
@@ -611,7 +611,7 @@
     "frameType": null,
     "riderHeight": "5'1\" - 6'5\" (155-195 cm)",
     "features": [
-      "350W Motor",
+      "250W Motor",
       "Step-Through Frame",
       "Comfort Saddle",
       "Integrated Rack"
