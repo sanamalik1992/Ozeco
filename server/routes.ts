@@ -61,6 +61,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               topSpeed: p.topSpeed,
               frameType: p.frameType,
               riderHeight: p.riderHeight,
+              inStock: p.inStock ?? true,
+              stockQuantity: p.stockQuantity ?? 10,
             })
             .where(eq(products.slug, p.slug))
             .execute();
