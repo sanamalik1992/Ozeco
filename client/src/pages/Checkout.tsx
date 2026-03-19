@@ -366,6 +366,9 @@ export default function Checkout() {
                           )}
                         </Button>
                       </div>
+                      <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+                        Please note: voucher codes cannot be applied to sale items. All products on our site are currently on sale, so discount codes are not valid at this time.
+                      </p>
                     </div>
                   ) : (
                     <div className="bg-primary/10 p-3 rounded-lg">
