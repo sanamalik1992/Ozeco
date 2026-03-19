@@ -71,6 +71,14 @@ export default function Checkout() {
       return;
     }
 
+    // All items are currently on sale — show notice and stop here
+    toast({
+      title: "Voucher Code Not Applicable",
+      description: "Voucher codes cannot be applied to sale items. All products on our site are currently on sale, so discount codes are not valid at this time.",
+      variant: "destructive",
+    });
+    return;
+
     setIsValidatingCode(true);
     try {
       const response = await apiRequest("POST", "/api/validate-discount", {
