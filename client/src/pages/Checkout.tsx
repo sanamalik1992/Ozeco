@@ -71,10 +71,10 @@ export default function Checkout() {
       return;
     }
 
-    // All items are currently on sale — show notice and stop here
+    // Show notice that voucher codes cannot be applied to sale items
     toast({
       title: "Voucher Code Not Applicable",
-      description: "Voucher codes cannot be applied to sale items. All products on our site are currently on sale, so discount codes are not valid at this time.",
+      description: "Voucher codes cannot be applied to sale items.",
       variant: "destructive",
     });
     return;
@@ -375,7 +375,7 @@ export default function Checkout() {
                         </Button>
                       </div>
                       <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
-                        Please note: voucher codes cannot be applied to sale items. All products on our site are currently on sale, so discount codes are not valid at this time.
+                        Please note: voucher codes cannot be applied to sale items.
                       </p>
                     </div>
                   ) : (
