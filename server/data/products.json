@@ -85,7 +85,7 @@
     "name": "ENGWE EP-2 Boost Electric Bike",
     "brand": "ENGWE",
     "slug": "engwe-ep-2-boost",
-    "description": "The original ENGWE EP-2 Boost that started it all. Built for riders who demand serious capability without the premium price tag. Its 500W motor powers through steep inclines, while the 48V 15Ah battery offers up to 100 km on a single charge. Fat tyres and front suspension absorb bumps with ease, and the folding mechanism lets you take it anywhere. Mechanical disc brakes provide dependable stopping power in all weather conditions.",
+    "description": "The original ENGWE EP-2 Boost that started it all. Built for riders who demand serious off-road capability without the premium price tag, this folding fat tyre e-bike weighs in at 27.5 kg and handles a maximum load of 120 kg. Its 500W motor powers through steep inclines with ease, while the 48V 15Ah battery delivers up to 100 km on a single charge. Four-inch fat tyres and front suspension absorb trail bumps effortlessly, and the folding frame makes storage and transport a doddle. Mechanical disc brakes deliver dependable stopping power in all weather conditions.",
     "price": "849.99",
     "originalPrice": "899.99",
     "image": "/products/engwe-ep-2-boost/1.jpg",
@@ -108,15 +108,19 @@
     "batteryCapacity": "48V 15Ah",
     "maxRange": "100 km",
     "topSpeed": "25 km/h",
-    "weight": null,
-    "maxLoad": null,
+    "weight": "27.5 kg",
+    "maxLoad": "120 kg",
     "frameType": null,
     "riderHeight": "5'4\" - 6'2\" (165-190 cm)",
     "features": [
       "500W Motor",
+      "48V 15Ah Battery",
+      "100 km Range",
+      "Folding Frame",
+      "4\" Fat Tyres",
       "Front Suspension",
       "Mechanical Disc Brakes",
-      "Removable Battery"
+      "120 kg Max Load"
     ],
     "createdAt": "2025-11-13T21:01:37.326Z"
   },
@@ -191,7 +195,7 @@
     "maxRange": "80 km",
     "topSpeed": "25 km/h",
     "weight": "26.5kg",
-    "maxLoad": null,
+    "maxLoad": "120 kg",
     "frameType": null,
     "riderHeight": "5'7\" - 6'7\" (170-200 cm)",
     "features": [
@@ -228,7 +232,7 @@
     "maxRange": "40 km",
     "topSpeed": "25 km/h",
     "weight": "17.2kg",
-    "maxLoad": null,
+    "maxLoad": "100 kg",
     "frameType": null,
     "riderHeight": "5'1\" - 5'11\" (155-180 cm)",
     "features": [
@@ -306,7 +310,7 @@
     "maxRange": "50 km",
     "topSpeed": "25 km/h",
     "weight": "22.7kg",
-    "maxLoad": null,
+    "maxLoad": "120 kg",
     "frameType": null,
     "riderHeight": "5'1\" - 6'5\" (155-195 cm)",
     "features": [
@@ -345,7 +349,7 @@
     "maxRange": "90 km",
     "topSpeed": "28 mph",
     "weight": "39.8kg",
-    "maxLoad": null,
+    "maxLoad": "120 kg",
     "frameType": null,
     "riderHeight": "5'7\" - 6'7\" (170-200 cm)",
     "features": [
@@ -380,7 +384,7 @@
     "maxRange": "35 km",
     "topSpeed": "25 km/h",
     "weight": "17.3kg",
-    "maxLoad": null,
+    "maxLoad": "100 kg",
     "frameType": null,
     "riderHeight": "4'11\" - 6'1\" (150-185 cm)",
     "features": [
@@ -459,7 +463,7 @@
     "maxRange": "110 km",
     "topSpeed": "28 mph",
     "weight": "31.6kg",
-    "maxLoad": null,
+    "maxLoad": "120 kg",
     "frameType": null,
     "riderHeight": "5'4\" - 6'2\" (162-188 cm)",
     "features": [
@@ -495,7 +499,7 @@
     "maxRange": "80 km",
     "topSpeed": "25 km/h",
     "weight": "33.2kg",
-    "maxLoad": null,
+    "maxLoad": "120 kg",
     "frameType": null,
     "riderHeight": "5'1\" - 6'3\" (155-190 cm)",
     "features": [
@@ -578,7 +582,7 @@
     "maxRange": "100 km",
     "topSpeed": "25 km/h",
     "weight": "26.9kg",
-    "maxLoad": null,
+    "maxLoad": "120 kg",
     "frameType": null,
     "riderHeight": "5'3\" - 6'7\" (160-200 cm)",
     "features": [
@@ -619,7 +623,7 @@
     "batteryCapacity": "36V 15.6Ah",
     "maxRange": "100 km",
     "topSpeed": "25 km/h",
-    "weight": null,
+    "weight": "26 kg",
     "maxLoad": "120 kg",
     "frameType": null,
     "riderHeight": "5'1\" - 6'5\" (155-195 cm)",
