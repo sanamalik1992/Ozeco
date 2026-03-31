@@ -443,8 +443,8 @@
     "brand": "ENGWE",
     "slug": "engwe-engine-pro-2-0",
     "description": "Unstoppable adventure starts here. The ENGWE Engine Pro 2.0 packs a mighty 750W motor and a massive 48V 16Ah battery that pushes your range up to 110 km on a single charge. Full suspension front and rear cushions every bump, while chunky fat tyres grip loose terrain with authority. Fold it flat for transport, unfold it for freedom - this is premium off-road capability that travels with you.",
-    "price": "1129.99",
-    "originalPrice": "1149.99",
+    "price": 1129.99,
+    "originalPrice": 1410,
     "image": "/products/engwe-engine-pro-2-0/1.png",
     "images": [
       "/products/engwe-engine-pro-2-0/1.png",
