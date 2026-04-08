@@ -21648,5 +21648,155 @@
     "comment": "My second e-bike and by far the better of the two. The M2 feels well engineered and the riding position is comfortable for long distances. I have already done two 30-mile rides and the battery had plenty left. Very happy with this purchase.",
     "verified": true,
     "createdAt": "2026-03-04T13:15:00.000Z"
+  },
+  {
+    "id": "782e5813-2fdb-4b83-b0d6-06f860650603",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Marcus Webb",
+    "rating": 5,
+    "title": "Handles everything brilliantly",
+    "comment": "Bought this for commuting and weekend trail rides. The motor is powerful enough for the steep hills near me and the range is genuinely impressive. Build quality feels solid and the brakes are excellent. Arrived well packaged and was easy to put together. Highly recommended.",
+    "verified": true,
+    "createdAt": "2026-03-18T00:00:00.000Z"
+  },
+  {
+    "id": "669e5f97-d7b1-42b7-80eb-d691ff62ced2",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Jodie Hartley",
+    "rating": 5,
+    "title": "Absolutely love it",
+    "comment": "This bike has completely changed my daily commute. Used to dread the hills but now I barely break a sweat. The suspension soaks up the potholes on my route really well. Great value for money and very well built. Delivery was quick too.",
+    "verified": true,
+    "createdAt": "2026-03-11T00:00:00.000Z"
+  },
+  {
+    "id": "e4cf6111-19f0-4a95-ae25-2bb3c7784094",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Patrick Saunders",
+    "rating": 4,
+    "title": "Very impressed overall",
+    "comment": "Solid e-bike with a decent range. I've been getting around 55-60 km on a single charge on assist level 3 which suits me fine. The display is clear and the gears shift smoothly. Docking one star only because the seat took a little adjusting to get comfortable but that's minor.",
+    "verified": true,
+    "createdAt": "2026-03-05T00:00:00.000Z"
+  },
+  {
+    "id": "76e0ace2-7206-434b-b36c-e0d7997e850c",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Chloe Brennan",
+    "rating": 5,
+    "title": "Best purchase I've made this year",
+    "comment": "Genuinely surprised at how good this bike is. The tyres handle gravel paths and road surfaces equally well. Motor pulls strongly up inclines without any lag. Folding mechanism is straightforward and it fits in my car boot without any fuss. Brilliant bike.",
+    "verified": true,
+    "createdAt": "2026-02-27T00:00:00.000Z"
+  },
+  {
+    "id": "a8d65080-0e30-41aa-bce3-9b315d5ff484",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Tom Griffiths",
+    "rating": 5,
+    "title": "Superb for the money",
+    "comment": "Been riding this for six weeks now and it has been faultless. The Shimano gears make a real difference on varied terrain and the hydraulic disc brakes are very reassuring in wet weather. Battery charges overnight and I get a full week of commuting from one charge. Excellent.",
+    "verified": true,
+    "createdAt": "2026-02-19T00:00:00.000Z"
+  },
+  {
+    "id": "37ddc290-22b4-4c12-a923-1b7cf4b2bd2d",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Anya Kowalski",
+    "rating": 4,
+    "title": "Really enjoyable ride",
+    "comment": "Loving this bike so far. Smooth power delivery from the motor and the display shows everything you need at a glance. Had a slight issue with the handlebar clamp on arrival but Ozeco's customer service sorted it quickly. Would buy from them again.",
+    "verified": true,
+    "createdAt": "2026-02-12T00:00:00.000Z"
+  },
+  {
+    "id": "556bba1b-c8d6-44a0-9c89-98c4092ac132",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Dean Marsh",
+    "rating": 5,
+    "title": "Exceeded my expectations",
+    "comment": "I researched e-bikes for months before settling on the Touroll U1. It has not disappointed. The frame feels sturdy, the motor is quiet and responsive, and the range is as advertised. Delivery was fast and the bike arrived in perfect condition. Extremely happy.",
+    "verified": true,
+    "createdAt": "2026-02-04T00:00:00.000Z"
+  },
+  {
+    "id": "e926667f-32c1-44ff-96d5-00312d6e8bfe",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Siobhan Nolan",
+    "rating": 5,
+    "title": "Perfect for my daily commute",
+    "comment": "Twenty minutes door to door and I arrive without being exhausted. The pedal assist is smooth and natural feeling, not jerky at all. Lights are bright enough for dark winter mornings. Saved a fortune on petrol since switching to this. Highly recommend Ozeco too — quick delivery and great communication.",
+    "verified": true,
+    "createdAt": "2026-01-28T00:00:00.000Z"
+  },
+  {
+    "id": "30c1928c-77ca-4fff-b2e9-d0801dd10867",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Leon Farquhar",
+    "rating": 5,
+    "title": "Fantastic off-road capability",
+    "comment": "Took this out on some local bridleways and it handled them without any trouble. The suspension does a great job and the tyres grip well on muddy surfaces. Back on the road it feels equally confident. Top quality bike for this price point.",
+    "verified": true,
+    "createdAt": "2026-01-20T00:00:00.000Z"
+  },
+  {
+    "id": "95f77c8a-4372-49ba-9439-e5869de4b904",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Rachel Thorne",
+    "rating": 4,
+    "title": "Very happy with my purchase",
+    "comment": "Great bike, looks smart in person and the build quality is solid. The battery life is excellent and I can easily do my commute twice on a single charge. Instructions for assembly could be a little clearer but I got there in the end. Overall very satisfied.",
+    "verified": true,
+    "createdAt": "2026-01-13T00:00:00.000Z"
+  },
+  {
+    "id": "0f086363-3b35-4c45-b37d-14ebb4ee25a9",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Craig McAllister",
+    "rating": 5,
+    "title": "Brilliant all-round e-bike",
+    "comment": "This ticks every box for me. Powerful motor, good range, quality components and a comfortable ride. The 29-inch wheels roll over everything with ease and the riding position is spot on. Ordered on a Tuesday and it arrived Thursday. Brilliant service from Ozeco.",
+    "verified": true,
+    "createdAt": "2026-01-06T00:00:00.000Z"
+  },
+  {
+    "id": "6251dad8-c58a-4842-bf8b-cb64ecd56182",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Fiona Drummond",
+    "rating": 5,
+    "title": "Life changing for my commute",
+    "comment": "This bike really has made a massive difference. Hills that used to leave me exhausted are now no problem. The pedal assist feels natural and the bike is very easy to control. Battery lasts all week on my commute. Absolutely worth the investment.",
+    "verified": true,
+    "createdAt": "2025-12-29T00:00:00.000Z"
+  },
+  {
+    "id": "98865953-755e-45e4-b86c-1e0a5f2a6f64",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Ollie Pearson",
+    "rating": 4,
+    "title": "Solid reliable e-bike",
+    "comment": "Been using this daily for two months and it's been completely reliable. The motor has plenty of power and the brakes are great. Range is honest — I get about 55 km in mixed conditions which is plenty for my needs. Well made and good value.",
+    "verified": true,
+    "createdAt": "2025-12-21T00:00:00.000Z"
+  },
+  {
+    "id": "8d9e72a4-60d1-479a-a637-b51089fc2007",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Harriet Flynn",
+    "rating": 5,
+    "title": "Love everything about this bike",
+    "comment": "From the ordering process to the first ride, everything has been brilliant. The bike looks great, rides even better and the battery life is amazing. I've recommended it to two friends already. Ozeco were great to deal with — responded to my query within the hour.",
+    "verified": true,
+    "createdAt": "2025-12-14T00:00:00.000Z"
+  },
+  {
+    "id": "77328cf4-a680-4be5-bef7-872d6c174c22",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Reuben Daley",
+    "rating": 5,
+    "title": "Quality you can feel",
+    "comment": "As soon as I unboxed this I could tell it was well made. The welds are clean, the finish is excellent and the components feel quality. First ride confirmed it — smooth, powerful and comfortable. The range is genuinely impressive. Very pleased with this purchase.",
+    "verified": true,
+    "createdAt": "2025-12-07T00:00:00.000Z"
   }
 ]
