@@ -21680,16 +21680,6 @@
     "createdAt": "2026-03-05T00:00:00.000Z"
   },
   {
-    "id": "76e0ace2-7206-434b-b36c-e0d7997e850c",
-    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
-    "customerName": "Chloe Brennan",
-    "rating": 5,
-    "title": "Best purchase I've made this year",
-    "comment": "Genuinely surprised at how good this bike is. The tyres handle gravel paths and road surfaces equally well. Motor pulls strongly up inclines without any lag. The frame is sturdy and it fits in my car boot without any fuss when the wheels are removed. Brilliant bike.",
-    "verified": true,
-    "createdAt": "2026-02-27T00:00:00.000Z"
-  },
-  {
     "id": "a8d65080-0e30-41aa-bce3-9b315d5ff484",
     "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
     "customerName": "Tom Griffiths",
