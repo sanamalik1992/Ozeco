@@ -174,6 +174,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       console.log(`   ✅ Updated ${allVariantUpdates.length} variant images, inserted ${newVariantsInserted} new variants`);
+
+      // Step 2b: Update specific variant prices
+      console.log('💰 Updating variant prices...');
+      const variantPriceUpdates = [
+        { slug: 'touroll-u1', value: '26 Inch', price: '429.99' },
+        { slug: 'touroll-u1', value: '29 Inch', price: '449.99' },
+      ];
+      for (const vp of variantPriceUpdates) {
+        const prod = await db.select().from(products).where(eq(products.slug, vp.slug)).limit(1);
+        if (prod.length > 0) {
+          await db.update(productVariants)
+            .set({ price: vp.price })
+            .where(and(eq(productVariants.productId, prod[0].id), eq(productVariants.value, vp.value)))
+            .execute();
+        }
+      }
+      console.log(`   ✅ Updated ${variantPriceUpdates.length} variant prices`);
       
       // Step 3: Delete and reseed reviews
       console.log('⭐ Reseeding reviews...');
