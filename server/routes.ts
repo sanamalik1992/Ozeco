@@ -11,6 +11,34 @@ import { getUncachableResendClient } from "./resend";
 import { getClientIP, getLocationFromIP } from "./geolocation";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Lightweight endpoint to sync just bestseller flags
+  app.get("/api/sync-bestsellers", async (req, res) => {
+    try {
+      const { key } = req.query;
+      const adminPassword = process.env.ADMIN_PASSWORD;
+      if (!key || key !== adminPassword) {
+        return res.status(403).json({ error: 'Invalid key' });
+      }
+      const fs = await import('fs');
+      const path = await import('path');
+      const productsRaw = fs.readFileSync(path.join(process.cwd(), 'server/data/products.json'), 'utf8');
+      const productsData = JSON.parse(productsRaw);
+      let updated = 0;
+      for (const p of productsData) {
+        await db.update(products)
+          .set({ isBestseller: p.isBestseller ?? false })
+          .where(eq(products.slug, p.slug))
+          .execute();
+        updated++;
+      }
+      const bestsellers = productsData.filter((p: any) => p.isBestseller).map((p: any) => p.slug);
+      return res.json({ success: true, updated, bestsellers });
+    } catch (err: any) {
+      console.error('sync-bestsellers error:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
   // Emergency force update endpoint - requires admin password as query param
   app.get("/api/force-update-production", async (req, res) => {
     try {
