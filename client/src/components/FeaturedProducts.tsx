@@ -15,14 +15,17 @@ export default function FeaturedProducts() {
   const { addItem } = useCart();
   const { toast } = useToast();
 
-  // Filter for bestsellers and sort with Eleglide M2 first
+  // Filter for bestsellers and sort by biggest price drop first (Touroll U1 first)
   const products = allProducts
     .filter(p => p.isBestseller)
     .sort((a, b) => {
-      // Put Eleglide M2 first
-      if (a.slug === 'eleglide-m2') return -1;
-      if (b.slug === 'eleglide-m2') return 1;
-      return 0;
+      // Put Touroll U1 first (biggest price drop)
+      if (a.slug === 'touroll-u1') return -1;
+      if (b.slug === 'touroll-u1') return 1;
+      // Then sort by biggest price drop
+      const dropA = a.originalPrice ? (parseFloat(String(a.originalPrice)) - parseFloat(String(a.price))) : 0;
+      const dropB = b.originalPrice ? (parseFloat(String(b.originalPrice)) - parseFloat(String(b.price))) : 0;
+      return dropB - dropA;
     })
     .slice(0, 4);
 

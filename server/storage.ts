@@ -550,7 +550,7 @@ export class DbStorage implements IStorage {
       .orderBy(desc(customerPhotos.createdAt));
     
     return result.map((row: any) => ({
-      ...row.customerPhotos,
+      ...(row.customer_photos || row.customerPhotos || {}),
       product: row.products!,
     }));
   }
