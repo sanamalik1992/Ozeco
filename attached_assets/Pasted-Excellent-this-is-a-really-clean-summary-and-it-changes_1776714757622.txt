@@ -1,0 +1,41 @@
+Excellent — this is a really clean summary and it changes the plan meaningfully. A few things jump out that are worth flagging honestly before we go further:
+The good news
+This is a proper, well-architected app. React + TypeScript + Express + Postgres + Drizzle is a solid modern stack. You're not migrating away from junk — you're migrating away from Replit's hosting and constraints, not from bad code.
+The not-so-good news (worth knowing)
+A few things in that summary would make me nervous if this were my shop:
+
+Admin password falls back to admin123 if the env var isn't set, and the current password (Ozeco080123) was just shared in plain text. Change it today, and while you're at it move admin auth to something proper (passkey, 2FA, or at minimum a hashed password + rate limiting) during the rebuild.
+Two separate databases kept in sync via a manual endpoint (/api/force-update-production) is fragile — that's why it kept timing out. A proper setup has one production DB and a separate dev DB you populate from backups, not a sync endpoint.
+Product images on Replit's filesystem means if Replit has an outage or you lose the container, images go with it. Needs to move to proper object storage.
+Master product data in products.json alongside the database is a smell — you've got two sources of truth. The rebuild should make the database the only source.
+
+None of these are disasters, but they're exactly the kind of thing to fix during a rebuild rather than carry forward.
+Revised migration plan
+Given what you actually have, the move is much simpler than I first suggested. You don't need to rebuild everything from scratch — you've got a working Express API, a working schema, working Stripe/PayPal/Resend integrations. What you want is:
+Keep: the database schema (Drizzle), the Express API logic, the Stripe/PayPal/Resend wiring, the product/review/order data.
+Rebuild: the React frontend (for design freedom), the admin panel UI (cleaner + more secure), and move hosting off Replit.
+Migrate: images off the filesystem onto proper storage, consolidate to one production database.
+Recommended target stack
+
+Next.js 15 (App Router) replacing the Vite React frontend and absorbing the Express API into Next's API routes — one codebase, simpler deploy
+Vercel for hosting (free tier fine, integrates with Neon and Stripe perfectly)
+Neon Postgres — you already have it, just consolidate to the production DB
+Cloudflare R2 or UploadThing for images (cheap, fast, CDN-backed)
+Drizzle — keep it, it's already doing the job
+Stripe + PayPal + Resend — keep all three, just port the integration code
+Tailwind + shadcn/ui for the UI
+
+What to do in Replit right now
+Paste this as your next prompt:
+
+I'm migrating this project off Replit. Please prepare a complete export package. Specifically:
+
+Make sure the project is pushed to a GitHub repo — if it isn't already connected, connect it now and push everything including the latest changes.
+Export the production Neon database (not the dev one) as a full pg_dump SQL file. Save it to /exports/production-db.sql. Also export each table as CSV to /exports/csv/.
+Zip the entire public/ directory (products, customer-photos, brands, blog, everything) into /exports/images.zip.
+Zip the server/data/ directory (products.json, reviews.json, customer-photos.json) into /exports/server-data.zip.
+Create /exports/ENV_VARS.txt listing every environment variable name this project uses (names only, not values — I'll grab values from Secrets myself).
+Create /exports/README.md documenting: every cron job or scheduled task, every webhook URL currently registered with Stripe and PayPal (so I know what to update), the current Resend domain/from-address setup, and any Replit-specific features being used (Replit DB, Replit Auth, Replit Object Storage, etc.).
+Confirm the GitHub repo URL once pushed.
+
+Do not delete anything. Do not change live data. Just prepare the export.
