@@ -64,6 +64,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               inStock: p.inStock ?? true,
               stockQuantity: p.stockQuantity ?? 10,
               inTheBox: p.inTheBox ?? [],
+              isBestseller: p.isBestseller ?? false,
             })
             .where(eq(products.slug, p.slug))
             .execute();
@@ -191,6 +192,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       console.log(`   ✅ Updated ${variantPriceUpdates.length} variant prices`);
+
+      // Step 2c: Explicitly set bestseller flags from products.json
+      console.log('🏆 Syncing bestseller flags...');
+      for (const p of productsData) {
+        await db.update(products)
+          .set({ isBestseller: p.isBestseller ?? false })
+          .where(eq(products.slug, p.slug))
+          .execute();
+      }
+      const bestsellerCount = productsData.filter((p: any) => p.isBestseller).length;
+      console.log(`   ✅ Synced bestseller flags (${bestsellerCount} bestsellers)`);
       
       // Step 3: Delete and reseed reviews
       console.log('⭐ Reseeding reviews...');
