@@ -1,0 +1,41 @@
+# Environment Variables — Ozeco E-Commerce
+# Copy these names to your new hosting provider and supply values from Replit Secrets
+
+# === DATABASE ===
+DATABASE_URL          # Full Neon PostgreSQL connection string (pooled)
+PGHOST                # Neon host (e.g. ep-xxx.eu-west-2.aws.neon.tech)
+PGPORT                # Neon port (usually 5432)
+PGUSER                # Neon DB user
+PGPASSWORD            # Neon DB password
+PGDATABASE            # Neon database name
+
+# === SESSION ===
+SESSION_SECRET        # Random string for express-session signing (32+ chars)
+
+# === ADMIN ===
+ADMIN_PASSWORD        # Admin dashboard password (currently: see Replit Secrets)
+
+# === STRIPE ===
+STRIPE_SECRET_KEY          # Stripe secret key (sk_live_...)
+STRIPE_WEBHOOK_SECRET      # Stripe webhook signing secret (whsec_...)
+VITE_STRIPE_PUBLIC_KEY     # Stripe publishable key (pk_live_...) — exposed to browser
+
+# === PAYPAL ===
+PAYPAL_CLIENT_ID      # PayPal app client ID
+PAYPAL_CLIENT_SECRET  # PayPal app client secret
+
+# === EMAIL (RESEND) ===
+RESEND_API_KEY        # Resend API key (re_...)
+RESEND_FROM_EMAIL     # Verified sending address (e.g. support@ozeco.co.uk)
+
+# === ANALYTICS ===
+VITE_GA_MEASUREMENT_ID    # Google Analytics 4 measurement ID (G-XXXXXXXXXX)
+                          # Currently hardcoded as G-SXLCMMCK6N in index.html
+
+# === REPLIT-SPECIFIC (not needed after migration) ===
+REPL_IDENTITY             # Replit connector auth token — used only for Resend connector
+REPLIT_CONNECTORS_HOSTNAME # Replit internal hostname — used only for Resend connector
+WEB_REPL_RENEWAL          # Replit auth renewal token
+
+# NOTE: After migrating off Replit, connect Resend directly using RESEND_API_KEY
+# and RESEND_FROM_EMAIL instead of the Replit connector approach.
