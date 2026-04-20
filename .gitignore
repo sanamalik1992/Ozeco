@@ -4,3 +4,23 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# ozeco-v2 Next.js
+ozeco-v2/node_modules
+ozeco-v2/.next
+ozeco-v2/out
+ozeco-v2/build
+ozeco-v2/.vercel
+ozeco-v2/.turbo
+ozeco-v2/next-env.d.ts
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+ozeco-v2/.env
+ozeco-v2/.env.local
+ozeco-v2/.env.*.local
+
+# Exports (per brief, never commit)
+exports/
