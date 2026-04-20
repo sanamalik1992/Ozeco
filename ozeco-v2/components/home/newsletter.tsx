@@ -33,10 +33,10 @@ export function Newsletter() {
           Get £20 off your first bike.
         </h2>
         <p className="mx-auto mt-6 max-w-lg text-base text-muted-foreground">
-          Join 5,000+ UK riders for early access to new models, seasonal offers and route ideas.
+          Early access to new models, seasonal offers and route tips.
         </p>
         {status === "ok" ? (
-          <p className="mx-auto mt-10 max-w-md rounded-full bg-accent/10 px-6 py-4 text-sm text-accent">
+          <p className="mx-auto mt-10 max-w-md rounded-full border border-foreground px-6 py-4 text-sm text-foreground">
             Thanks — we&apos;ve emailed your £20 discount code.
           </p>
         ) : (

@@ -21,7 +21,7 @@ export async function CustomerGallery() {
           </div>
           <Link
             href="/gallery"
-            className="hidden shrink-0 self-end text-sm font-semibold hover:text-accent transition-colors md:inline-flex"
+            className="hidden shrink-0 self-end text-sm font-semibold hover:underline underline-offset-4 md:inline-flex"
           >
             See the full gallery →
           </Link>
