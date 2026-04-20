@@ -448,6 +448,24 @@ export default function ProductDetail() {
                 </div>
               </div>
 
+              {/* What's in the Box */}
+              {product.inTheBox && product.inTheBox.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <h2 className="text-xl font-semibold mb-4">What's in the Box</h2>
+                    <div className="grid grid-cols-2 gap-2">
+                      {product.inTheBox.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2" data-testid={`inbox-item-${index}`}>
+                          <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                          <span className="text-muted-foreground text-sm">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
               <Separator />
 
               {/* Product Variants */}

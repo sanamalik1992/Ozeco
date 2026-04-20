@@ -63,6 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               riderHeight: p.riderHeight,
               inStock: p.inStock ?? true,
               stockQuantity: p.stockQuantity ?? 10,
+              inTheBox: p.inTheBox ?? [],
             })
             .where(eq(products.slug, p.slug))
             .execute();
@@ -89,6 +90,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             frameType: p.frameType,
             riderHeight: p.riderHeight,
             features: p.features,
+            inTheBox: p.inTheBox ?? [],
           } as any).execute();
           newProductsInserted++;
           console.log(`   🆕 Inserted new product: ${p.name}`);
