@@ -21788,5 +21788,85 @@
     "comment": "As soon as I unboxed this I could tell it was well made. The welds are clean, the finish is excellent and the components feel quality. First ride confirmed it — smooth, powerful and comfortable. The range is genuinely impressive. Very pleased with this purchase.",
     "verified": true,
     "createdAt": "2025-12-07T00:00:00.000Z"
+  },
+  {
+    "id": "b4490850-767e-409c-a40c-9fe6dda84a2a",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Kyle Ashworth",
+    "rating": 5,
+    "title": "Great value, premium feel",
+    "comment": "Just finished building this and I'm already impressed. Assembly was genuinely straightforward — took me under 30 minutes with the tools provided. For the price, the build quality is something else. Feels far more expensive than it is.",
+    "verified": true,
+    "createdAt": "2026-04-10T00:00:00.000Z"
+  },
+  {
+    "id": "035ee3f4-ac03-4a22-869d-b37105c03423",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Natasha Gould",
+    "rating": 5,
+    "title": "Can't believe the quality at this price",
+    "comment": "For what you pay, this is genuinely outstanding. Looks and rides like a bike that costs twice as much. Put it together in about 40 minutes following the manual — no fuss at all.",
+    "verified": true,
+    "createdAt": "2026-04-04T00:00:00.000Z"
+  },
+  {
+    "id": "c21b3ec5-e4b0-49ac-8aab-0f8562eb4927",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Sam Houghton",
+    "rating": 5,
+    "title": "Solid all-round e-bike",
+    "comment": "Great on trails and tarmac. It's one of the more affordable options out there but you'd never know it from the quality. Really easy to put together too — clear instructions and everything you need is in the box.",
+    "verified": true,
+    "createdAt": "2026-03-28T00:00:00.000Z"
+  },
+  {
+    "id": "52e40fdb-b7e5-4183-8a1b-c6506b23ce43",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Bethany Cross",
+    "rating": 5,
+    "title": "Surprised at the quality for the price",
+    "comment": "Assembled it in the garden in about 45 minutes. Everything went together perfectly. The finish and components feel premium — hard to believe this sits at the price point it does.",
+    "verified": true,
+    "createdAt": "2026-03-20T00:00:00.000Z"
+  },
+  {
+    "id": "5c54beee-11b1-45e9-8357-1bac55b07a29",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Jordan Whitfield",
+    "rating": 5,
+    "title": "Best budget e-bike I've come across",
+    "comment": "Budget price, premium quality — that's the best way I can describe it. First ride was great. Motor is smooth, gears shift well, and it looks fantastic. Assembly took me about 35 minutes.",
+    "verified": true,
+    "createdAt": "2026-03-14T00:00:00.000Z"
+  },
+  {
+    "id": "b0992135-7161-4837-8758-a1b4dc2a6761",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Priya Mehta",
+    "rating": 5,
+    "title": "Easy assembly, impressive quality",
+    "comment": "Assembled it indoors the evening it arrived. Really simple process — maybe 30-40 minutes. The quality for the price is honestly remarkable. Feels solid and well made.",
+    "verified": true,
+    "createdAt": "2026-03-07T00:00:00.000Z"
+  },
+  {
+    "id": "90123e5e-0c1e-423d-93ce-c8c528836444",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Connor Rafferty",
+    "rating": 5,
+    "title": "Cheap price, not cheap quality",
+    "comment": "Don't let the price put you off — this is a seriously well built bike. Rides as well as some e-bikes I've tested at double the cost. Straightforward to assemble, clear manual and all tools included.",
+    "verified": true,
+    "createdAt": "2026-02-26T00:00:00.000Z"
+  },
+  {
+    "id": "95d83482-82f7-4424-bafd-fb44cb0e7353",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Alicia Drummond",
+    "rating": 5,
+    "title": "Very happy with this purchase",
+    "comment": "Brilliant bike. You get a lot for your money — the build quality is way above what you'd expect at this price. Putting it together was easy, took about 30 minutes.",
+    "verified": true,
+    "createdAt": "2026-02-17T00:00:00.000Z"
   }
 ]

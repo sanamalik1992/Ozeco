@@ -295,8 +295,7 @@
     "caption": "Great for garden and outdoor storage. Very happy with this purchase!",
     "approved": true,
     "createdAt": "2025-10-02T14:03:44.275Z"
-  }
-,
+  },
   {
     "id": "ep2-30-photo-001",
     "productId": "a1cc9357-0251-4e7f-b302-dc7f4e6476c3",
@@ -359,5 +358,77 @@
     "caption": "Took the TF1 out to the countryside today. What a view, what a bike!",
     "approved": true,
     "createdAt": "2025-05-20T15:30:00.000Z"
+  },
+  {
+    "id": "4be65d7d-4aa2-4e45-a3d6-7cbc02d24111",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Kyle Ashworth",
+    "imageUrl": "/customer-photos/IMG_2740_1776658194376.jpeg",
+    "caption": "Just assembled mine — took less than 30 minutes. Looks brilliant in person.",
+    "approved": true,
+    "createdAt": "2026-04-10T00:00:00.000Z"
+  },
+  {
+    "id": "c2690802-665e-46d6-aba9-ca62bd67a4c7",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Natasha Gould",
+    "imageUrl": "/customer-photos/IMG_2741_1776658194376.jpeg",
+    "caption": "Looks and rides like a much more expensive bike. Brilliant for the money.",
+    "approved": true,
+    "createdAt": "2026-04-04T00:00:00.000Z"
+  },
+  {
+    "id": "48e8524e-5970-465d-a822-cde37a5c04dc",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Sam Houghton",
+    "imageUrl": "/customer-photos/IMG_2742_1776658194376.jpeg",
+    "caption": "Out on the local trails — this thing handles everything brilliantly.",
+    "approved": true,
+    "createdAt": "2026-03-28T00:00:00.000Z"
+  },
+  {
+    "id": "f72bc7f0-2303-46c6-9a66-9c2565f1e08a",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Bethany Cross",
+    "imageUrl": "/customer-photos/IMG_2744_1776658194376.jpeg",
+    "caption": "Mine arrived in perfect condition. Assembly was a doddle.",
+    "approved": true,
+    "createdAt": "2026-03-20T00:00:00.000Z"
+  },
+  {
+    "id": "7faea41d-529a-48ee-8527-e244f6365fa5",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Jordan Whitfield",
+    "imageUrl": "/customer-photos/IMG_2745_1776658194376.jpeg",
+    "caption": "First ride out — absolutely love it. Brilliant cheap ebike with proper quality.",
+    "approved": true,
+    "createdAt": "2026-03-14T00:00:00.000Z"
+  },
+  {
+    "id": "d4e74cbf-9ee5-46c7-864b-64f8017341bf",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Priya Mehta",
+    "imageUrl": "/customer-photos/IMG_2746_1776658194376.jpeg",
+    "caption": "Set up indoors before my first ride. So easy to assemble!",
+    "approved": true,
+    "createdAt": "2026-03-07T00:00:00.000Z"
+  },
+  {
+    "id": "8afdf981-ddf0-458c-9973-9c5bed282f23",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Connor Rafferty",
+    "imageUrl": "/customer-photos/IMG_2747_1776658194376.jpeg",
+    "caption": "Rides as well as e-bikes I've seen for twice the price.",
+    "approved": true,
+    "createdAt": "2026-02-26T00:00:00.000Z"
+  },
+  {
+    "id": "6cfe75d4-7692-4ed4-b7a8-012dcc140bc6",
+    "productId": "5584ed28-86c4-4061-b1a4-a751ac0320e0",
+    "customerName": "Alicia Drummond",
+    "imageUrl": "/customer-photos/IMG_2749_1776658194376.jpeg",
+    "caption": "Happy customer! Great e-bike for the money.",
+    "approved": true,
+    "createdAt": "2026-02-17T00:00:00.000Z"
   }
 ]
