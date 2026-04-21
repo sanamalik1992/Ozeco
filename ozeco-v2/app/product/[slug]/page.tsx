@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { Truck, ShieldCheck, Headset } from "lucide-react";
 import type { Metadata } from "next";
@@ -14,6 +13,7 @@ import {
 import { assetUrl } from "@/lib/assets";
 import { RatingStars } from "@/components/site/rating-stars";
 import { ProductCard } from "@/components/site/product-card";
+import { ProductImage } from "@/components/site/product-image";
 import { ProductGallery } from "./gallery";
 import { VariantSelector } from "./variant-selector";
 import { ReviewsList } from "./reviews-list";
@@ -428,7 +428,7 @@ async function CustomerPhotosStrip({
               key={p.id}
               className="relative aspect-square overflow-hidden rounded-xl bg-paper-dim"
             >
-              <Image
+              <ProductImage
                 src={assetUrl(p.imageUrl)}
                 alt={p.caption ?? p.customerName}
                 fill

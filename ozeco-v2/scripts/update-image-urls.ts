@@ -62,8 +62,24 @@ function toManifestKey(u: string | null | undefined): string | null {
   return u.replace(/^\/+/, "");
 }
 
-type Change = { table: string; id: string; column: string; old: string; new: string };
+type Change = { table: string; id: string; column: string; old: string; new: string; note?: string };
 type Skip = { table: string; id: string; column: string; value: string; reason: string };
+
+// If the exact manifest key isn't present, try swapping the extension.
+// Handles the common case where the old DB recorded `.png` but the real
+// file is actually `.jpg` (served 404s on the live Replit site).
+const EXT_FALLBACKS = [".jpg", ".jpeg", ".png", ".webp", ".gif"] as const;
+
+function resolveKey(manifest: Manifest, key: string): { matchedKey: string; extFixed: boolean } | null {
+  if (manifest[key]) return { matchedKey: key, extFixed: false };
+  const base = key.replace(/\.[^./]+$/, "");
+  if (base === key) return null; // no extension to swap
+  for (const ext of EXT_FALLBACKS) {
+    const alt = base + ext;
+    if (alt !== key && manifest[alt]) return { matchedKey: alt, extFixed: true };
+  }
+  return null;
+}
 
 function lookup(manifest: Manifest, u: string | null, table: string, id: string, column: string, changes: Change[], skips: Skip[]) {
   if (!u) return u; // no-op for nulls
@@ -74,13 +90,21 @@ function lookup(manifest: Manifest, u: string | null, table: string, id: string,
     skips.push({ table, id, column, value: u, reason: "already-migrated-or-external" });
     return u;
   }
-  const newUrl = manifest[key];
-  if (!newUrl) {
+  const resolved = resolveKey(manifest, key);
+  if (!resolved) {
     skips.push({ table, id, column, value: u, reason: "no-manifest-entry" });
     return u;
   }
+  const newUrl = manifest[resolved.matchedKey];
   if (newUrl !== u) {
-    changes.push({ table, id, column, old: u, new: newUrl });
+    changes.push({
+      table,
+      id,
+      column,
+      old: u,
+      new: newUrl,
+      note: resolved.extFixed ? `ext-fix: ${key} → ${resolved.matchedKey}` : undefined,
+    });
   }
   return newUrl;
 }
@@ -183,11 +207,20 @@ async function main() {
   for (const [table, cs] of byTable) {
     console.log(`\n[${table}] ${cs.length} columns to rewrite`);
     for (const c of cs.slice(0, 5)) {
-      console.log(`  ${c.id} · ${c.column}`);
+      console.log(`  ${c.id} · ${c.column}${c.note ? `  [${c.note}]` : ""}`);
       console.log(`    - ${c.old}`);
       console.log(`    + ${c.new}`);
     }
     if (cs.length > 5) console.log(`  …and ${cs.length - 5} more`);
+  }
+
+  const extFixes = changes.filter((c) => c.note?.startsWith("ext-fix"));
+  if (extFixes.length > 0) {
+    console.log(`\n=== extension auto-fixes (${extFixes.length}) ===`);
+    for (const c of extFixes) {
+      console.log(`  ${c.table} · ${c.id} · ${c.column}`);
+      console.log(`    ${c.note}`);
+    }
   }
 
   console.log("\n=== skips ===");

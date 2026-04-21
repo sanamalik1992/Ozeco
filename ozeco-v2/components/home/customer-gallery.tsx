@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getApprovedCustomerPhotos } from "@/lib/db/queries";
 import { assetUrl } from "@/lib/assets";
+import { ProductImage } from "@/components/site/product-image";
 
 export async function CustomerGallery() {
   const photos = await getApprovedCustomerPhotos(12);
@@ -35,7 +35,7 @@ export async function CustomerGallery() {
               className="group block overflow-hidden rounded-xl bg-paper-dim"
             >
               <div className="relative">
-                <Image
+                <ProductImage
                   src={assetUrl(photo.imageUrl)}
                   alt={photo.caption ?? `${photo.customerName} on their ${photo.productName}`}
                   width={600}
