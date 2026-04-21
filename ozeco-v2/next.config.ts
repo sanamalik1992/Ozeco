@@ -3,9 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "ozeco.co.uk" },
-      { protocol: "https", hostname: "www.ozeco.co.uk" },
-      // Vercel Blob — public store subdomain takes the shape <id>.public.blob.vercel-storage.com
+      // Vercel Blob — public store subdomain takes the shape <id>.public.blob.vercel-storage.com.
+      // Post Phase 3A migration, this is the only image origin in use.
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
     dangerouslyAllowSVG: false,
