@@ -17,9 +17,9 @@ export async function ReviewsSection() {
 
         <figure className="mt-10 max-w-4xl">
           <blockquote className="font-display text-3xl font-medium leading-tight tracking-tight text-balance sm:text-4xl md:text-5xl lg:text-[56px]">
-            <span className="text-accent">“</span>
+            <span aria-hidden>“</span>
             {pull.comment}
-            <span className="text-accent">”</span>
+            <span aria-hidden>”</span>
           </blockquote>
           <figcaption className="mt-8 flex items-center gap-3 text-sm text-paper/70">
             <RatingStars rating={pull.rating} size="sm" />

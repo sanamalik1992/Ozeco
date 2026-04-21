@@ -21,7 +21,7 @@ export async function RangeRow() {
           </div>
           <Link
             href="/shop"
-            className="hidden shrink-0 items-center gap-2 self-end text-sm font-semibold hover:text-accent transition-colors md:inline-flex"
+            className="hidden shrink-0 items-center gap-2 self-end text-sm font-semibold hover:underline underline-offset-4 md:inline-flex"
           >
             Browse all {products.length}
             <ArrowRight className="size-4" />

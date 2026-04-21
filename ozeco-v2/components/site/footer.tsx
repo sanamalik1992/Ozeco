@@ -43,7 +43,7 @@ export function SiteFooter() {
         </div>
         <div className="mt-16 flex flex-col gap-3 border-t border-border/60 pt-8 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
           <span>© {new Date().getFullYear()} Ozeco Ltd. All rights reserved.</span>
-          <span>Designed in the UK. Shipped free across Great Britain.</span>
+          <span>Free UK delivery, supported by our UK team.</span>
         </div>
       </div>
     </footer>

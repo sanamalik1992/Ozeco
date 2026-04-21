@@ -21,7 +21,7 @@ export async function BlogTeaser() {
           </div>
           <Link
             href="/blog"
-            className="hidden shrink-0 self-end text-sm font-semibold hover:text-accent transition-colors md:inline-flex"
+            className="hidden shrink-0 self-end text-sm font-semibold hover:underline underline-offset-4 md:inline-flex"
           >
             All posts →
           </Link>
@@ -53,7 +53,7 @@ export async function BlogTeaser() {
                     year: "numeric",
                   })}
                 </div>
-                <h3 className="mt-2 font-display text-xl font-semibold leading-tight text-balance group-hover:text-accent transition-colors">
+                <h3 className="mt-2 font-display text-xl font-semibold leading-tight text-balance underline-offset-4 group-hover:underline">
                   {post.title}
                 </h3>
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-2">

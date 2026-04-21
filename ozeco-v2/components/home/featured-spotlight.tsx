@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getSpotlightProduct, getHeroProduct } from "@/lib/db/queries";
 import { assetUrl, formatPrice } from "@/lib/assets";
 import { ArrowRight } from "lucide-react";
+import { ProductImage } from "@/components/site/product-image";
 
 export async function FeaturedSpotlight() {
   const hero = await getHeroProduct();
@@ -18,10 +18,11 @@ export async function FeaturedSpotlight() {
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-12 px-6 md:grid-cols-12 md:gap-16 md:px-10">
         <div className="md:col-span-7">
           <div className="relative aspect-[5/4] overflow-hidden rounded-2xl bg-paper-dim md:aspect-[4/3]">
-            <Image
+            <ProductImage
               src={assetUrl(product.image)}
               alt={product.name}
               fill
+              isStudio
               sizes="(max-width: 768px) 100vw, 60vw"
               className="object-cover"
             />

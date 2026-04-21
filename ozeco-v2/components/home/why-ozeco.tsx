@@ -25,7 +25,7 @@ export function WhyOzeco() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-10">
           {ITEMS.map((item) => (
             <div key={item.title} className="flex flex-col items-start gap-4">
-              <div className="flex size-10 items-center justify-center rounded-full border border-border/60 text-accent">
+              <div className="flex size-10 items-center justify-center rounded-full border border-border/60 text-foreground">
                 <item.icon className="size-5" strokeWidth={1.5} />
               </div>
               <h3 className="font-display text-xl font-semibold tracking-tight">

@@ -10,7 +10,7 @@ import {
   getReviewsForProduct,
   getVariantsForProduct,
 } from "@/lib/db/queries";
-import { assetUrl, formatPrice } from "@/lib/assets";
+import { assetUrl } from "@/lib/assets";
 import { RatingStars } from "@/components/site/rating-stars";
 import { ProductCard } from "@/components/site/product-card";
 import { ProductGallery } from "./gallery";
@@ -51,10 +51,6 @@ export default async function ProductDetailPage({
       ? product.images
       : [product.image];
 
-  const hasDiscount =
-    product.originalPrice &&
-    parseFloat(product.originalPrice) > parseFloat(product.displayPrice);
-
   return (
     <>
       {/* Top — gallery + buy box */}
@@ -90,14 +86,7 @@ export default async function ProductDetailPage({
               <InlineRatingSummary productId={product.id} />
             </Suspense>
 
-            {hasDiscount && (
-              <div className="mt-3 inline-flex rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
-                Save {formatPrice(
-                  parseFloat(product.originalPrice!) -
-                    parseFloat(product.displayPrice)
-                )}
-              </div>
-            )}
+            {/* Sale is indicated by strike-through pricing in the buy box only (no chip). */}
 
             <div className="mt-8">
               <Suspense
@@ -165,7 +154,7 @@ export default async function ProductDetailPage({
             <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {product.features.map((f, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm">
-                  <span className="mt-1 inline-block size-1.5 rounded-full bg-accent" />
+                  <span className="mt-1 inline-block size-1.5 rounded-full bg-foreground" />
                   <span>{f}</span>
                 </li>
               ))}
@@ -359,7 +348,7 @@ async function ReviewsBlock({ productId }: { productId: string }) {
             <div className="flex items-center gap-2">
               <RatingStars rating={r.rating} size="sm" />
               {r.verified && (
-                <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-accent">
+                <span className="rounded-full border border-foreground px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-foreground">
                   Verified
                 </span>
               )}

@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ProductWithPricing } from "@/lib/db/schema";
 import { assetUrl, formatPrice } from "@/lib/assets";
+import { ProductImage } from "@/components/site/product-image";
 
 export function ProductCard({
   product,
@@ -25,10 +25,11 @@ export function ProductCard({
     >
       <div className="relative aspect-square overflow-hidden rounded-xl bg-paper-dim hover-lift">
         {hero ? (
-          <Image
+          <ProductImage
             src={hero}
             alt={product.name}
             fill
+            isStudio
             sizes="(max-width: 768px) 80vw, (max-width: 1280px) 33vw, 380px"
             priority={priority}
             className="object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.04]"
