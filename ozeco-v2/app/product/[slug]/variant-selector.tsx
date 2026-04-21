@@ -6,11 +6,13 @@ import { formatPrice } from "@/lib/assets";
 import { AddToCartButton } from "./add-to-cart";
 
 export function VariantSelector({
+  productId,
   basePrice,
   originalPrice,
   baseInStock,
   variants,
 }: {
+  productId: string;
   basePrice: string;
   originalPrice?: string | null;
   baseInStock: boolean;
@@ -109,7 +111,11 @@ export function VariantSelector({
 
       {/* Add to cart */}
       <div className="pt-2">
-        <AddToCartButton soldOut={soldOut} />
+        <AddToCartButton
+          productId={productId}
+          variantId={chosen?.id ?? null}
+          soldOut={soldOut}
+        />
       </div>
 
       {/* Stock / delivery note */}

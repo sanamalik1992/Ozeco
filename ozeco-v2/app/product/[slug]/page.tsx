@@ -249,6 +249,7 @@ async function VariantBlock({
   const variants = await getVariantsForProduct(productId);
   return (
     <VariantSelector
+      productId={productId}
       basePrice={basePrice}
       originalPrice={originalPrice}
       baseInStock={baseInStock}
