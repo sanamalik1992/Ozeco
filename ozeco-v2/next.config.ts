@@ -5,8 +5,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "ozeco.co.uk" },
       { protocol: "https", hostname: "www.ozeco.co.uk" },
+      // Vercel Blob — public store subdomain takes the shape <id>.public.blob.vercel-storage.com
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
-    // A transparent SVG we render locally if a remote image fails.
     dangerouslyAllowSVG: false,
   },
   experimental: {

@@ -3,20 +3,17 @@
 import { useMemo, useState } from "react";
 import type { ProductVariant } from "@/lib/db/schema";
 import { formatPrice } from "@/lib/assets";
+import { AddToCartButton } from "./add-to-cart";
 
-/**
- * Variants are stored as flat rows with (name, value). A product like "Colour: Red"
- * + "Colour: Black" forms one group. This selector handles N groups and picks
- * a combination — though the old site only ever used single-axis (colour OR size),
- * so we render each group as a simple row of buttons.
- */
 export function VariantSelector({
   basePrice,
-  inStock,
+  originalPrice,
+  baseInStock,
   variants,
 }: {
   basePrice: string;
-  inStock: boolean;
+  originalPrice?: string | null;
+  baseInStock: boolean;
   variants: ProductVariant[];
 }) {
   const groups = useMemo(() => {
@@ -44,21 +41,37 @@ export function VariantSelector({
   }, [selected, variants]);
 
   const effectivePrice = chosen?.price ?? basePrice;
-  const effectiveStock = chosen ? chosen.stockQuantity : inStock ? 1 : 0;
-  const disabled = effectiveStock <= 0;
+  const hasDiscount =
+    originalPrice && parseFloat(originalPrice) > parseFloat(effectivePrice);
+  const effectiveStock = chosen ? chosen.stockQuantity : baseInStock ? 1 : 0;
+  const soldOut = effectiveStock <= 0;
 
   return (
     <div className="space-y-6">
+      {/* Price */}
       <div className="flex items-baseline gap-3">
         <span className="font-display text-4xl font-semibold tabular-nums">
           {formatPrice(effectivePrice)}
         </span>
+        {hasDiscount && (
+          <span className="text-lg text-muted-foreground line-through">
+            {formatPrice(originalPrice!)}
+          </span>
+        )}
       </div>
 
+      {/* Variant groups */}
       {groups.map((group) => (
         <div key={group.name}>
-          <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            {group.name}
+          <div className="flex items-baseline justify-between">
+            <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+              {group.name}
+            </div>
+            <div className="text-xs text-foreground/70">
+              {
+                group.variants.find((v) => selected[group.name] === v.id)?.value
+              }
+            </div>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {group.variants.map((v) => {
@@ -72,16 +85,17 @@ export function VariantSelector({
                   onClick={() =>
                     setSelected((s) => ({ ...s, [group.name]: v.id }))
                   }
+                  aria-pressed={active}
                   className={[
                     "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors",
                     active
-                      ? "border-ink bg-ink text-paper"
-                      : "border-border bg-card text-foreground hover:border-ink",
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border bg-card text-foreground hover:border-foreground",
                     oos ? "line-through opacity-50 cursor-not-allowed" : "",
                   ].join(" ")}
                 >
                   {v.value}
-                  {v.price && v.price !== basePrice && (
+                  {v.price && v.price !== basePrice && !oos && (
                     <span className="text-xs opacity-70">
                       {formatPrice(v.price)}
                     </span>
@@ -93,17 +107,16 @@ export function VariantSelector({
         </div>
       ))}
 
-      <div className="pt-2 space-y-3">
-        <button
-          type="button"
-          disabled={disabled}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-4 text-sm font-semibold text-paper transition-opacity hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {disabled ? "Sold out" : "Add to cart"}
-        </button>
-        <div className="text-center text-xs text-muted-foreground">
-          Free UK delivery · 3–5 working days
-        </div>
+      {/* Add to cart */}
+      <div className="pt-2">
+        <AddToCartButton soldOut={soldOut} />
+      </div>
+
+      {/* Stock / delivery note */}
+      <div className="text-center text-xs text-muted-foreground">
+        {soldOut
+          ? "Currently sold out"
+          : "In stock · ships in 1–2 working days · free UK delivery"}
       </div>
     </div>
   );
