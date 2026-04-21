@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getProductBySlug } from "@/lib/db/queries";
-import { assetUrl } from "@/lib/assets";
 
 // TODO: make admin-configurable in Phase 4
 const HERO_SLUG = "touroll-u1";
@@ -10,17 +9,21 @@ const HERO_LABEL = "TOUROLL U1";
 // TODO: confirm final copy with user
 const TAGLINE = "Your adventure. Your way.";
 
-// Return exactly `count` support images, skipping index 0 (reserved for the hero shot).
-// If we don't have enough unique images, cycle through the available ones — never blank.
-function stripImages(images: readonly string[], count = 4): string[] {
-  const pool = images.slice(1);
-  if (pool.length === 0) return [];
-  const out: string[] = [];
-  for (let i = 0; i < count; i++) out.push(pool[i % pool.length]);
-  return out;
-}
+// TODO Phase 4: move these image assignments to admin-configurable hero settings
+// (see Phase 4 brief — hero is currently hard-coded).
+const HERO_IMAGES = {
+  main: "/hero/touroll-u1-hero.jpeg",
+  strip: [
+    "/hero/touroll-u1-battery.jpeg",
+    "/hero/touroll-u1-drivetrain.jpeg",
+    "/hero/touroll-u1-handlebar.jpeg",
+    "/hero/touroll-u1-lifestyle.jpeg",
+  ],
+} as const;
 
 export async function Hero() {
+  // We still query the product so the CTA points at the right slug/name/metadata,
+  // but the images are no longer DB-driven for the hero.
   const product = await getProductBySlug(HERO_SLUG);
   if (!product) {
     console.warn(
@@ -29,20 +32,11 @@ export async function Hero() {
     return null;
   }
 
-  const heroSrc = product.images?.[0] ?? product.image;
-  const strip = stripImages(product.images ?? []);
-  const uniqueSupport = Math.max(0, (product.images?.length ?? 0) - 1);
-  if (uniqueSupport < 4) {
-    console.warn(
-      `[hero] only ${uniqueSupport}/4 unique support images for "${HERO_SLUG}" — cycling to fill the strip`
-    );
-  }
-
   return (
     <section className="bg-background">
-      {/* One continuous canvas on #F4F2EF. No split, no panel, no divider. */}
+      {/* One continuous canvas on #F4F2EF — no split, no panel, no divider. */}
       <div className="relative min-h-[72dvh] overflow-hidden md:min-h-[70dvh]">
-        {/* Copy — upper-left quadrant. 10vw left gutter + 120px from top on desktop. */}
+        {/* Copy — upper-left quadrant. 10vw left gutter + 120px top on desktop. */}
         <div className="relative z-10 px-6 pt-12 pb-4 md:max-w-[42vw] md:pl-[10vw] md:pr-0 md:pt-[120px] md:pb-0">
           <div className="text-[14px] font-medium uppercase tracking-[0.22em] text-foreground/60 md:text-[15px]">
             {HERO_LABEL}
@@ -70,45 +64,48 @@ export async function Hero() {
         </div>
 
         {/* Bike — dominant, right side, vertically centred.
-            Mobile: stacks below copy (aspect-ratio wrapper).
-            Desktop: absolute, 62vw wide, inset 10% top/bottom to sit at ~80% of hero height. */}
+            Mobile: stacks below copy. Desktop: absolute, 62vw wide, inset 10% top/bottom.
+            Transparent wrapper (no bg colour) so the image's white studio bg blends
+            into #F4F2EF via object-contain. No mix-blend-mode on first pass. */}
         <div className="relative mt-2 aspect-[5/3] w-full px-6 md:absolute md:inset-y-[10%] md:right-0 md:mt-0 md:aspect-auto md:w-[62vw] md:px-0">
-          {heroSrc && (
-            <Image
-              src={assetUrl(heroSrc)}
-              alt={product.name}
-              fill
-              priority
-              sizes="(max-width: 768px) 92vw, 62vw"
-              className="object-contain"
-              style={{
-                filter: "drop-shadow(0 32px 30px rgba(14, 15, 13, 0.12))",
-              }}
-            />
-          )}
+          <Image
+            src={HERO_IMAGES.main}
+            alt={product.name}
+            fill
+            priority
+            sizes="(max-width: 768px) 92vw, 62vw"
+            className="object-contain"
+            style={{
+              filter: "drop-shadow(0 32px 30px rgba(14, 15, 13, 0.12))",
+            }}
+          />
         </div>
       </div>
 
-      {/* Image strip — immediately below the hero, no vertical gap, full-bleed 100vw,
-          4 equal 25vw cells, no gaps between images, edge-to-edge. */}
-      {strip.length > 0 && (
-        <div className="grid w-full grid-cols-4 gap-0">
-          {strip.map((src, i) => (
+      {/* Strip — immediately below the hero, no vertical gap, full-bleed 100vw,
+          4 equal 25vw cells, no gaps, edge-to-edge. object-cover everywhere.
+          Lifestyle shot (slot 4) gets a slight upward object-position so the
+          rider's head isn't cropped off when the cell is taller than its image. */}
+      <div className="grid w-full grid-cols-4 gap-0">
+        {HERO_IMAGES.strip.map((src, i) => {
+          const isLifestyle = i === HERO_IMAGES.strip.length - 1;
+          return (
             <div
-              key={src + "-" + i}
+              key={src}
               className="relative aspect-[4/3] overflow-hidden bg-paper-dim"
             >
               <Image
-                src={assetUrl(src)}
+                src={src}
                 alt=""
                 fill
                 sizes="25vw"
                 className="object-cover"
+                style={isLifestyle ? { objectPosition: "50% 35%" } : undefined}
               />
             </div>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </section>
   );
 }
