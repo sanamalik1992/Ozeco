@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
+import { Truck, ShieldCheck, Headset } from "lucide-react";
 import type { Metadata } from "next";
 import {
   getCustomerPhotosForProduct,
@@ -13,8 +13,10 @@ import {
 import { assetUrl } from "@/lib/assets";
 import { RatingStars } from "@/components/site/rating-stars";
 import { ProductCard } from "@/components/site/product-card";
+import { ProductImage } from "@/components/site/product-image";
 import { ProductGallery } from "./gallery";
 import { VariantSelector } from "./variant-selector";
+import { ReviewsList } from "./reviews-list";
 
 export const revalidate = 300;
 
@@ -37,6 +39,15 @@ export async function generateMetadata({
   };
 }
 
+function firstParagraph(text: string, maxChars = 200): string {
+  const firstSentenceEnd = /(?<=\.)\s+(?=[A-Z])/.exec(text);
+  const cut = firstSentenceEnd ? text.slice(0, firstSentenceEnd.index + 1) : text;
+  if (cut.length <= maxChars) return cut.trim();
+  const trimmed = cut.slice(0, maxChars);
+  const lastSpace = trimmed.lastIndexOf(" ");
+  return (lastSpace > 0 ? trimmed.slice(0, lastSpace) : trimmed).trim() + "…";
+}
+
 export default async function ProductDetailPage({
   params,
 }: {
@@ -51,10 +62,12 @@ export default async function ProductDetailPage({
       ? product.images
       : [product.image];
 
+  const shortDesc = firstParagraph(product.description);
+
   return (
     <>
       {/* Top — gallery + buy box */}
-      <section className="mx-auto max-w-[1440px] px-6 py-12 md:px-10 md:py-16">
+      <section className="mx-auto max-w-[1440px] px-6 py-8 md:px-10 md:py-16">
         <nav className="mb-6 text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">
             Home
@@ -86,21 +99,26 @@ export default async function ProductDetailPage({
               <InlineRatingSummary productId={product.id} />
             </Suspense>
 
-            {/* Sale is indicated by strike-through pricing in the buy box only (no chip). */}
+            <p className="mt-5 text-sm leading-relaxed text-muted-foreground md:text-base">
+              {shortDesc}
+            </p>
 
             <div className="mt-8">
               <Suspense
                 fallback={
-                  <div className="h-32 w-full animate-pulse rounded-xl bg-paper-dim" />
+                  <div className="h-40 w-full animate-pulse rounded-xl bg-paper-dim" />
                 }
               >
                 <VariantBlock
                   productId={product.id}
                   basePrice={product.displayPrice}
-                  inStock={product.inStock}
+                  originalPrice={product.originalPrice}
+                  baseInStock={product.inStock}
                 />
               </Suspense>
             </div>
+
+            <TrustIcons />
 
             <KeySpecsGrid
               motor={product.motorPower}
@@ -162,7 +180,7 @@ export default async function ProductDetailPage({
           </div>
         )}
 
-        {/* What's in the box — empty arrays are handled gracefully */}
+        {/* What's in the box — section hidden entirely when array is empty */}
         {product.inTheBox && product.inTheBox.length > 0 && (
           <div className="mt-14">
             <h3 className="font-display text-xl font-semibold tracking-tight">
@@ -196,9 +214,13 @@ export default async function ProductDetailPage({
         </div>
       </section>
 
-      {/* Customer photos */}
+      {/* Customer photos — filtered to approved=true in the query */}
       <Suspense fallback={null}>
-        <CustomerPhotosStrip productId={product.id} productName={product.name} />
+        <CustomerPhotosStrip
+          productId={product.id}
+          productSlug={product.slug}
+          productName={product.name}
+        />
       </Suspense>
 
       {/* Related */}
@@ -216,17 +238,20 @@ export default async function ProductDetailPage({
 async function VariantBlock({
   productId,
   basePrice,
-  inStock,
+  originalPrice,
+  baseInStock,
 }: {
   productId: string;
   basePrice: string;
-  inStock: boolean;
+  originalPrice: string | null;
+  baseInStock: boolean;
 }) {
   const variants = await getVariantsForProduct(productId);
   return (
     <VariantSelector
       basePrice={basePrice}
-      inStock={inStock}
+      originalPrice={originalPrice}
+      baseInStock={baseInStock}
       variants={variants}
     />
   );
@@ -271,6 +296,23 @@ function KeySpecsGrid({
         </div>
       ))}
     </dl>
+  );
+}
+
+function TrustIcons() {
+  return (
+    <ul className="mt-8 grid grid-cols-3 gap-3 text-center text-[11px] font-medium text-muted-foreground">
+      {[
+        { icon: Truck, label: "Free UK delivery" },
+        { icon: ShieldCheck, label: "2-year warranty" },
+        { icon: Headset, label: "Expert support" },
+      ].map(({ icon: Icon, label }) => (
+        <li key={label} className="flex flex-col items-center gap-2 rounded-lg border border-border/60 px-2 py-4">
+          <Icon className="size-5 text-foreground" strokeWidth={1.5} />
+          <span>{label}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -329,7 +371,7 @@ async function ReviewsBlock({ productId }: { productId: string }) {
                 </span>
                 <div className="h-1.5 overflow-hidden rounded-full bg-paper-dim">
                   <div
-                    className="h-full rounded-full bg-ink"
+                    className="h-full rounded-full bg-foreground"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -342,41 +384,20 @@ async function ReviewsBlock({ productId }: { productId: string }) {
         </div>
       </div>
 
-      <ol className="lg:col-span-8 space-y-8 divide-y divide-border/60">
-        {items.slice(0, 8).map((r) => (
-          <li key={r.id} className="pt-8 first:pt-0">
-            <div className="flex items-center gap-2">
-              <RatingStars rating={r.rating} size="sm" />
-              {r.verified && (
-                <span className="rounded-full border border-foreground px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-foreground">
-                  Verified
-                </span>
-              )}
-            </div>
-            <h3 className="mt-3 font-display text-lg font-semibold">{r.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-foreground/90">
-              {r.comment}
-            </p>
-            <div className="mt-3 text-xs text-muted-foreground">
-              {r.customerName} ·{" "}
-              {new Date(r.createdAt).toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </div>
-          </li>
-        ))}
-      </ol>
+      <div className="lg:col-span-8">
+        <ReviewsList reviews={items} />
+      </div>
     </div>
   );
 }
 
 async function CustomerPhotosStrip({
   productId,
+  productSlug,
   productName,
 }: {
   productId: string;
+  productSlug: string;
   productName: string;
 }) {
   const photos = await getCustomerPhotosForProduct(productId, 6);
@@ -385,19 +406,29 @@ async function CustomerPhotosStrip({
   return (
     <section className="py-20 md:py-24">
       <div className="mx-auto max-w-[1440px] px-6 md:px-10">
-        <div className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-          From our riders
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <div className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              From our riders
+            </div>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tighter sm:text-4xl">
+              {productName.replace(/ Electric Bike$/i, "")} out in the wild
+            </h2>
+          </div>
+          <Link
+            href={`/gallery?product=${productSlug}`}
+            className="hidden self-end text-sm font-semibold underline-offset-4 hover:underline md:inline-block"
+          >
+            View all →
+          </Link>
         </div>
-        <h2 className="mt-3 font-display text-3xl font-bold tracking-tighter sm:text-4xl">
-          {productName.replace(/ Electric Bike$/i, "")} out in the wild
-        </h2>
         <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
           {photos.map((p) => (
             <div
               key={p.id}
               className="relative aspect-square overflow-hidden rounded-xl bg-paper-dim"
             >
-              <Image
+              <ProductImage
                 src={assetUrl(p.imageUrl)}
                 alt={p.caption ?? p.customerName}
                 fill

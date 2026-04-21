@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getLatestBlogPosts } from "@/lib/db/queries";
 import { assetUrl } from "@/lib/assets";
+import { ProductImage } from "@/components/site/product-image";
 
 export async function BlogTeaser() {
   const posts = await getLatestBlogPosts(3);
@@ -35,7 +35,7 @@ export async function BlogTeaser() {
               className="group block"
             >
               <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-paper-dim">
-                <Image
+                <ProductImage
                   src={assetUrl(post.featuredImage)}
                   alt={post.title}
                   fill

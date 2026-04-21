@@ -1,12 +1,18 @@
 /**
- * Asset origin — product/customer/blog images still live on the old Replit site
- * (ozeco.co.uk) until Phase 3 migrates them to Vercel Blob.
+ * Asset origin — product / customer / blog images now live in Vercel Blob.
+ * Post Phase 3A migration, every DB image URL is an absolute Blob URL, so
+ * assetUrl() is effectively a passthrough for DB data.
  *
- * Override with NEXT_PUBLIC_ASSET_ORIGIN if you want to point somewhere else
- * (e.g. local dev with `http://localhost:4000`).
+ * ASSET_ORIGIN is only consulted for the handful of pre-existing broken
+ * relative paths that had no file to migrate (and for dev overrides).
+ * Pointing the default at the Blob base URL means those 404 against Blob
+ * and trigger the ProductImage onError fallback, same as any other miss.
+ *
+ * Override with NEXT_PUBLIC_ASSET_ORIGIN for local dev (e.g. a mock server).
  */
 export const ASSET_ORIGIN =
-  process.env.NEXT_PUBLIC_ASSET_ORIGIN ?? "https://ozeco.co.uk";
+  process.env.NEXT_PUBLIC_ASSET_ORIGIN ??
+  "https://tg5paiqevb7ejsay.public.blob.vercel-storage.com";
 
 export function assetUrl(path: string | null | undefined): string {
   if (!path) return "";
