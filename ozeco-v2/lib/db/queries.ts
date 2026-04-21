@@ -27,7 +27,7 @@ import {
 
 /**
  * Enrich a product row with derived fields:
- *  - inStock:           true if product.stockQuantity > 0 OR any variant has stock
+ *  - inStock:           true if product.stockQuantity > 0 OR any variant has stock > 0
  *  - lowestVariantPrice: string | null — lowest in-stock variant price, if variants exist
  *  - displayPrice:       the price shown on cards (variant-aware)
  */
@@ -35,9 +35,11 @@ function enrich(
   product: Product,
   variants: ProductVariant[]
 ): ProductWithPricing {
-  const inStockFromBase = product.stockQuantity > 0;
-  const inStockFromVariants = variants.some((v) => v.stockQuantity > 0);
-  const inStock = variants.length > 0 ? inStockFromVariants : inStockFromBase;
+  // Rule: inStock = stockQuantity > 0, applied at both base and variant level.
+  // OR-combined so a product with base stock but zero-stock variant options
+  // still reports as in-stock. (Touroll U1 fix — had base=10 but all variants=0.)
+  const inStock =
+    product.stockQuantity > 0 || variants.some((v) => v.stockQuantity > 0);
 
   let lowestVariantPrice: string | null = null;
   let displayPrice = product.price;
