@@ -10,7 +10,7 @@ import {
   getReviewsForProduct,
   getVariantsForProduct,
 } from "@/lib/db/queries";
-import { assetUrl, formatPrice } from "@/lib/assets";
+import { assetUrl } from "@/lib/assets";
 import { RatingStars } from "@/components/site/rating-stars";
 import { ProductCard } from "@/components/site/product-card";
 import { ProductGallery } from "./gallery";
@@ -50,10 +50,6 @@ export default async function ProductDetailPage({
     product.images && product.images.length > 0
       ? product.images
       : [product.image];
-
-  const hasDiscount =
-    product.originalPrice &&
-    parseFloat(product.originalPrice) > parseFloat(product.displayPrice);
 
   return (
     <>

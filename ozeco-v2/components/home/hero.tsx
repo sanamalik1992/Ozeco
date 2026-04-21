@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getProductBySlug } from "@/lib/db/queries";
+import { ProductImage } from "@/components/site/product-image";
 
 // TODO: make admin-configurable in Phase 4
 const HERO_SLUG = "touroll-u1";
@@ -9,21 +9,21 @@ const HERO_LABEL = "TOUROLL U1";
 // TODO: confirm final copy with user
 const TAGLINE = "Your adventure. Your way.";
 
-// TODO Phase 4: move these image assignments to admin-configurable hero settings
-// (see Phase 4 brief — hero is currently hard-coded).
+// TODO Phase 4: move these image assignments to admin-configurable hero settings.
+// `isStudio: true` applies mix-blend-mode multiply so the pure-white backdrop
+// blends into the warm paper page background. Studio shots only — the lifestyle
+// slot (rider at the lake) stays plain so real photography isn't destroyed.
 const HERO_IMAGES = {
-  main: "/hero/touroll-u1-hero.jpeg",
+  main: { src: "/hero/touroll-u1-hero.jpeg", isStudio: true },
   strip: [
-    "/hero/touroll-u1-battery.jpeg",
-    "/hero/touroll-u1-drivetrain.jpeg",
-    "/hero/touroll-u1-handlebar.jpeg",
-    "/hero/touroll-u1-lifestyle.jpeg",
+    { src: "/hero/touroll-u1-battery.jpeg", isStudio: true },
+    { src: "/hero/touroll-u1-drivetrain.jpeg", isStudio: true },
+    { src: "/hero/touroll-u1-handlebar.jpeg", isStudio: true },
+    { src: "/hero/touroll-u1-lifestyle.jpeg", isStudio: false },
   ],
 } as const;
 
 export async function Hero() {
-  // We still query the product so the CTA points at the right slug/name/metadata,
-  // but the images are no longer DB-driven for the hero.
   const product = await getProductBySlug(HERO_SLUG);
   if (!product) {
     console.warn(
@@ -35,7 +35,7 @@ export async function Hero() {
   return (
     <section className="bg-background">
       {/* One continuous canvas on #F4F2EF — no split, no panel, no divider. */}
-      <div className="relative min-h-[72dvh] overflow-hidden md:min-h-[70dvh]">
+      <div className="relative min-h-[72dvh] overflow-hidden md:min-h-[74dvh]">
         {/* Copy — upper-left quadrant. 10vw left gutter + 120px top on desktop. */}
         <div className="relative z-10 px-6 pt-12 pb-4 md:max-w-[42vw] md:pl-[10vw] md:pr-0 md:pt-[120px] md:pb-0">
           <div className="text-[14px] font-medium uppercase tracking-[0.22em] text-foreground/60 md:text-[15px]">
@@ -63,20 +63,23 @@ export async function Hero() {
           </Link>
         </div>
 
-        {/* Bike — dominant, right side, vertically centred.
-            Mobile: stacks below copy. Desktop: absolute, 62vw wide, inset 10% top/bottom.
-            Transparent wrapper (no bg colour) so the image's white studio bg blends
-            into #F4F2EF via object-contain. No mix-blend-mode on first pass. */}
-        <div className="relative mt-2 aspect-[5/3] w-full px-6 md:absolute md:inset-y-[10%] md:right-0 md:mt-0 md:aspect-auto md:w-[62vw] md:px-0">
-          <Image
-            src={HERO_IMAGES.main}
+        {/* Bike — dominant, right side, bottom-anchored.
+            Mobile: stacks below copy. Desktop: absolute, 64vw wide, more vertical
+            room than before (top 5%, bottom 0) so the bike has breathing space
+            above the handlebars. object-position: center bottom pins the bike
+            to the floor of its box regardless of container height. */}
+        <div className="relative mt-2 aspect-[5/3] w-full px-6 md:absolute md:right-0 md:top-[5%] md:bottom-0 md:mt-0 md:aspect-auto md:w-[64vw] md:px-0">
+          <ProductImage
+            src={HERO_IMAGES.main.src}
             alt={product.name}
             fill
+            isStudio={HERO_IMAGES.main.isStudio}
             priority
-            sizes="(max-width: 768px) 92vw, 62vw"
+            sizes="(max-width: 768px) 92vw, 64vw"
             className="object-contain"
             style={{
-              filter: "drop-shadow(0 32px 30px rgba(14, 15, 13, 0.12))",
+              objectPosition: "center bottom",
+              filter: "drop-shadow(0 40px 36px rgba(14, 15, 13, 0.22))",
             }}
           />
         </div>
@@ -87,17 +90,18 @@ export async function Hero() {
           Lifestyle shot (slot 4) gets a slight upward object-position so the
           rider's head isn't cropped off when the cell is taller than its image. */}
       <div className="grid w-full grid-cols-4 gap-0">
-        {HERO_IMAGES.strip.map((src, i) => {
-          const isLifestyle = i === HERO_IMAGES.strip.length - 1;
+        {HERO_IMAGES.strip.map(({ src, isStudio }) => {
+          const isLifestyle = !isStudio;
           return (
             <div
               key={src}
               className="relative aspect-[4/3] overflow-hidden bg-paper-dim"
             >
-              <Image
+              <ProductImage
                 src={src}
                 alt=""
                 fill
+                isStudio={isStudio}
                 sizes="25vw"
                 className="object-cover"
                 style={isLifestyle ? { objectPosition: "50% 35%" } : undefined}
@@ -115,7 +119,7 @@ export function HeroSkeleton() {
     <section className="bg-background">
       <div
         aria-hidden
-        className="relative min-h-[72dvh] overflow-hidden md:min-h-[70dvh]"
+        className="relative min-h-[72dvh] overflow-hidden md:min-h-[74dvh]"
       >
         <div className="relative z-10 px-6 pt-12 pb-4 md:max-w-[42vw] md:pl-[10vw] md:pt-[120px]">
           <div className="h-3 w-28 rounded-full bg-paper-dim" />

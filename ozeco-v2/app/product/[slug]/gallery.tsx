@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { assetUrl } from "@/lib/assets";
+import { ProductImage } from "@/components/site/product-image";
 
 export function ProductGallery({
   name,
@@ -19,10 +19,11 @@ export function ProductGallery({
     <div>
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-paper-dim">
         {hero && (
-          <Image
+          <ProductImage
             src={assetUrl(hero)}
             alt={name}
             fill
+            isStudio
             sizes="(max-width: 1024px) 100vw, 55vw"
             priority
             className="object-cover"
@@ -43,10 +44,11 @@ export function ProductGallery({
                   : "opacity-70 hover:opacity-100"
               }`}
             >
-              <Image
+              <ProductImage
                 src={assetUrl(img)}
                 alt=""
                 fill
+                isStudio
                 sizes="80px"
                 className="object-cover"
               />
